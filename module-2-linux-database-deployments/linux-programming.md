@@ -7,6 +7,8 @@
 - [Learning the Shell](#learning-the-shell)
   - [Navigation](#navigation)
   - [Looking around](#looking-around)
+  - [Manipulating Files](#manipulating-files)
+  - [I/O Direction](#io-direction)
 
 # Definition
 
@@ -94,7 +96,7 @@
 
 **Long format**
 
-![long-format.png](C:\Users\antho\Desktop\internship\module-2-linux-database-deployments\assets\images\long-format.png)
+![long-format.png](assets/images/long-format.png)
 
 | Name              | Meaning                                                                                                                                                                                                                                                                                                                                                                          |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -109,10 +111,98 @@
 
  A program lets you view text files
 
-**Command**: `less text_file`
+- **Command**: `less text_file`
 
 **file**
 
 As you wander around Linux system. It's helpful to determine what kind of data a file contains before you try to view it.
 
-**Command**: `file name_of_file`
+- **Command**: `file name_of_file`
+
+## Manipulating Files
+
+**Wildcards**
+
+| Wildcard      | Meaning                                                                                                                    |
+|---------------|----------------------------------------------------------------------------------------------------------------------------|
+| *             | Matches any characters                                                                                                     |
+| ?             | Matches any single character                                                                                               |
+| [characters]  | Matches any character that is a member of the set characters [:alnum:] \| [:alpha:] \| [:digit:] \| [:upper:] \| [:lower:] |
+| [!characters] | Matches any character that is not a member of the set characters                                                           |
+
+**cp**
+
+    Copy files and directories
+
+- Copies a single file: `cp file1 file2`
+- Copies multiple files: `cp file... directory`
+
+| Command           | Results                                                                                                                                                       |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `cp file1 file2`    | If file2 does not exist, it is created; otherwise, file2 is silently overwritten with the contents of file1.         |
+| `cp -i file1 file2` | if file2 exists, the user is prompted before it is overwritten with the contents of file1.                                                                    |
+| `cp file1 dir1`     | Copy the contents of file1 (into a file named file1) inside of directory dir1.                                                                                |
+| `cp -R dir1 dir2`   | Copy the contents of the directory dir1. If directory dir2 does not exist, it is created. Otherwise, it creates a directory named dir1 within directory dir2. |
+
+**mv**
+    
+    Moves or renames files and directories
+
+- To rename: `mv filename1 filename2`
+- To move files to different directory: `mv file... directory`
+
+| Command                   | Results                                                                                                                               |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `mv file1 file2`         | If file2 does not exist, then file1 is renamed file2. If file2 exists, its contents are silently replaced with the contents of file1. |
+| `mv -i file1 file2`         | Ff file2 exists, the user is prompted before it is overwritten with the contents of file1.                                            |
+| `mv file1 file2 file3 dir1` | The files file1, file2, file3 are moved to directory dir1. If dir1 does not exist, mv will exit with an error.                        |
+| `mv dir1 dir2`              | If dir2 does not exist, then dir1 is renamed dir2. If dir2 exists, the directory dir1 is moved within directory dir2.                 |
+
+**rm**
+
+    Removes files and directories
+
+- Files: `rm file...`
+- Direcoties: `rm -r directory...`
+
+| Command           | Results                                                                 |
+|-------------------|-------------------------------------------------------------------------|
+| `rm file1 file2`    | Delete file1 and file2.                                                 |
+| `rm -i file1 file2` | The user is prompted before each file is deleted.                       |
+| `rm -r dir1 dir2`   | Directories dir1 and dir2 are deleted along with all of their contents. |
+
+**mkdir**
+
+    Create directories
+
+- Command: `mkdir directory...`
+  
+
+## I/O Direction
+
+**Standard Output**
+
+    To redirect standard output to a file
+
+- `>` - to redirect standard output to a file (overwritten if exists)
+- '>>' - to append to a file
+
+**Standard Input**
+
+
+    To redirect standard input from a file
+
+- `<` - to get contents of file for processing
+- `< ... >`- to get contents of file for processing and pass the results to a fle
+
+**Pipelines**
+
+    Connect multiple commands together. The standard output of one command is fed into the standard input of another
+
+- Command: `|`
+- Example: `ls -l | less`
+
+**Filters**
+
+    Take standard input and perform an operation on it and send the results to standard ouput
+
