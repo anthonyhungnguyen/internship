@@ -9,6 +9,14 @@ df['reqDate'] = df['reqDate'].apply(
 
 
 def return_users():
+    return df['userID'].unique()
+
+
+def return_banks():
+    return df['bankCode'].dropna().unique()
+
+
+def return_users_rfm():
     max_date = max(df['reqDate'])
     rfm = df.groupby(['userID']).agg({
         'reqDate': lambda x: (max_date + timedelta(1) - x.max()).days,
@@ -23,7 +31,7 @@ def return_users():
     return rfm.values
 
 
-def return_banks():
+def return_banks_success_rate():
     bank_success = df.groupby(['bankCode', 'reqDate']).agg({
         'transStatus': 'sum',
         'transID': 'count'
