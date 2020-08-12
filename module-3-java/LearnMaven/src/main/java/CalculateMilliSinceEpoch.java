@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,12 +19,10 @@ public class CalculateMilliSinceEpoch {
             long milliSinceEpoch = parseDate.atZone(zoneId).toInstant().toEpochMilli();
             logger.info("Success: " + datetime + " to: " + milliSinceEpoch);
             return milliSinceEpoch;
-        }
-        catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             logger.error("DateTime is null");
             throw new NullPointerException("Datetime mustn't be null");
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             logger.error("DateTime is blank or wrong format: " + datetime);
             throw new DateTimeException("Please re-check your DateTime");
         }

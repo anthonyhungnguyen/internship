@@ -55,7 +55,7 @@ public class Main {
 
         // lambda expression to implement FuncInterface. This interface by default implements
         // abstractFun()
-        FuncInterface fobj = x -> System.out.println(x);
+        com.company.vng.FuncInterface fobj = x -> System.out.println(x);
         fobj.abstractFunc(530);
 
         // Test stream
@@ -116,7 +116,7 @@ public class Main {
         System.out.println("Month: " + month + " day: " + day + " seconds: " + seconds);
 
         // Specific date
-        LocalDate date2 = LocalDate.of(1950,1,26);
+        LocalDate date2 = LocalDate.of(1950, 1, 26);
         System.out.println(date2);
 
         // Zone Time

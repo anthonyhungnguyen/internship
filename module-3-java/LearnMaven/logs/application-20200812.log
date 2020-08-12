@@ -1,0 +1,22 @@
+2020-08-12 09:39:10.081 [main] INFO  CalculateMilliSinceEpoch - Success: 2020/08/11 15:51:37 to: 1597135897000
+2020-08-12 09:39:10.098 [main] ERROR CalculateMilliSinceEpoch - DateTime is null
+2020-08-12 09:39:10.102 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/08/11
+2020-08-12 09:39:10.105 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 
+2020-08-12 09:39:10.107 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/13/11 02:02:02
+2020-08-12 09:39:10.128 [main] INFO  CalculateMilliSinceEpoch - Success: 2020/08/11 15:51:37 to: 1597135897000
+2020-08-12 09:39:10.130 [main] ERROR CalculateMilliSinceEpoch - DateTime is null
+2020-08-12 09:39:10.130 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/08/11
+2020-08-12 09:39:10.131 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 
+2020-08-12 09:39:10.131 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/13/11 02:02:02
+2020-08-12 09:41:26.348 [main] INFO  CalculateMilliSinceEpoch - Success: 2020/08/11 15:51:37 to: 1597135897000
+2020-08-12 09:41:26.362 [main] ERROR CalculateMilliSinceEpoch - DateTime is null
+2020-08-12 09:41:26.364 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/08/11
+2020-08-12 09:41:26.366 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 
+2020-08-12 09:41:26.369 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/13/11 02:02:02
+2020-08-12 09:41:26.394 [main] INFO  CalculateMilliSinceEpoch - Success: 2020/08/11 15:51:37 to: 1597135897000
+2020-08-12 09:41:26.401 [main] ERROR CalculateMilliSinceEpoch - DateTime is null
+2020-08-12 09:41:26.401 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/08/11
+2020-08-12 09:41:26.402 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 
+2020-08-12 09:41:26.402 [main] ERROR CalculateMilliSinceEpoch - DateTime is blank or wrong format: 2020/13/11 02:02:02
+2020-08-12 10:02:35.654 [main] ERROR CalculateMilliSinceEpoch - DateTime is null
+2020-08-12 10:02:35.687 [main] ERROR CalculateMilliSinceEpoch - DateTime is null

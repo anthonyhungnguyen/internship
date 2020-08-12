@@ -14,14 +14,15 @@ public class TestCalculateMilliSinceEpoch extends TestCase {
         long expected = 1597135897000L;
         assertEquals(milliSinceEpoch, expected);
     }
+
     @Test
     public void testNullDateTime() {
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        Exception exception = assertThrows(Exception.class, () -> {
             CalculateMilliSinceEpoch.compute(null);
         });
         String exceptedMessage = "Datetime mustn't be null";
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.equals(exceptedMessage));
+        assertEquals(NullPointerException.class, exception.getClass());
     }
 
     @Test
@@ -31,7 +32,7 @@ public class TestCalculateMilliSinceEpoch extends TestCase {
         });
         String exceptedMessage = "Please re-check your DateTime";
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.equals(exceptedMessage));
+        assertEquals(actualMessage, exceptedMessage);
     }
 
     @Test

@@ -1,15 +1,15 @@
 package com.company.vng;
 
-public class CountDownThreadRunnable implements Runnable{
+public class CountDownThreadRunnable implements Runnable {
 
     @Override
     public void run() {
         int count = 10;
         for (int i = count; i > 0; i--) {
             System.out.println(i + " Thread name: " + Thread.currentThread().getName());
-            try{
+            try {
                 Thread.sleep(1000);
-            } catch(InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
