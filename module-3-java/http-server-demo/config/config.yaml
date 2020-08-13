@@ -1,0 +1,6 @@
+server:
+  port: 9095
+mysql:
+  url: jdbc:mysql://localhost:3306/m3
+  user: root
+  password: ngph
