@@ -12,6 +12,28 @@
     - [Primitive types](#primitive-types)
     - [Non-primitives data type](#non-primitives-data-type)
   - [Java is Pass-by-Value](#java-is-pass-by-value)
+  - [Exceptions](#exceptions)
+    - [Error](#error)
+    - [Exceptions](#exceptions-1)
+    - [RuntimeException - unchecked exception](#runtimeexception---unchecked-exception)
+    - [IOException - checked exception](#ioexception---checked-exception)
+  - [Abstract vs Interface](#abstract-vs-interface)
+    - [Interface](#interface)
+    - [Abstract](#abstract)
+    - [Comparision](#comparision)
+    - [When to use which](#when-to-use-which)
+  - [Java Collections](#java-collections)
+    - [List](#list)
+    - [Set](#set)
+    - [Map](#map)
+  - [Java Generics](#java-generics)
+    - [How to use](#how-to-use)
+    - [Creating Generic Class](#creating-generic-class)
+    - [Creating Generics Methods](#creating-generics-methods)
+    - [Bounded types](#bounded-types)
+    - [Advantages](#advantages)
+  - [Multithreading](#multithreading)
+    - [Basic Multithreading](#basic-multithreading)
 
 # Java Programming Language
 
@@ -214,3 +236,285 @@ Collection of Native Libraries required for Execution Engine
 - All have same sizes
 
 ## Java is Pass-by-Value
+
+- **Pass by Value:** The method parameter values are copied to another variable and then the copied object is passed
+- **Pass by Reference:** An alias or reference to the actual parameter is passed to the method
+
+To test whether Java (or anything language) if it's passed by value, we use swap method
+```
+public static void swap(Object o1, Object o2){ //o1=50, o2=100
+	Object temp = o1; //temp=50, o1=50, o2=100
+	o1=o2; //temp=50, o1=100, o2=100
+	o2=temp; //temp=50, o1=100, o2=50
+} //method terminated
+```
+
+Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. After swap terminated, we noticed changing values of o1 and o2 but they are copies of two real objects. Hence, there is actually no change in the values of 2 objects.
+
+## Exceptions
+
+<p align="center">
+  <img src="assets/images/ExceptionHierarchy.png" alt="exceptions">
+  <br/>
+  <i><a href="https://www.programiz.com/java-programming/exceptions">Source: Exceptions</a></i>
+</p>
+
+### Error
+
+- Irrecoverable exceptions such as out of memoery, memory leaks, stack overflow errors, library incompartibility, infinite recursion, etc.
+- Beyond the control of programmer, we should not try to handle errors
+
+### Exceptions
+
+- Can be caught and handled by the program
+- When exception happens, it creates an object (exception object). It contains information about exeption such as the name, description and state of program when exception occurred
+
+### RuntimeException - unchecked exception
+
+    Exception that is not checked at compile time
+- Commons
+  - `IllegalArgumentException`: Improper use of an API
+  - `NullPointerException`: Null pointer access (missing the initialization of vairable)
+  - `ArrayIndexOutOfBoundsException`: Out-of-bounds array access
+  - `ArithmeticException`: dividing a number by 0
+
+### IOException - checked exception
+    Checked by compiler at compile-time and programmer is prompted to handle these exceptions
+- Commons
+  - `FileNotFoundException`: Try to open non-exists file
+  - Try to read past the end of a file
+
+## Abstract vs Interface
+
+### Interface
+
+- Not a class
+- Only contains empty methods
+- A blueprint for classes to implement
+- A class can implement many interfaces
+- Class must implement all methods in interface
+
+### Abstract
+
+- Same same as interface but contains more
+- Two types of methods:
+  - abstract method - empty method
+  - normal method
+- A class can only extend one abstract class
+- Normal method will be used for all sub class (without reimplementing)
+
+### Comparision
+
+- **Abstract**:
+  - Cannot extend many abstract class
+- **Interface**
+  - When a class implements an interface, that class needs to implement all methods (some of them may not be needed)
+
+### When to use which
+- **Abstract**: use when extended class have lots of properties in common with abstract class
+- **Interface**: use when we want a function be used among classes without caring what it is
+
+## Java Collections
+
+<p align="center">
+  <img src="assets/images/Java-Collections.png" alt="collections">
+  <br/>
+  <i><a href="https://www.programiz.com/java-programming/collections">Source: Collections</a></i>
+</p>
+
+### List 
+
+    An ordered collection that allows to add and remove elements like an array
+
+<p align="center">
+  <img src="assets/images/Java-list-interface.png" alt="lists">
+  <br/>
+  <i><a href="https://www.programiz.com/java-programming/list">Source: List</a></i>
+</p>
+
+- **ArrayList**: allows us to create resizable-arrays.
+- **LinkedList**: provides the functionality of the linked list data structure.
+- **Vector**: provides the functionality of the linked list data structure.
+- **Stack**: provides the functionality of the linked list data structure.
+
+**How to use**
+
+In Java, we must import java.util.List package in order to use List.
+
+```
+// ArrayList implementation of List
+List<String> list1 = new ArrayList<>();
+
+// LinkedList implementation of List
+List<String> list2 = new LinkedList<>();
+```
+
+**Methods**
+
+- `add()` - adds an element to a list
+- `addAll()` - adds all elements of one list to another
+- `get()` - helps to randomly access elements from lists
+- `iterator()` - returns iterator object that can be used to sequentially access elements of lists
+- `set()` - changes elements of lists
+remove() - removes an element from the list
+- `removeAll()` - removes all the elements from the list
+- `clear()` - removes all the elements from the list (more efficient than removeAll())
+- `size()` - returns the length of lists
+- `toArray()` - converts a list into an array
+- `contains()` - returns true if a list contains specified element
+
+### Set
+
+**Classes that implement Set**
+
+<p align="center">
+  <img src="assets/images/java-set-implementation.png" alt="sets">
+  <br/>
+  <i><a href="https://www.programiz.com/java-programming/set">Source: Set</a></i>
+</p>
+
+- **HashSet**: provices the functionalities for hash table data structure
+- **LinkedHashSet**: provides functionalities of both the hashtable and the linked list data structure
+- **EnumSet**: provides a set implementation of elements of a single enum.
+- **TreeSet**: provides the functionality of a tree data structure.
+
+**How to use**
+
+In Java, we must import java.util.Set package in order to use Set.
+```
+// Set implementation using HashSet
+Set<String> animals = new HashSet<>();
+```
+
+**Methods**
+
+- `add()` - adds the specified element to the set
+- `addAll()` - adds all the elements of the specified collection to the set
+iterator() - returns an iterator that can be used to access elements of the set sequentially
+- `remove()` - removes the specified element from the set
+- `removeAll()` - removes all the elements from the set that is present in another specified set
+- `retainAll()` - retains all the elements in the set that are also present in another specified set
+- `clear()` - removes all the elements from the set
+- `size()` - returns the length (number of elements) of the set
+- `toArray()` - returns an array containing all the elements of the set
+- `contains()` - returns true if the set contains the specified element
+- `containsAll()` - returns true if the set contains all the elements of the specified collection
+- `hashCode()` - returns a hash code value (address of the element in the set)
+
+**Operations**
+
+- `Union` - to get the union of two sets x and y, we can use `x.addAll(y)`
+- `Intersection` - to get the intersection of two sets x and y, we can use `x.retainAll(y)`
+- `Subset` - to check if x is a subset of y, we can use `y.containsAll(x)`
+
+### Map
+    In Java, elements of Map are stored in key/value pairs. Keys are unique values associated with individual Values.
+
+- A map cannot contain duplicate keys. And, each key is associated with a single value.
+
+<p align="center">
+  <img src="assets/images/Map.png" alt="map">
+  <br/>
+  <i><a href="https://www.programiz.com/java-programming/map">Source: Map</a></i>
+</p>
+
+<p align="center">
+  <img src="assets/images/java-map-implementation.png" alt="map">
+  <br/>
+  <i><a href="https://www.programiz.com/java-programming/map">Source: Map</a></i>
+</p>
+
+- **HashMap**: provides the hash table implementation of the Map interface.
+- **EnumMap**: provides a map implementation for elements of an enum.
+- **LinkedHashMap**: provides the hash table and linked list implementation of the Map interface.
+- **WeakHashMap**: provides the feature of the hash table data structure..
+- **TreeMap**: provides the tree data structure implementation.
+
+**How to use**
+
+```
+// Map implementation using HashMap
+Map<Key, Value> numbers = new HashMap<>();
+```
+
+**Methods**
+
+- `put(K, V)` - Inserts the association of a key K and a value V into the map. If the key is already present, the new value replaces the old value.
+- `putAll()` - Inserts all the entries from the specified map to this map.
+- `putIfAbsent(K, V)` - Inserts the association if the key K is not already associated with the value V.
+- `get(K)` - Returns the value associated with the specified key K. If the key is not found, it returns null.
+- `getOrDefault(K, defaultValue)` - Returns the value associated with the specified key K. If the key is not found, it returns the defaultValue.
+- `containsKey(K)` - Checks if the specified key K is present in the map or not.
+- `containsValue(V)` - Checks if the specified value V is present in the map or not.
+- `replace(K, V)` - Replace the value of the key K with the new specified value V.
+- `replace(K, oldValue, newValue)` - Replaces the value of the key K with the new value newValue only if the key K is associated with the value oldValue.
+- `remove(K)` - Removes the entry from the map represented by the key K.
+- `remove(K, V)` - Removes the entry from the map that has key K associated with value V.
+- `keySet()` - Returns a set of all the keys present in a map.
+- `values()` - Returns a set of all the values present in a map.
+- `entrySet()` - Returns a set of all the key/value mapping present in a map.
+
+## Java Generics
+
+    Helps to create classes, interfaces, and methods that can be used with different types of objects (data). Hence, allows us to reuse our code.
+
+### How to use
+```
+ArrayList<Integer> list1 = new ArrayList<>();
+```
+- We have used `Integer` inside the angle brackets, <>. The angle bracket, <> is known as the **type parameter** in generics.
+
+### Creating Generic Class
+
+```
+class GenericsClass<T> {...}
+```
+
+### Creating Generics Methods
+
+```
+public <T> void genericMethod(T data) {...}
+```
+
+### Bounded types
+
+In general, the **type parameter** can accept any data types (except primitive types). However, if we want to use generics for some specific types (such as accept data of number types) only, then we can use bounded types.
+
+```
+class GenericsClass <T extends Number> {
+
+  public void display() {
+    System.out.println("This is a bounded type generics class.");
+  }
+}
+
+class Main {
+  public static void main(String[] args) {
+
+    // create an object of GenericsClass
+    GenericsClass<String> obj = new GenericsClass<>();
+  }
+}
+```
+
+- In this example, `T` can only work with data types that are children of `Number (Integer, Double, ...)`
+- However, we have created an object of the generics class with String. This is why when we run the program, we will get the following error.
+
+```
+GenericsClass<String> obj = new GenericsClass<>();
+                                                 ^
+    reason: inference variable T has incompatible bounds
+      equality constraints: String
+      lower bounds: Number
+  where T is a type-variable:
+    T extends Number declared in class GenericsClass
+```
+
+### Advantages
+
+- **Code Reusability**
+- **Compile-time Type Checking**
+- **Used with Collections**
+
+## Multithreading
+### Basic Multithreading
