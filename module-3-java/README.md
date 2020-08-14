@@ -34,6 +34,37 @@
     - [Advantages](#advantages)
   - [Multithreading](#multithreading)
     - [Basic Multithreading](#basic-multithreading)
+      - [Concurrency](#concurrency)
+      - [Parallelism](#parallelism)
+      - [Multithreading in Java is both Concurrency and Parallelism](#multithreading-in-java-is-both-concurrency-and-parallelism)
+      - [Runnable vs Thread](#runnable-vs-thread)
+    - [Advanced Multithreading](#advanced-multithreading)
+      - [Thread safety](#thread-safety)
+      - [Thread Pools](#thread-pools)
+  - [Java 8 LTS](#java-8-lts)
+    - [Lambda Expressions](#lambda-expressions)
+      - [Functional Interface](#functional-interface)
+      - [Defnition](#defnition)
+      - [Usage](#usage)
+      - [Types](#types)
+    - [Default methods](#default-methods)
+    - [Stream](#stream)
+      - [Definition](#definition)
+      - [Operations](#operations)
+    - [Optional class](#optional-class)
+    - [New DateTime API](#new-datetime-api)
+      - [LocalDate](#localdate)
+      - [LocalTime](#localtime)
+      - [LocalDateTime](#localdatetime)
+      - [ZonedDateTime](#zoneddatetime)
+      - [Period](#period)
+      - [Duration](#duration)
+      - [Compatibility with Date and Calendar](#compatibility-with-date-and-calendar)
+      - [Formatting](#formatting)
+  - [Maven](#maven)
+    - [Definition](#definition-1)
+    - [Commands](#commands)
+  - [Unit Test](#unit-test)
 
 # Java Programming Language
 
@@ -518,3 +549,703 @@ GenericsClass<String> obj = new GenericsClass<>();
 
 ## Multithreading
 ### Basic Multithreading
+
+#### Concurrency
+
+<p align="center">
+  <img src="assets/images/concurrency-and-parallelism-are-different-2.jpg" alt="concurrency">
+  <br/>
+  <i><a href="https://luminousmen.com/post/concurrency-and-parallelism-are-different">Source: Concurrency and parallelism are two different things</a></i>
+</p>
+
+
+- Execution of more than one task is being processed in overlapping time periods. 
+- A way of structuring your programs: it has to do with how programs are written
+- Tasks are **not necessarily performed at the same time**
+
+**Example:** You decide to learn Java! You start watching a video tutorial, you need to pause the video, apply what beene said in code then continue watching
+
+
+#### Parallelism
+
+<p align="center">
+  <img src="assets/images/concurrency-and-parallelism-are-different-3.jpg" alt="parallelism">
+  <br/>
+  <i><a href="https://luminousmen.com/post/concurrency-and-parallelism-are-different">Source: Concurrency and parallelism are two different things</a></i>
+</p>
+
+- The simultaneous execution of tasks
+- A way of making your programs go faster
+- For parallelism to be true, there must be at lease two computational resources
+
+**Example**: You're a professional Java programmer.., and you enjoy listening to calm music while coding
+
+#### Multithreading in Java is both Concurrency and Parallelism
+
+#### Runnable vs Thread
+
+**Difference**
+
+- Runnable is **interface**
+- Thread is **abstract class**
+
+**How to**
+- **Runnable**
+  - Implements Runnable interface, override `run()` method
+  - Create Thread object with parameter: Runnable implementation
+  - Call `start()` method
+
+- **Thread**
+  - Extends Thread class, override `run()` method
+  - Create Thread object
+  - Call `start()` method
+
+**Which one to use**
+  - When we implement interface Runnable, we still can extend 1 more class. However, when we extend Thread class, we cannot extend any other class
+  - When a class implement interface Runnable, that class has `has-a` relationship. However, class extends Thread has `is-a` relationship. 
+  - Normally, `has-a` relationship is easier to reduce code dependency, to test and to maintain
+  - Extends Thread meaning that we inherit all methods of Thread class and it's not necessary
+  - Only extend Thread when we want to use method of Thread class (mostly Runnable)
+
+### Advanced Multithreading
+#### Thread safety
+**Stateless Implementations**
+- Given a specific input, it always produces the same output
+- The method neither relies on external state nor maintains state at all
+
+```
+public class MathUtils {
+
+  public static BigInteger factorial(int number) {
+      BigInteger f = new BigInteger("1");
+      for (int i = 2; i <= number; i++) {
+          f = f.multiply(BigInteger.valueOf(i));
+      }
+      return f;
+  }
+}
+```
+
+**Immutable implementations**
+- Make classes immutation for thread safety
+- A class instance if immutable when its internal state can't be modified after is has been constructed
+- Declaring all fields `private` or `final` and `not provide setters`
+
+```
+public class MessageService {
+    
+    private final String message;
+ 
+    public MessageService(String message) {
+        this.message = message;
+    }
+    
+    // standard getter
+    
+}
+```
+
+**Thread-Local fields**
+- Making classes fields thread-local
+- Simply defining private fields in `Thread` classes
+
+```
+public class ThreadA extends Thread {
+    
+    private final List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
+    
+    @Override
+    public void run() {
+        numbers.forEach(System.out::println);
+    }
+}
+
+public class ThreadB extends Thread {
+    
+    private final List<String> letters = Arrays.asList("a", "b", "c", "d", "e", "f");
+    
+    @Override
+    public void run() {
+        letters.forEach(System.out::println);
+    }
+}
+```
+
+- In both implementations, the classes have their own state but it's not shared with other threads
+
+**Synchronized Collections**
+- This means that methods can be accessed by only one thread at a time, while other threads will be blocked until the method is unlocked by the first thread
+- A penalty in performance, due to underlying logic of synchronized access
+
+```
+Collection<Integer> syncCollection = Collections.synchronizedCollection(new ArrayList<>());
+Thread thread1 = new Thread(() -> syncCollection.addAll(Arrays.asList(1, 2, 3, 4, 5, 6)));
+Thread thread2 = new Thread(() -> syncCollection.addAll(Arrays.asList(7, 8, 9, 10, 11, 12)));
+thread1.start();
+thread2.start();
+```
+
+**Concurrent Collections**
+- Achieved thread-safety by dividing data into segments
+- Much more performant than syncrhonized collections
+
+```
+Map<String,String> concurrentMap = new ConcurrentHashMap<>();
+concurrentMap.put("1", "one");
+concurrentMap.put("2", "two");
+concurrentMap.put("3", "three");
+```
+
+**Atomic Objects**
+- Allow us to perform atomic operations, without using `synchronization`
+
+```
+public class AtomicCounter {
+    
+    private final AtomicInteger counter = new AtomicInteger();
+    
+    public void incrementCounter() {
+        counter.incrementAndGet();
+    }
+    
+    public int getCounter() {
+        return counter.get();
+    }
+}
+```
+
+**Synchronized methods**
+
+Only one thread can access a synchonized method at a time while blocking access to this method from other threads
+
+```
+public synchronized void incrementCounter() {
+    counter += 1;
+}
+```
+**Synchronized Statements**
+
+Synchronization is expensive, so with this option, we are able to only synchronize the relevant parts of a method
+
+```
+public void incrementCounter() {
+    // additional unsynced operations
+    synchronized(this) {
+        counter += 1; 
+    }
+}
+```
+
+**Other Objects as a Lock**
+- Uses an external entity to enfore exclusive access to the resource
+
+```
+public class ObjectLockCounter {
+ 
+    private int counter = 0;
+    private final Object lock = new Object();
+    
+    public void incrementCounter() {
+        synchronized(lock) {
+            counter += 1;
+        }
+    }
+    
+    // standard getter
+}
+```
+
+**Caveats**
+```
+public class Class1 {
+    private static final String LOCK  = "Lock";
+ 
+    // uses the LOCK as the intrinsic lock
+}
+ 
+public class Class2 {
+    private static final String LOCK  = "Lock";
+ 
+    // uses the LOCK as the intrinsic lock
+}
+```
+- At first glance, it seems that these two classes are using two different objects as their lock. However, because of string interning, these two “Lock” values may actually refer to the same object on the string pool. That is, the Class1 and Class2 are sharing the same lock!
+- In addition to Strings, we should avoid using any cacheable or reusable objects as intrinsic locks. 
+
+**Volatile Fields**
+- Synchronized methods and blocks are handy for addressing variable visibility problems among threads. 
+- Even so, the values of regular class fields might be cached by the CPU.
+- Hence, consequent updates to a particular field, even if they're synchronized, might not be visible to other threads.
+- With the `volatile keyword`, we instruct the JVM and the compiler to store the counter variable in the main memory.
+- The use of a `volatile variable` ensures that all variables that are visible to a given thread will be read from the main memory as well.
+
+```
+public class Counter {
+ 
+    private volatile int counter;
+ 
+    // standard constructors / getter
+    
+}
+```
+**Reentrant Locks**
+- With `intrinsic locks`, there's no underlying mechanism that checks the queued threads and gives priority access to the longest waiting threads.
+- `ReentrantLock` prevents queued threads from suffering some types of resource starvation
+- The ReentrantLock constructor takes an optional fairness boolean parameter. When set to true, and multiple threads are trying to acquire a lock, **the JVM will give priority to the longest waiting thread and grant access to the lock.**
+
+```
+public class ReentrantLockCounter {
+ 
+    private int counter;
+    private final ReentrantLock reLock = new ReentrantLock(true);
+    
+    public void incrementCounter() {
+        reLock.lock();
+        try {
+            counter += 1;
+        } finally {
+            reLock.unlock();
+        }
+    }
+    
+    // standard constructors / getter
+    
+}
+```
+
+**Read/Write Locks**
+- A ReadWriteLock lock actually uses a pair of associated locks, one for read-only operations and other for writing operations.
+- It's possible to have many threads reading a resource, as long as there's no thread writing to it. Moreover, the thread writing to the resource will prevent other threads from reading it.
+
+```
+public class ReentrantReadWriteLockCounter {
+    
+    private int counter;
+    private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private final Lock readLock = rwLock.readLock();
+    private final Lock writeLock = rwLock.writeLock();
+    
+    public void incrementCounter() {
+        writeLock.lock();
+        try {
+            counter += 1;
+        } finally {
+            writeLock.unlock();
+        }
+    }
+    
+    public int getCounter() {
+        readLock.lock();
+        try {
+            return counter;
+        } finally {
+            readLock.unlock();
+        }
+    }
+ 
+   // standard constructors
+   
+}
+```
+
+#### Thread Pools
+- In Java, threads are mapped to system-level threads which are operating system's resources. If you create threads uncontrollably, you may run out of these resources quickly.
+- When you use a thread pool, you **write your concurrent code in the form of parallel tasks and submit them for execution to an instance of a thread pool.**
+
+<p align="center">
+  <img src="assets/images/2016-08-10_10-16-52-1024x572-768x429.png" alt="concurrency">
+  <br/>
+  <i><a href="https://www.baeldung.com/thread-pool-java-and-guava">Source: Introduction to Thread Pools in Java</a></i>
+</p>
+
+**Executors, Executor and ExecutorService**
+- The Executors helper class contains several methods for the creation of pre-configured thread pool instances for you. Those classes are a good place to start with – use it if you don't need to apply any custom fine-tuning.
+- The Executor and ExecutorService interfaces are used to work with different thread pool implementations in Java. Usually, you should keep your code decoupled from the actual implementation of the thread pool and use these interfaces throughout your application.
+
+```
+Executor executor = Executors.newSingleThreadExecutor();
+executor.execute(() -> System.out.println("Hello World"));
+```
+
+**ThreadPoolExecutor**
+- Extensible thread pool implementation with lots of parameters and hooks for fine-tuning.
+- Main params:
+  - **corePoolSize**: number of core threads that will be instantiated and kept in the pool.
+  - **maximumPoolSize**: if all core threads are busy and the internal queue is full, then the pool is allowed to grow up to maximumPoolSize.
+  - **keepAliveTime**: nterval of time for which the excessive threads are allowed to exist in the idle state
+
+```
+ThreadPoolExecutor executor = 
+  (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+executor.submit(() -> {
+    Thread.sleep(1000);
+    return null;
+});
+executor.submit(() -> {
+    Thread.sleep(1000);
+    return null;
+});
+executor.submit(() -> {
+    Thread.sleep(1000);
+    return null;
+});
+ 
+assertEquals(2, executor.getPoolSize());
+assertEquals(1, executor.getQueue().size());
+```
+
+## Java 8 LTS
+
+### Lambda Expressions
+
+#### Functional Interface
+
+- If a Java interface contains one and only one abstract method then it is termed as functional interface. 
+
+- **Example**: the Runnable interface from package java.lang; is a functional interface because it constitutes only one method i.e. run().
+
+```
+import java.lang.FunctionalInterface;
+@FunctionalInterface
+public interface MyInterface{
+    // the single abstract method
+    double getValue();
+}
+```
+- The annotation `@FunctionalInterface` forces Java compiler to indicate that interface is a functional interface
+
+In Java 7, functional interfaces were considered as **Single Abstract Methods (SAM)**
+
+In Java 8 extended the power of SAM, there should be no need to define the name of that method when passing it as an argument. Lambda expression allows us to do exactly that.
+
+#### Defnition
+
+- An anonymous or unnamed method, it doesn't execute on its own
+- It's used to implement a method defined by a functional interface
+
+#### Usage
+```
+(parameter list) -> lambda body
+```
+
+```
+import java.lang.FunctionalInterface;
+
+// this is functional interface
+@FunctionalInterface
+interface MyInterface{
+
+    // abstract method
+    double getPiValue();
+}
+
+public class Main {
+
+    public static void main( String[] args ) {
+
+    // declare a reference to MyInterface
+    MyInterface ref;
+    
+    // lambda expression
+    ref = () -> 3.1415;
+    
+    System.out.println("Value of Pi = " + ref.getPiValue());
+    } 
+}
+```
+
+#### Types
+**A body with a single expression**
+
+```
+() -> System.out.println("Lambdas are great");
+(n) -> (n%2)==0
+```
+
+**A body consists of a block of code**
+```
+() -> {
+    double pi = 3.1415;
+    return pi;
+};
+```
+
+### Default methods
+
+- Before Java 8, interfaces could have only abstract methods. The implementation of these methods has to be provided in a separate class. So, if a new method is to be added in an interface, then its implementation code has to be provided in the class implementing the same interface. 
+- To overcome this issue, Java 8 has introduced the concept of default methods which allow the interfaces to have methods with implementation without affecting the classes that implement the interface.
+
+```
+
+// A simple program to Test Interface default 
+// methods in java 
+interface TestInterface 
+{ 
+    // abstract method 
+    public void square(int a); 
+  
+    // default method 
+    default void show() 
+    { 
+      System.out.println("Default Method Executed"); 
+    } 
+} 
+  
+class TestClass implements TestInterface 
+{ 
+    // implementation of square abstract method 
+    public void square(int a) 
+    { 
+        System.out.println(a*a); 
+    } 
+  
+    public static void main(String args[]) 
+    { 
+        TestClass d = new TestClass(); 
+        d.square(4); 
+  
+        // default method executed 
+        d.show(); 
+    } 
+} 
+```
+
+### Stream
+
+#### Definition
+
+- A stream is a sequence of objects that supports various methods which can be pipelined to produce the desired result.
+  
+#### Operations
+**Terminal Operations**
+- **map:** return a stream consisting of the results of applying given function to elements of stream
+
+```
+List number = Arrays.asList(2,3,4,5);
+List square = number.stream().map(x->x*x).collect(Collectors.toList());
+```
+- **filter:** Select elements based on conditions
+
+```
+List names = Arrays.asList("Reflection","Collection","Stream");
+List result = names.stream().filter(s->s.startsWith("S")).collect(Collectors.toList());
+```
+
+- **sorted:** Sort the stream
+
+```
+List names = Arrays.asList("Reflection","Collection","Stream");
+List result = names.stream().sorted().collect(Collectors.toList());
+```
+
+**Terminal Operator**
+- **collect:** return result of intermediate operations
+
+```
+List number = Arrays.asList(2,3,4,5,3);
+Set square = number.stream().map(x->x*x).collect(Collectors.toSet());
+```
+
+- **forEach:** used to iterate through every element of the stream
+
+```
+List number = Arrays.asList(2,3,4,5);
+number.stream().map(x->x*x).forEach(y->System.out.println(y));
+```
+
+- **reduce:** used to reduce the elements of a stream to a single value
+
+```
+List number = Arrays.asList(2,3,4,5);
+int even = number.stream().filter(x->x%2==0).reduce(0,(ans,i)-> ans+i);
+```
+
+### Optional class
+
+- `NullPointerException` can crash your code and it's very hard to avoid it without using too many null checks
+- By using `Optional`, we can specify alternate values to return or alternate code to run
+
+```
+// Java program with Optional Class 
+import java.util.Optional;   
+public class OptionalDemo{   
+    public static void main(String[] args) {   
+        String[] words = new String[10];   
+        Optional<String> checkNull =  
+                      Optional.ofNullable(words[5]);   
+        if (checkNull.isPresent()) {   
+            String word = words[5].toLowerCase();   
+            System.out.print(word);   
+        } else  
+            System.out.println("word is null");   
+    }   
+}   
+```
+
+### New DateTime API
+#### LocalDate
+- Represents a date in ISO format (yyyy-MM-dd) without time.
+- Used to store dates like birthdays and paydays.
+
+```
+// Instance of current date
+LocalDate localDate = LocalDate.now();
+
+// Instance of specific day, month and year
+LocalDate.of(2015, 02, 20); 
+LocalDate.parse("2015-02-20");
+
+// Add one day
+LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+// Subtract one month
+LocalDate previousMonthSameDay = LocalDate.now().minus(1, ChronoUnit.MONTHS);
+
+// Get date of week, month
+DayOfWeek sunday = LocalDate.parse("2016-06-12").getDayOfWeek();
+int twelve = LocalDate.parse("2016-06-12").getDayOfMonth();
+
+// Test leap year
+boolean leapYear = LocalDate.now().isLeapYear();
+
+// Check before after
+boolean notBefore = LocalDate.parse("2016-06-12")
+  .isBefore(LocalDate.parse("2016-06-11"));
+ 
+boolean isAfter = LocalDate.parse("2016-06-12")
+  .isAfter(LocalDate.parse("2016-06-11"));
+
+```
+
+#### LocalTime
+
+Represents **time without a date**
+
+```
+// Instance of current time
+LocalTime now = LocalTime.now();
+
+// Instance of specific time
+
+LocalTime sixThirty = LocalTime.parse("06:30");
+LocalTime sixThirty = LocalTime.of(6, 30);
+
+// Add time
+LocalTime sevenThirty = LocalTime.parse("06:30").plus(1, ChronoUnit.HOURS);
+
+// Get time
+int six = LocalTime.parse("06:30").getHour();
+
+// Check before & after
+boolean isbefore = LocalTime.parse("06:30").isBefore(LocalTime.parse("07:30"));
+
+// MAX, MIN time
+LocalTime maxTime = LocalTime.MAX
+
+```
+
+#### LocalDateTime
+Represents **a combination of date and time**
+
+```
+// Instance of current datetime
+LocalDateTime.now();
+
+// Instance of specific datetime
+LocalDateTime.of(2015, Month.FEBRUARY, 20, 06, 30);
+LocalDateTime.parse("2015-02-20T06:30:00");
+
+// Add datetime
+localDateTime.plusDays(1);
+localDateTime.minusHours(2);
+
+// Get datetime
+localDateTime.getMonth();
+```
+
+#### ZonedDateTime
+
+When we need to deal with time zone specific date and time.
+
+```
+\\ Get ZoneID
+ZoneId zoneId = ZoneId.of("Europe/Paris");
+
+\\ Get all zone ids
+Set<String> allZoneIds = ZoneId.getAvailableZoneIds();
+
+\\ Convert LocalDateTime to a specific zone
+ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, zoneId);
+
+\\ Parse to specific date tiem
+ZonedDateTime.parse("2015-05-03T10:15:30+01:00[Europe/Paris]");
+
+```
+
+#### Period
+Quantity of time in terms of years, months and days
+
+```
+\\ Plus date
+LocalDate finalDate = initialDate.plus(Period.ofDays(5));
+
+\\ Date difference
+int five = Period.between(initialDate, finalDate).getDays();
+
+```
+
+#### Duration
+Quantity of time in terms of seconds and nano seconds
+
+```
+LocalTime initialTime = LocalTime.of(6, 30, 0);
+ 
+LocalTime finalTime = initialTime.plus(Duration.ofSeconds(30));
+
+long thirty = Duration.between(initialTime, finalTime).getSeconds();
+
+```
+
+#### Compatibility with Date and Calendar
+
+`toInstant()` method helps convert exisiting Date and Calendar instance to new Date Time API
+```
+LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+LocalDateTime.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
+
+```
+
+#### Formatting
+```
+localDateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
+localDateTime
+  .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+  .withLocale(Locale.UK);
+```
+
+## Maven
+
+### Definition
+
+- A powerful project management tool that is based on POM (project object model)
+- Used for projects build, dependency and documentation
+
+<p align="center">
+  <img src="assets/images/How-Maven-Works.jpg" alt="maven">
+  <br/>
+  <i><a href="https://www.geeksforgeeks.org/introduction-apache-maven-build-automation-tool-java-projects/">Source: Introduction to Apache Maven | A build automation tool for Java projects</a></i>
+</p>
+
+### Commands
+- **mvn clean** cleans the maven project by deleting the target directory
+- **mvn install** builds the maven project and installs the project files to local repo
+- **mvn package** build the maven project and packages into JAR, WAR, etc
+- **mvn test** run test cases of project
+
+## Unit Test
+
+- Create ideal environment to test any codee block and detect error exactly
+- Detect inefficient or time-out code 
+- Detect system design problem
+- Create safe barrier between code block
