@@ -3,11 +3,11 @@ package com.company.vng;
 import java.util.*;
 
 public class MyList<T> implements List<T> {
-    private final int DEFAULT_CAPACITY = 10;
     private Object[] data;
     private int size;
 
     public MyList() {
+        int DEFAULT_CAPACITY = 10;
         data = new Object[DEFAULT_CAPACITY];
     }
 
@@ -69,7 +69,7 @@ public class MyList<T> implements List<T> {
     public boolean containsAll(Collection<?> c) {
         int cSize = c.size();
         for (int i = 0; i < cSize; i++) {
-            if(!contains(data[i])) {
+            if (!contains(data[i])) {
                 return false;
             }
         }
@@ -77,7 +77,7 @@ public class MyList<T> implements List<T> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends T> c) { ;
+    public boolean addAll(Collection<? extends T> c) {
         Object[] tempC = c.toArray();
         int cLength = tempC.length;
         while (cLength + size >= data.length) {
@@ -106,7 +106,7 @@ public class MyList<T> implements List<T> {
         int cLength = c.size();
         if (cLength != 0) {
             for (int i = 0; i < cLength; i++) {
-                while(c.contains(data[i])) {
+                while (c.contains(data[i])) {
                     remove(data[i]);
                 }
             }
@@ -117,11 +117,9 @@ public class MyList<T> implements List<T> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        if(c.size() != 0) {
-            for(int i = 0; i < size(); i++) {
-                while(!c.contains(data[i])) {
-                    remove(data[i]);
-                }
+        if (c.size() != 0) {
+            for (int i = 0; i < size(); i++) {
+                while (!c.contains(data[i])) remove(data[i]);
             }
             return true;
         }
@@ -130,9 +128,7 @@ public class MyList<T> implements List<T> {
 
     @Override
     public void clear() {
-        for (int i = 0; i < size; i ++) {
-            data[i] = null;
-        }
+        for (int i = 0; i < size; i++) data[i] = null;
         size = 0;
     }
 
@@ -153,7 +149,11 @@ public class MyList<T> implements List<T> {
     @Override
     public void add(int index, T element) {
         rangeCheckAdd(index);
-        System.arraycopy(data, index, data, index + 1, size-index);
+        System.arraycopy(data,
+                index,
+                data,
+                index + 1,
+                size - index);
         data[index] = element;
         size++;
     }
@@ -164,7 +164,7 @@ public class MyList<T> implements List<T> {
     }
 
     public void increaseSize() {
-        data = Arrays.copyOf(data, data.length  * 2);
+        data = Arrays.copyOf(data, data.length * 2);
     }
 
     public void rangeCheck(int index) {
@@ -181,7 +181,13 @@ public class MyList<T> implements List<T> {
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        return null;
+        rangeCheck(fromIndex);
+        rangeCheck(toIndex);
+        List<T> toReturn = new MyList<>();
+        for (int i = fromIndex; i < toIndex; i += 1) {
+            toReturn.add((T) data[i]);
+        }
+        return toReturn;
     }
 
     @Override
@@ -191,11 +197,11 @@ public class MyList<T> implements List<T> {
 
     @Override
     public String toString() {
-        String toPrint = "";
-        for(int i = 0; i < size; i++) {
-            toPrint += data[i] + " ";
+        StringBuilder toPrint = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            toPrint.append(data[i]).append(" ");
         }
-        return toPrint;
+        return toPrint.toString();
     }
 
     @Override

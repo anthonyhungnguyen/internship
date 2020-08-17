@@ -20,7 +20,7 @@
   - [Abstract vs Interface](#abstract-vs-interface)
     - [Interface](#interface)
     - [Abstract](#abstract)
-    - [Comparision](#comparision)
+    - [Comparison](#comparison)
     - [When to use which](#when-to-use-which)
   - [Java Collections](#java-collections)
     - [List](#list)
@@ -43,12 +43,12 @@
   - [Java 8 LTS](#java-8-lts)
     - [Lambda Expressions](#lambda-expressions)
       - [Functional Interface](#functional-interface)
-      - [Defnition](#defnition)
+      - [Definition](#definition)
       - [Usage](#usage)
       - [Types](#types)
     - [Default methods](#default-methods)
     - [Stream](#stream)
-      - [Definition](#definition)
+      - [Definition](#definition-1)
       - [Operations](#operations)
     - [Optional class](#optional-class)
     - [New DateTime API](#new-datetime-api)
@@ -61,7 +61,7 @@
       - [Compatibility with Date and Calendar](#compatibility-with-date-and-calendar)
       - [Formatting](#formatting)
   - [Maven](#maven)
-    - [Definition](#definition-1)
+    - [Definition](#definition-2)
     - [Commands](#commands)
   - [Unit Test](#unit-test)
 - [Models & Principles](#models--principles)
@@ -155,7 +155,7 @@ Contains a number of development tools(compilers, JavaDoc, Java Debugger, etc..)
 
 **Linking**
 
-Verifying and preparing class/interface, its direct superclass, its direct superinterfaces and its element type if needed
+Verifying and preparing class/interface, its direct superclass, its direct super-interfaces and its element type if needed
 
 **Initialization**
 
@@ -173,25 +173,25 @@ Verifying and preparing class/interface, its direct superclass, its direct super
 
 **Stack Area**
 
-- For every thread, a seperate stack will be created. For every method call, one entry will be made in the stack memory (Stack Frame)
+- For every thread, a separate stack will be created. For every method call, one entry will be made in the stack memory (Stack Frame)
 - Local variables in stack memory
 - Not a shared resources
 
 **PC Registers**
 
-- Each thread will have seperate PC Registers for holding address of current executing
+- Each thread will have separate PC Registers for holding address of current executing
 - Once the instruction is executed, PC register will be updated with next instruction
 
 **Native Method stacks**
 - Holds native method information
 
 **Interpreter**
-- Converts bytecodes into machine code
+- Converts bytecode into machine code
 - Slow when one method is called multiple times
 
 **JIT Compiler**
 
-Takes advantage of `Interpreter`, make sure multiple interpreation doesn't occur to same code
+Takes advantage of `Interpreter`, make sure multiple interpretation doesn't occur to same code
 
 **Garbage Collector**
 
@@ -233,7 +233,7 @@ Collection of Native Libraries required for Execution Engine
 - Declaration: `int range = -4250000;`
 
 **long**
-- Value from: [-2<sup>63</sup>, 2<ssup>63</ssup>-1]
+- Value from: [-2<sup>63</sup>, 2<sup>63</sup>-1]
 - `unsigned 64-bit integer`: [0, 2<sup>64</sup>-1]
 - Default: `0`
 - Declaration: `long range = -42332200000L;`
@@ -290,20 +290,20 @@ Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. A
 
 ### Error
 
-- Irrecoverable exceptions such as out of memory, memory leaks, stack overflow errors, library incompartibility, infinite recursion, etc.
+- Irrecoverable exceptions such as out of memory, memory leaks, stack overflow errors, library incompatibility, infinite recursion, etc.
 - Beyond the control of programmer, we should not try to handle errors
 
 ### Exceptions
 
 - Can be caught and handled by the program
-- When exception happens, it creates an object (exception object). It contains information about exeption such as the name, description and state of program when exception occurred
+- When exception happens, it creates an object (exception object). It contains information about exception such as the name, description and state of program when exception occurred
 
 #### RuntimeException - unchecked exception
 
     Exception that is not checked at compile time
 - Commons
   - `IllegalArgumentException`: Improper use of an API
-  - `NullPointerException`: Null pointer access (missing the initialization of vairable)
+  - `NullPointerException`: Null pointer access (missing the initialization of variable)
   - `ArrayIndexOutOfBoundsException`: Out-of-bounds array access
   - `ArithmeticException`: dividing a number by 0
 
@@ -330,9 +330,9 @@ Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. A
   - abstract method - empty method
   - normal method
 - A class can only extend one abstract class
-- Normal method will be used for all sub class (without reimplementing)
+- Normal method will be used for all sub class (without re-implementing)
 
-### Comparision
+### Comparison
 
 - **Abstract**:
   - Cannot extend many abstract class
@@ -501,7 +501,7 @@ GenericsClass<String> obj = new GenericsClass<>();
 - A way of structuring your programs: it has to do with how programs are written
 - Tasks are **not necessarily performed at the same time**
 
-**Example:** You decide to learn Java! You start watching a video tutorial, you need to pause the video, apply what beene said in code then continue watching
+**Example:** You decide to learn Java! You start watching a video tutorial, you need to pause the video, apply what has been said in code then continue watching
 
 
 #### Parallelism
@@ -625,7 +625,7 @@ thread2.start();
 
 **Concurrent Collections**
 - Achieved thread-safety by dividing data into segments
-- Much more performant than syncrhonized collections
+- Much more performance than synchronized collections
 
 ```
 Map<String,String> concurrentMap = new ConcurrentHashMap<>();
@@ -654,7 +654,7 @@ public class AtomicCounter {
 
 **Synchronized methods**
 
-Only one thread can access a synchonized method at a time while blocking access to this method from other threads
+Only one thread can access a synchronized method at a time while blocking access to this method from other threads
 
 ```
 public synchronized void incrementCounter() {
@@ -675,7 +675,7 @@ public void incrementCounter() {
 ```
 
 **Other Objects as a Lock**
-- Uses an external entity to enfore exclusive access to the resource
+- Uses an external entity to enforce exclusive access to the resource
 
 ```
 public class ObjectLockCounter {
@@ -810,7 +810,7 @@ executor.execute(() -> System.out.println("Hello World"));
 - Main params:
   - **corePoolSize**: number of core threads that will be instantiated and kept in the pool.
   - **maximumPoolSize**: if all core threads are busy and the internal queue is full, then the pool is allowed to grow up to maximumPoolSize.
-  - **keepAliveTime**: nterval of time for which the excessive threads are allowed to exist in the idle state
+  - **keepAliveTime**: Interval of time for which the excessive threads are allowed to exist in the idle state
 
 ```
 ThreadPoolExecutor executor = 
@@ -856,7 +856,7 @@ In Java 7, functional interfaces were considered as **Single Abstract Methods (S
 
 In Java 8 extended the power of SAM, there should be no need to define the name of that method when passing it as an argument. Lambda expression allows us to do exactly that.
 
-#### Defnition
+#### Definition
 
 - An anonymous or unnamed method, it doesn't execute on its own
 - It's used to implement a method defined by a functional interface
@@ -1115,7 +1115,7 @@ Set<String> allZoneIds = ZoneId.getAvailableZoneIds();
 \\ Convert LocalDateTime to a specific zone
 ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, zoneId);
 
-\\ Parse to specific date tiem
+\\ Parse to specific date item
 ZonedDateTime.parse("2015-05-03T10:15:30+01:00[Europe/Paris]");
 
 ```
@@ -1146,7 +1146,7 @@ long thirty = Duration.between(initialTime, finalTime).getSeconds();
 
 #### Compatibility with Date and Calendar
 
-`toInstant()` method helps convert exisiting Date and Calendar instance to new Date Time API
+`toInstant()` method helps convert existing Date and Calendar instance to new Date Time API
 ```
 LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 LocalDateTime.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
@@ -1183,7 +1183,7 @@ localDateTime
 
 ## Unit Test
 
-- Create ideal environment to test any codee block and detect error exactly
+- Create ideal environment to test any code block and detect error exactly
 - Detect inefficient or time-out code 
 - Detect system design problem
 - Create safe barrier between code block
@@ -1206,8 +1206,8 @@ localDateTime
 ### HTTP, Websocket, gRPC
 
 - **HTTP** - A protocal allows the fetching of resources, such as HTML docs.
-- **Websocket** - A techonoly makes it possible to open a two-way interactive communication session between user's browser and server. With this API, you can send messages to a server and receive responses without having to poll the server for reply
-- **gRPC** - A framework helps connecting services in system, support **load-balancing, tracing, health checking and authentication**, etc. It uses Protocal Buffer to transfer data instead of JSON/XML so that its speed is much better. It's designed to replace REST API, instead of focusing in resource, it focuses on action.
+- **Websocket** - A technology makes it possible to open a two-way interactive communication session between user's browser and server. With this API, you can send messages to a server and receive responses without having to poll the server for reply
+- **gRPC** - A framework helps connecting services in system, support **load-balancing, tracing, health checking and authentication**, etc. It uses Protocol Buffer to transfer data instead of JSON/XML so that its speed is much better. It's designed to replace REST API, instead of focusing in resource, it focuses on action.
 
 ### SSL/TLS
 
@@ -1454,12 +1454,12 @@ public class StandardKeyboard implements Keyboard { }
 
 ### DRY and KISS
 **DRY**
-- Stand for "Dont't Repeat Yourself", a principle aims at reducing repetition of information
-- To achieve DRY, divide your system into pieces, into smaller resuable units and use that code by calling it where you want.
+- Stand for "Don't Repeat Yourself", a principle aims at reducing repetition of information
+- To achieve DRY, divide your system into pieces, into smaller reusable units and use that code by calling it where you want.
 - Less code is good, it saves time and effort, easy to maintain and reduces chances of bugs
 - **Helper functions in libraries** is a good example of DRY principle
 
 **KISS**
 - Stand for "Keep It Simple, Stupid"
-- Keep code simple and claer, every method should never be more than 40-50 lines
+- Keep code simple and clear, every method should never be more than 40-50 lines
 - Easy to understand and modify
