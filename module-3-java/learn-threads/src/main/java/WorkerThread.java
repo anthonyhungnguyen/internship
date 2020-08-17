@@ -1,5 +1,5 @@
 public class WorkerThread implements Runnable {
-    private String command;
+    private final String command;
 
     public WorkerThread(String command) {
         this.command = command;
