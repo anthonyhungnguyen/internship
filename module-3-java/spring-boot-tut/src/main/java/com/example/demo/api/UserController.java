@@ -23,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping(path = "rfm/{id}")
-    public List<UserRFM> getUserRFMByUserId(@PathVariable("id") String id) {
+    public UserRFM getUserRFMByUserId(@PathVariable("id") String id) {
         return userService.getUserRFMByUserId(id);
     }
 

@@ -1,5 +1,6 @@
 package com.example.demo.api;
 
+import com.example.demo.model.Bank;
 import com.example.demo.model.BankSuccess;
 import com.example.demo.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class BankSuccessController {
     }
 
     @GetMapping
-    public List<BankSuccess> getAll() {
-        return bankService.getAllBankSuccess();
+    public List<Bank> getAllBanks() {
+        return bankService.getAllBanks();
     }
 
     @GetMapping(path = "{id}")

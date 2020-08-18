@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -22,12 +21,11 @@ public class UserService {
         this.userPayAppDao = userPayAppDao;
     }
 
-
     public List<UserPayApp> getUserPayAppByUserId(String id) {
-        return userPayAppDao.findAll().stream().filter(userPayApp -> userPayApp.getUser_id().equals(id)).collect(Collectors.toList());
+        return userPayAppDao.getUserPayAppByUserId(id);
     }
 
-    public List<UserRFM> getUserRFMByUserId(String id) {
-        return userRFMDao.findAll().stream().filter(userRFM -> userRFM.getUser_id().equals(id)).collect(Collectors.toList());
+    public UserRFM getUserRFMByUserId(String id) {
+        return userRFMDao.getUserRFMByUserId(id);
     }
 }

@@ -7,13 +7,13 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class DemoApplication {
 
-	public static void main(String[] args) {
-		ApplicationContext context =
-				SpringApplication.run(DemoApplication.class,
-				args);
+    public static void main(String[] args) {
+        ApplicationContext context =
+                SpringApplication.run(DemoApplication.class,
+                        args);
 //		BankDao bankDao = context.getBean(BankDao.class);
 //		bankDao.findAll().forEach(System.out::println);
 
-	}
+    }
 
 }

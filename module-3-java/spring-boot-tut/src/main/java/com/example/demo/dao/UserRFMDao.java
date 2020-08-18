@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRFMDao extends JpaRepository<UserRFM, String> {
-//    @Query("SELECT u FROM user_pay_app u WHERE u.user_id = :id")
-//    public UserRFM getUserRFMByUserId(String id);
+    @Query("SELECT t FROM UserRFM t WHERE t.user_id = :id")
+    UserRFM getUserRFMByUserId(String id);
 }

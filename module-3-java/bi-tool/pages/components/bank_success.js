@@ -1,6 +1,6 @@
 import fetch from 'unfetch'
 import React, { useEffect, useState } from 'react'
-import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, Label } from 'recharts'
+import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, Label } from 'recharts'
 import moment from 'moment'
 
 const BankSuccess = () => {
@@ -10,7 +10,7 @@ const BankSuccess = () => {
 
 	useEffect(() => {
 		const fetchBank = async () => {
-			const bankReq = await fetch('/api/bank')
+			const bankReq = await fetch(`http://localhost:8081/api/bank`)
 			const bankRes = await bankReq.json()
 			const bankProcessed = bankRes.bank.map((b) => b.id)
 			setBank(bankProcessed)
@@ -29,7 +29,6 @@ const BankSuccess = () => {
 					body: currentBank
 				})
 				const data = await response.json()
-				console.log(data)
 				const dataProcessed = data.bank_success.map((b) => ({
 					...b,
 					success_rate: (b.success_rate * 100).toPrecision(5),
@@ -47,7 +46,7 @@ const BankSuccess = () => {
 	}
 
 	return (
-		<div className='flex flex-col justify-center items-center	'>
+		<div className='flex flex-col justify-center items-center'>
 			<div className='inline-block relative w-auto py-4'>
 				<select
 					className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
