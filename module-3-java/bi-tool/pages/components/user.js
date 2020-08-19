@@ -1,36 +1,78 @@
 import fetch from 'unfetch'
 import React, { useState } from 'react'
-import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, LabelList, Bar, Label } from 'recharts'
+import UserPayApp from './userpayapp'
+import UserRFM from './user_rfm'
+import UserTransfer from './user_transfer'
+import moment from 'moment'
+import DatePicker from 'react-datepicker'
+import swal from 'sweetalert'
 
 const User = () => {
 	const [ currentUser, setCurrentUser ] = useState('')
 	const [ userPayApp, setUserPayApp ] = useState([])
 	const [ userRFM, setUserRFM ] = useState([])
+	const [ userTransfer, setUserTransfer ] = useState([])
+	const [ startDate, setStartDate ] = useState(new Date('2018/12/01'))
+	const [ endDate, setEndDate ] = useState(new Date('2018/12/31'))
 	const fetchUserPayAppID = () => {
-		return new Promise(async (resolve) => {
-			const response = await fetch('/api/pay_appid', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'text/plain'
-				},
-				body: currentUser
-			})
-			const data = await response.json()
-			resolve(data.user_pay_app)
+		return new Promise(async (resolve, reject) => {
+			try {
+				const response = await fetch(`http://localhost:8081/api/user/payapp/${currentUser}`)
+				if (response.ok) {
+					const data = await response.json()
+					resolve(data)
+				} else {
+					swal('Error', 'User Not Found', 'error')
+					reject()
+				}
+			} catch (err) {
+				swal('Error', err, 'error')
+				reject()
+			}
 		})
 	}
 
 	const fetchUserRFM = () => {
-		return new Promise(async (resolve) => {
-			const response = await fetch('/api/user_rfm', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'text/plain'
-				},
-				body: currentUser
-			})
-			const data = await response.json()
-			resolve(data.user_rfm)
+		return new Promise(async (resolve, reject) => {
+			try {
+				const response = await fetch(`http://localhost:8081/api/user/rfm/${currentUser}`)
+				if (response.ok) {
+					const data = await response.json()
+					resolve(data)
+				} else {
+					swal('Error', 'User Not Found', 'error')
+					reject()
+				}
+			} catch (err) {
+				swal('Error', err, 'error')
+				reject()
+			}
+		})
+	}
+
+	const fetchUserTransfer = () => {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const response = await fetch(
+					`http://localhost:8081/api/user/transfer/${currentUser}?startDate=${moment(startDate).format(
+						'YYYY-MM-DD'
+					)}&endDate=${moment(endDate).format('YYYY-MM-DD')}`
+				)
+				if (response.ok) {
+					const data = await response.json()
+					const processedData = data.map((pd) => ({
+						...pd,
+						reqDate: moment(pd['reqDate']).format('YYYY-MM-DD')
+					}))
+					resolve(processedData)
+				} else {
+					swal('Error', 'User Not Found', 'error')
+					reject()
+				}
+			} catch (err) {
+				swal('Error', err, 'error')
+				reject()
+			}
 		})
 	}
 
@@ -38,44 +80,54 @@ const User = () => {
 		e.preventDefault()
 		const userPayAppData = await fetchUserPayAppID()
 		const userRFMData = await fetchUserRFM()
+		const userTransfer = await fetchUserTransfer()
 		setUserPayApp(userPayAppData)
 		setUserRFM(userRFMData)
+		setUserTransfer(userTransfer)
 	}
-
 	return (
-		<div className='flex flex-col justify-center items-center'>
-			<form onSubmit={handleSearch} className='flex justify-center py-5'>
-				<input
-					type='text'
-					name='user_id'
-					placeholder='enter user_id'
-					onChange={(e) => setCurrentUser(e.target.value)}
-					className='py-2 px-3 mx-3'
-				/>
-				<button type='submit' className='bg-black text-white py-2 px-3'>
-					Search
-				</button>
+		<div className="flex flex-col justify-center items-center">
+			<form onSubmit={handleSearch} className="py-5 my-5 text-center">
+				<div className="flex justify-center items-center" style={{ height: '500px' }}>
+					<input
+						type="text"
+						name="user_id"
+						placeholder="enter user_id"
+						onChange={(e) => setCurrentUser(e.target.value)}
+						className="py-2 px-3 mx-3 w-2/3"
+					/>
+					<div>
+						<DatePicker
+							className="py-2 px-3 mx-3"
+							selected={startDate}
+							onChange={(date) => setStartDate(date)}
+							selectsStart
+							startdate={startDate}
+							endDate={endDate}
+							maxDate={endDate}
+							minDate={new Date('2018-12-01')}
+						/>
+						<DatePicker
+							className="py-2 px-3 mx-3"
+							selected={endDate}
+							onChange={(date) => setEndDate(date)}
+							selectsEnd
+							startdate={startDate}
+							endDate={endDate}
+							minDate={startDate}
+							maxDate={new Date('2018-12-31')}
+						/>
+					</div>
+
+					<button type="submit" className="bg-black text-white py-2 px-3">
+						Search
+					</button>
+				</div>
 			</form>
-			<BarChart width={900} height={400} data={userPayApp} margin={{ top: 30, right: 30, left: 100, bottom: 30 }}>
-				<CartesianGrid strokeDasharray='3 3' />
-				<XAxis dataKey='app_id'>
-					<Label value='App ID' offset={-2} position='insideBottom' />
-				</XAxis>
-				<YAxis />
-				<Tooltip />
-				<Bar dataKey='total_amount' fill='#8884d8' label />
-			</BarChart>
-			<BarChart width={900} height={400} data={userRFM} margin={{ top: 30, right: 30, left: 100, bottom: 30 }}>
-				<CartesianGrid strokeDasharray='3 3' />
-				<XAxis dataKey='app_id'>
-					<Label value='RFM Score' offset={-2} position='insideBottom' />
-				</XAxis>
-				<YAxis domain={[ 0, 5 ]} />
-				<Tooltip />
-				<Bar dataKey='r_score' fill='#2980b9' label />
-				<Bar dataKey='f_score' fill='#e74c3c' label />
-				<Bar dataKey='m_score' fill='#2ecc71' label />
-			</BarChart>
+
+			<UserRFM data={userRFM} />
+			<UserPayApp data={userPayApp} />
+			<UserTransfer data={userTransfer} />
 		</div>
 	)
 }

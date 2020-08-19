@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface BankSuccessDao extends JpaRepository<BankSuccess, String> {
-    @Query("SELECT t FROM BankSuccess t WHERE t.bank_code = :id")
-    List<BankSuccess> getBankSuccessById(String id);
+    List<BankSuccess> findByBank_code(String bankCode);
 }
