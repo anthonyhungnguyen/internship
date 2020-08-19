@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -14,18 +15,30 @@ public class UserRFM {
     @Id
     private int id;
 
-    private String user_id;
-    private Date recorded_date;
+    @Column(name = "user_id")
+    private String userId;
+
+    @Column(name = "recorded_date")
+    private Date recordedDate;
+
+    @Column(name = "recency")
     private int recency;
+
+    @Column(name = "frequency")
     private int frequency;
+
+    @Column(name = "monetary")
     private double monetary;
-    private int r_score;
-    private int f_score;
-    private int m_score;
-    private String rfm_score;
 
+    @Column(name = "r_score")
+    private int rScore;
 
-    public String getUser_id() {
-        return user_id;
-    }
+    @Column(name = "f_score")
+    private int fScore;
+
+    @Column(name = "m_score")
+    private int mScore;
+
+    @Column(name = "rfm_score")
+    private String rfmScore;
 }

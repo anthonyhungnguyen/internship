@@ -2,10 +2,7 @@ package com.example.demo.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -17,18 +14,19 @@ public class BankSuccess {
     @GeneratedValue
     private int id;
 
-    private String bank_code;
+    @Column(name = "bank_code")
+    private String bankCode;
 
-//    @ManyToOne
-//    @JoinColumn(name = "bank_code")
-//    private Bank bank_code;
+    @Column(name = "recorded_date")
+    private Date recordedDate;
 
-    private Date recorded_date;
-    private int success_trans;
-    private int total_trans;
-    private double success_rate;
+    @Column(name = "success_trans")
+    private int successTrans;
 
-    public String getBank_code() {
-        return bank_code;
-    }
+    @Column(name = "total_trans")
+    private int totalTrans;
+
+    @Column(name = "success_rate")
+    private double successRate;
+
 }

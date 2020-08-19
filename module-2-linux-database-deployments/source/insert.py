@@ -75,6 +75,20 @@ class UserPayApp(Base):
     total_amount = Column('total_amount', Float)
 
 
+class UserTransfer(Base):
+    __tablename__ = 'user_transfer'
+    id = Column('id', Integer, primary_key=True, autoincrement=True)
+    sender = Column('sender', String(
+        32), ForeignKey("user.id"), nullable=False)
+    receiver = Column('receiver', String(
+        32), ForeignKey('user.id'), nullable=False)
+    trans_id = Column('trans_id', String(20), nullable=False)
+    req_date = Column('req_date', Date, nullable=False)
+    amount = Column('amount', Float)
+    sender_f = relationship("User", foreign_keys=[sender])
+    receiver_f = relationship("User", foreign_keys=[receiver])
+
+
 # def insert_users(session):
 #     all_users = return_users()
 #     for u in all_users:
@@ -106,24 +120,36 @@ class UserPayApp(Base):
 #         session.add(new_user)
 
 
+# def insert_userpayapp(session):
+#     userPayApp = return_user_pay_app()
+#     for upa in userPayApp:
+#         new_upa = UserPayApp()
+#         new_upa.user_id = upa[0]
+#         new_upa.app_id = upa[1]
+#         new_upa.total_amount = upa[2]
+#         session.add(new_upa)
 
-def insert_userpayapp(session):
-    userPayApp = return_user_pay_app()
-    for upa in userPayApp:
-        new_upa = UserPayApp()
-        new_upa.user_id = upa[0]
-        new_upa.app_id = upa[1]
-        new_upa.total_amount = upa[2]
-        session.add(new_upa)
+
+def insert_usertransfer(session):
+    userTransfer = return_usertransfer()
+    for ut in userTransfer:
+        new_ut = UserTransfer()
+        new_ut.sender = ut[0]
+        new_ut.receiver = ut[1]
+        new_ut.trans_id = ut[2]
+        new_ut.req_date = ut[3]
+        new_ut.amount = ut[4]
+        session.add(new_ut)
 
 
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 
 session = Session()
 # insert_users(session)
 # insert_banks(session)
 # insert_users(session)
-insert_userpayapp(session)
+# insert_userpayapp(session)
+insert_usertransfer(session)
 session.commit()
 session.close()

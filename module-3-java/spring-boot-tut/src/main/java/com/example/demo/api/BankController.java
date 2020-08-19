@@ -9,26 +9,34 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RequestMapping("api/bank")
 @RestController
-public class BankSuccessController {
+public class BankController {
 
     private final BankService bankService;
 
     @Autowired
-    public BankSuccessController(BankService bankService) {
+    public BankController(BankService bankService) {
         this.bankService = bankService;
     }
 
     @GetMapping
     public List<Bank> getAllBanks() {
-        return bankService.getAllBanks();
+        List<Bank> allBanks = bankService.getAllBanks();
+        return allBanks;
     }
 
     @GetMapping(path = "{id}")
-    public List<BankSuccess> getBankSuccessById(@PathVariable("id") String id) {
-        return bankService.getBankSuccessById(id);
+    public List<BankSuccess> getBankSuccessById(@NotBlank @PathVariable("id") String id) throws Exception {
+        Bank bank = bankService.getBankById(id);
+        if (bank == null) {
+            throw new Exception("Bank Not Found");
+        } else {
+            return bankService.getBankSuccessById(id);
+        }
+
     }
 }
