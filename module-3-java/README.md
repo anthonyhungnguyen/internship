@@ -12,6 +12,66 @@
     - [Primitive types](#primitive-types)
     - [Non-primitives data type](#non-primitives-data-type)
   - [Java is Pass-by-Value](#java-is-pass-by-value)
+  - [Exceptions](#exceptions)
+    - [Error](#error)
+    - [Exceptions](#exceptions-1)
+      - [RuntimeException - unchecked exception](#runtimeexception---unchecked-exception)
+      - [IOException - checked exception](#ioexception---checked-exception)
+  - [Abstract vs Interface](#abstract-vs-interface)
+    - [Interface](#interface)
+    - [Abstract](#abstract)
+    - [Comparison](#comparison)
+    - [When to use which](#when-to-use-which)
+  - [Java Collections](#java-collections)
+    - [List](#list)
+    - [Set](#set)
+    - [Map](#map)
+  - [Java Generics](#java-generics)
+    - [How to use](#how-to-use)
+    - [Creation](#creation)
+    - [Bounded types](#bounded-types)
+    - [Advantages](#advantages)
+  - [Multithreading](#multithreading)
+    - [Basic Multithreading](#basic-multithreading)
+      - [Parallelism](#parallelism)
+      - [Concurrency](#concurrency)
+      - [Multithreading in Java is both Concurrency and Parallelism](#multithreading-in-java-is-both-concurrency-and-parallelism)
+      - [Runnable vs Thread](#runnable-vs-thread)
+    - [Advanced Multithreading](#advanced-multithreading)
+      - [Thread safety](#thread-safety)
+      - [Thread Pools](#thread-pools)
+  - [Java 8 LTS](#java-8-lts)
+    - [Lambda Expressions](#lambda-expressions)
+      - [Functional Interface](#functional-interface)
+      - [Definition](#definition)
+      - [Usage](#usage)
+      - [Types](#types)
+    - [Default methods](#default-methods)
+    - [Stream](#stream)
+      - [Definition](#definition-1)
+      - [Operations](#operations)
+    - [Optional class](#optional-class)
+    - [New DateTime API](#new-datetime-api)
+      - [LocalDate](#localdate)
+      - [LocalTime](#localtime)
+      - [LocalDateTime](#localdatetime)
+      - [ZonedDateTime](#zoneddatetime)
+      - [Period](#period)
+      - [Duration](#duration)
+      - [Compatibility with Date and Calendar](#compatibility-with-date-and-calendar)
+      - [Formatting](#formatting)
+  - [Maven](#maven)
+    - [Definition](#definition-2)
+    - [Commands](#commands)
+  - [Unit Test](#unit-test)
+- [Models & Principles](#models--principles)
+  - [Client-server model](#client-server-model)
+    - [MVC vs MVVM](#mvc-vs-mvvm)
+    - [HTTP, Websocket, gRPC](#http-websocket-grpc)
+    - [SSL/TLS](#ssltls)
+    - [RESTful API](#restful-api)
+  - [Principles](#principles)
+    - [SOLID](#solid)
     - [DRY and KISS](#dry-and-kiss)
 
 # Java Programming Language
@@ -209,15 +269,6 @@ Collection of Native Libraries required for Execution Engine
 - **Pass by Value:** The method parameter values are copied to another variable and then the copied object is passed
 - **Pass by Reference:** An alias or reference to the actual parameter is passed to the method
 
-<!-- ```
-public static void swap(Object o1, Object o2){ //o1=50, o2=100
-	Object temp = o1; //temp=50, o1=50, o2=100
-	o1=o2; //temp=50, o1=100, o2=100
-	o2=temp; //temp=50, o1=100, o2=50
-} //method terminated
-```
-
-Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. After swap terminated, we noticed changing values of o1 and o2 but they are copies of two real objects. Hence, there is actually no change in the values of 2 objects. -->
 
 ```
 public static void main( String[] args ){
