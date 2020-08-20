@@ -12,66 +12,6 @@
     - [Primitive types](#primitive-types)
     - [Non-primitives data type](#non-primitives-data-type)
   - [Java is Pass-by-Value](#java-is-pass-by-value)
-  - [Exceptions](#exceptions)
-    - [Error](#error)
-    - [Exceptions](#exceptions-1)
-      - [RuntimeException - unchecked exception](#runtimeexception---unchecked-exception)
-      - [IOException - checked exception](#ioexception---checked-exception)
-  - [Abstract vs Interface](#abstract-vs-interface)
-    - [Interface](#interface)
-    - [Abstract](#abstract)
-    - [Comparison](#comparison)
-    - [When to use which](#when-to-use-which)
-  - [Java Collections](#java-collections)
-    - [List](#list)
-    - [Set](#set)
-    - [Map](#map)
-  - [Java Generics](#java-generics)
-    - [How to use](#how-to-use)
-    - [Creation](#creation)
-    - [Bounded types](#bounded-types)
-    - [Advantages](#advantages)
-  - [Multithreading](#multithreading)
-    - [Basic Multithreading](#basic-multithreading)
-      - [Concurrency](#concurrency)
-      - [Parallelism](#parallelism)
-      - [Multithreading in Java is both Concurrency and Parallelism](#multithreading-in-java-is-both-concurrency-and-parallelism)
-      - [Runnable vs Thread](#runnable-vs-thread)
-    - [Advanced Multithreading](#advanced-multithreading)
-      - [Thread safety](#thread-safety)
-      - [Thread Pools](#thread-pools)
-  - [Java 8 LTS](#java-8-lts)
-    - [Lambda Expressions](#lambda-expressions)
-      - [Functional Interface](#functional-interface)
-      - [Definition](#definition)
-      - [Usage](#usage)
-      - [Types](#types)
-    - [Default methods](#default-methods)
-    - [Stream](#stream)
-      - [Definition](#definition-1)
-      - [Operations](#operations)
-    - [Optional class](#optional-class)
-    - [New DateTime API](#new-datetime-api)
-      - [LocalDate](#localdate)
-      - [LocalTime](#localtime)
-      - [LocalDateTime](#localdatetime)
-      - [ZonedDateTime](#zoneddatetime)
-      - [Period](#period)
-      - [Duration](#duration)
-      - [Compatibility with Date and Calendar](#compatibility-with-date-and-calendar)
-      - [Formatting](#formatting)
-  - [Maven](#maven)
-    - [Definition](#definition-2)
-    - [Commands](#commands)
-  - [Unit Test](#unit-test)
-- [Models & Principles](#models--principles)
-  - [Client-server model](#client-server-model)
-    - [MVC vs MVVM](#mvc-vs-mvvm)
-    - [HTTP, Websocket, gRPC](#http-websocket-grpc)
-    - [SSL/TLS](#ssltls)
-    - [RESTful API](#restful-api)
-  - [Principles](#principles)
-    - [SOLID](#solid)
     - [DRY and KISS](#dry-and-kiss)
 
 # Java Programming Language
@@ -269,8 +209,7 @@ Collection of Native Libraries required for Execution Engine
 - **Pass by Value:** The method parameter values are copied to another variable and then the copied object is passed
 - **Pass by Reference:** An alias or reference to the actual parameter is passed to the method
 
-To test whether Java (or anything language) if it's passed by value, we use swap method
-```
+<!-- ```
 public static void swap(Object o1, Object o2){ //o1=50, o2=100
 	Object temp = o1; //temp=50, o1=50, o2=100
 	o1=o2; //temp=50, o1=100, o2=100
@@ -278,7 +217,34 @@ public static void swap(Object o1, Object o2){ //o1=50, o2=100
 } //method terminated
 ```
 
-Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. After swap terminated, we noticed changing values of o1 and o2 but they are copies of two real objects. Hence, there is actually no change in the values of 2 objects.
+Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. After swap terminated, we noticed changing values of o1 and o2 but they are copies of two real objects. Hence, there is actually no change in the values of 2 objects. -->
+
+```
+public static void main( String[] args ){
+    Dog dog = new Dog("Hehe");
+    foo(dog);
+
+    if (dog.getName().equals("Hehe")) { //true
+        System.out.println( "Java passes by value." );
+
+    } else if (dog.getName().equals("Hihi")) {
+        System.out.println( "Java passes by reference." );
+    }
+}
+
+public static void foo(Dog d) {
+    d.getName().equals("Hehe"); // true
+    
+    d = new Dog("Haha");
+    d.getName().equals("Haha"); // true
+
+    //d.setName("Hihi");
+}
+```
+
+- `dog = new Dog("Hehe")`, variable dog is not a real Dog but just reference to Dog object in heap (dog is just a pointer), Assume that this dog pointer points to offset 1000.
+- When passing dog to parameter `d` in foo function, variable `d` in created but also reference `Dog("Hehe")` object (in heap memory). In this case, d is also a pointer (in offset 1000) but `dog` and `d` are different pointers in stack (together point to offset 1000). When d points to `Dog("Haha")` (assume the offset is 2000), but the dog variable in main still points to the first `Dog("Hehe")` (offset 1000)
+- Assume the foo function is changed to `d.setName("Hihi")`, d will change the internal value of object `Dog("Hehe")` to `Hihi`. Although the object reference has changed its name to d but it still points to the same offset. In this case, Java will pass by value of reference (both `dog` and `d` are references, but both references pass the value, 1000)
 
 ## Exceptions
 
@@ -325,7 +291,7 @@ Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. A
 
 ### Abstract
 
-- Same same as interface but contains more
+- Same as interface but contains more
 - Two types of methods:
   - abstract method - empty method
   - normal method
@@ -361,11 +327,6 @@ Assume that we have 2 objects, o1 and o2 with address 50 and 100 respectively. A
   <i><a href="https://www.programiz.com/java-programming/list">Source: List</a></i>
 </p>
 
-- **ArrayList**: allows us to create resizable-arrays.
-- **LinkedList**: provides the functionality of the linked list data structure.
-- **Vector**: provides the functionality of the linked list data structure.
-- **Stack**: provides the functionality of the linked list data structure.
-
 **How to use**
 
 In Java, we must import java.util.List package in order to use List.
@@ -379,6 +340,8 @@ List<String> list2 = new LinkedList<>();
 ```
 
 ### Set
+
+    Unlike List, Set cannot contain duplicate elements
 
 **Classes that implement Set**
 
@@ -400,19 +363,20 @@ Set<String> animals = new HashSet<>();
 ### Map
     In Java, elements of Map are stored in key/value pairs. Keys are unique values associated with individual Values.
 
-- A map cannot contain duplicate keys. And, each key is associated with a single value.
-
-<p align="center">
-  <img src="assets/images/Map.png" alt="map">
-  <br/>
-  <i><a href="https://www.programiz.com/java-programming/map">Source: Map</a></i>
-</p>
-
 <p align="center">
   <img src="assets/images/java-map-implementation.png" alt="map">
   <br/>
   <i><a href="https://www.programiz.com/java-programming/map">Source: Map</a></i>
 </p>
+
+
+A map cannot contain duplicate keys. And, each key is associated with a single value.
+<p align="center">
+  <img src="assets/images/java-map-implementation.png" alt="map">
+  <br/>
+  <i><a href="https://www.programiz.com/java-programming/map">Source: Map</a></i>
+</p>
+
 
 **How to use**
 
@@ -488,7 +452,22 @@ GenericsClass<String> obj = new GenericsClass<>();
 ## Multithreading
 ### Basic Multithreading
 
+#### Parallelism
+
+Simultaneous execution of processes on a `multiple cores per CPU` or `multiple CPUs (on a single motherboard)`
+
+<p align="center">
+  <img src="assets/images/concurrency-and-parallelism-are-different-3.jpg" alt="parallelism">
+  <br/>
+  <i><a href="https://luminousmen.com/post/concurrency-and-parallelism-are-different">Source: Concurrency and parallelism are two different things</a></i>
+</p>
+
+**Example**: You're a professional Java programmer.., and you enjoy listening to calm music while coding
+
+
 #### Concurrency
+
+*Parallelism* is achieved on a `single core/CPU` by using scheduling algorithms that divines CPU's tim  (time-slice). Processes *interleaved* 
 
 <p align="center">
   <img src="assets/images/concurrency-and-parallelism-are-different-2.jpg" alt="concurrency">
@@ -497,28 +476,12 @@ GenericsClass<String> obj = new GenericsClass<>();
 </p>
 
 
-- Execution of more than one task is being processed in overlapping time periods. 
-- A way of structuring your programs: it has to do with how programs are written
-- Tasks are **not necessarily performed at the same time**
-
 **Example:** You decide to learn Java! You start watching a video tutorial, you need to pause the video, apply what has been said in code then continue watching
 
 
-#### Parallelism
-
-<p align="center">
-  <img src="assets/images/concurrency-and-parallelism-are-different-3.jpg" alt="parallelism">
-  <br/>
-  <i><a href="https://luminousmen.com/post/concurrency-and-parallelism-are-different">Source: Concurrency and parallelism are two different things</a></i>
-</p>
-
-- The simultaneous execution of tasks
-- A way of making your programs go faster
-- For parallelism to be true, there must be at lease two computational resources
-
-**Example**: You're a professional Java programmer.., and you enjoy listening to calm music while coding
-
 #### Multithreading in Java is both Concurrency and Parallelism
+
+Depends on the machine, when the machine only has `one-core processor`, it will execute concurrently. However, the machine has `multiple cores`, it will do parallelism
 
 #### Runnable vs Thread
 
@@ -955,7 +918,7 @@ class TestClass implements TestInterface
 - A stream is a sequence of objects that supports various methods which can be pipelined to produce the desired result.
   
 #### Operations
-**Terminal Operations**
+**Intermediate Operations**
 - **map:** return a stream consisting of the results of applying given function to elements of stream
 
 ```
@@ -976,7 +939,7 @@ List names = Arrays.asList("Reflection","Collection","Stream");
 List result = names.stream().sorted().collect(Collectors.toList());
 ```
 
-**Terminal Operator**
+**Terminal Operations**
 - **collect:** return result of intermediate operations
 
 ```

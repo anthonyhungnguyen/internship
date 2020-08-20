@@ -9,26 +9,41 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * The type Bank service.
+ */
 @Service
 public class BankService {
-
-    private final BankSuccessRepository bankSuccessRepository;
-    private final BankRepository bankRepository;
-
     @Autowired
-    public BankService(BankSuccessRepository bankSuccessRepository, BankRepository bankRepository) {
-        this.bankSuccessRepository = bankSuccessRepository;
-        this.bankRepository = bankRepository;
-    }
+    private BankSuccessRepository bankSuccessRepository;
+    @Autowired
+    private BankRepository bankRepository;
 
+    /**
+     * Gets all banks.
+     *
+     * @return the all banks
+     */
     public List<Bank> getAllBanks() {
         return bankRepository.findAll();
     }
 
+    /**
+     * Gets bank success by id.
+     *
+     * @param id the id
+     * @return the bank success by id
+     */
     public List<BankSuccess> getBankSuccessById(String id) {
         return bankSuccessRepository.findAllByBankCode(id);
     }
 
+    /**
+     * Gets bank by id.
+     *
+     * @param id the id
+     * @return the bank by id
+     */
     public Bank getBankById(String id) {
         return bankRepository.findById(id).orElse(null);
     }

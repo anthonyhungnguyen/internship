@@ -1,18 +1,20 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+/**
+ * The type User pay app.
+ */
 @Entity
 @Data
 @Table(name = "user_pay_app")
 public class UserPayApp {
     @Id
+    @GeneratedValue
     private int id;
 
     @Column(name = "user_id")

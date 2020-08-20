@@ -20,7 +20,11 @@ const User = () => {
 				const response = await fetch(`http://localhost:8081/api/user/payapp/${currentUser}`)
 				if (response.ok) {
 					const data = await response.json()
-					resolve(data)
+					const preprocessed = data.map((d) => ({
+						...d,
+						totalAmount: d['totalAmount'].toLocaleString('en-US', { style: 'currency', currency: 'VND' })
+					}))
+					resolve(preprocessed)
 				} else {
 					swal('Error', 'User Not Found', 'error')
 					reject()
@@ -38,6 +42,7 @@ const User = () => {
 				const response = await fetch(`http://localhost:8081/api/user/rfm/${currentUser}`)
 				if (response.ok) {
 					const data = await response.json()
+					data['monetary'] = data['monetary'].toLocaleString('en-US', { style: 'currency', currency: 'VND' })
 					resolve(data)
 				} else {
 					swal('Error', 'User Not Found', 'error')
@@ -62,6 +67,7 @@ const User = () => {
 					const data = await response.json()
 					const processedData = data.map((pd) => ({
 						...pd,
+						amount: pd['amount'].toLocaleString('en-US', { style: 'currency', currency: 'VND' }),
 						reqDate: moment(pd['reqDate']).format('YYYY-MM-DD')
 					}))
 					resolve(processedData)

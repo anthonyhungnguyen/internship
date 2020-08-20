@@ -1,10 +1,14 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * The type Bank success.
+ */
 @Entity
 @Data
 @Table(name = "bank_success")

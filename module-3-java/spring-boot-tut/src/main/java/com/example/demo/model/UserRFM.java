@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -8,10 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
+/**
+ * The type User rfm.
+ */
 @Entity
 @Data
 @Table(name = "user_rfm")
 public class UserRFM {
+
     @Id
     private int id;
 

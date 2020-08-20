@@ -12,23 +12,33 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+/**
+ * The type Bank controller.
+ */
 @RequestMapping("api/bank")
 @RestController
 public class BankController {
 
-    private final BankService bankService;
-
     @Autowired
-    public BankController(BankService bankService) {
-        this.bankService = bankService;
-    }
+    private BankService bankService;
 
+    /**
+     * Gets all banks.
+     *
+     * @return the all banks
+     */
     @GetMapping
     public List<Bank> getAllBanks() {
-        List<Bank> allBanks = bankService.getAllBanks();
-        return allBanks;
+        return bankService.getAllBanks();
     }
 
+    /**
+     * Gets bank success by id.
+     *
+     * @param id the id
+     * @return the bank success by id
+     * @throws Exception the exception when bank id not found
+     */
     @GetMapping(path = "{id}")
     public List<BankSuccess> getBankSuccessById(@NotBlank @PathVariable("id") String id) throws Exception {
         Bank bank = bankService.getBankById(id);
