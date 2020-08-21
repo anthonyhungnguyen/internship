@@ -2,10 +2,6 @@ import MUIDataTable from 'mui-datatables'
 
 const columns = [
 	{
-		name: 'userId',
-		label: 'User ID'
-	},
-	{
 		name: 'recency',
 		label: 'Recency'
 	},
@@ -41,7 +37,7 @@ const options = {
 }
 const UserRFM = ({ data }) => {
 	return (
-		<MUIDataTable title={'User RFM'} data={[ data ]} columns={columns} options={options} className="w-2/3 my-2" />
+		<MUIDataTable title={'User RFM'} data={[ data ]} columns={columns} options={options} className='w-2/3 my-2' />
 	)
 }
 

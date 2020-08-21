@@ -1,10 +1,8 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+
+import lombok.Data;
 
 /**
  * The type User pay app.
@@ -13,19 +11,17 @@ import javax.validation.constraints.NotNull;
 @Data
 @Table(name = "user_pay_app")
 public class UserPayApp {
-    @Id
-    @GeneratedValue
-    private int id;
+	@Id
+	@GeneratedValue
+	private int id;
 
-    @Column(name = "user_id")
-    @NotNull
-    private String userId;
+	@Column(name = "user_id")
+	private String userId;
 
-    @Column(name = "app_id")
-    @NotNull
-    private int appId;
+	@Column(name = "app_id")
+	private int appId;
 
-    @Column(name = "total_amount")
-    private double totalAmount;
+	@Column(name = "total_amount")
+	private double totalAmount;
 
 }

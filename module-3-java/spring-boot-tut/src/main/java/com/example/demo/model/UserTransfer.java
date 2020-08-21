@@ -1,10 +1,10 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import java.util.Date;
 
 import javax.persistence.*;
-import java.util.Date;
+
+import lombok.Data;
 
 /**
  * The type User transfer.
@@ -13,46 +13,46 @@ import java.util.Date;
 @Data
 @Table(name = "user_transfer")
 public class UserTransfer {
-    /**
-     * Auto Generated ID.
-     */
-    @Id
-    @GeneratedValue
-    private String id;
+	/**
+	 * Auto Generated ID.
+	 */
+	@Id
+	@GeneratedValue
+	private String id;
 
-    /**
-     * Sender ID.
-     */
+	/**
+	 * Sender ID.
+	 */
 
-    @Column(name = "sender")
-    private String sender;
+	@Column(name = "sender")
+	private String sender;
 
-    /**
-     * Receiver ID.
-     */
+	/**
+	 * Receiver ID.
+	 */
 
-    @Column(name = "receiver")
-    private String receiver;
+	@Column(name = "receiver")
+	private String receiver;
 
-    /**
-     * Transfer ID.
-     */
+	/**
+	 * Transfer ID.
+	 */
 
-    @Column(name = "trans_id")
-    private String transId;
+	@Column(name = "trans_id")
+	private String transId;
 
-    /**
-     * Date Transfer.
-     */
+	/**
+	 * Date Transfer.
+	 */
 
-    @Column(name = "req_date")
-    private Date reqDate;
+	@Column(name = "req_date")
+	private Date reqDate;
 
-    /**
-     * Amount of Transfer Money.
-     */
+	/**
+	 * Amount of Transfer Money.
+	 */
 
-    @Column(name = "amount")
-    private double amount;
+	@Column(name = "amount")
+	private double amount;
 
 }

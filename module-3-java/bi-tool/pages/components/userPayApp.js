@@ -2,14 +2,6 @@ import MUIDataTable from 'mui-datatables'
 
 const columns = [
 	{
-		name: 'userId',
-		label: 'User ID',
-		options: {
-			filter: false,
-			sort: false
-		}
-	},
-	{
 		name: 'appId',
 		label: 'App ID',
 		options: {
@@ -34,7 +26,7 @@ const options = {
 
 const UserPayApp = ({ data }) => {
 	return (
-		<MUIDataTable title={'User Pay App'} data={data} columns={columns} options={options} className="w-2/3 my-2" />
+		<MUIDataTable title={'User Pay App'} data={data} columns={columns} options={options} className='w-2/3 my-2' />
 	)
 }
 
