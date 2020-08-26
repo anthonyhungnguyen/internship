@@ -1,0 +1,23 @@
+{
+	"name": "front-end",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev -p 3005",
+		"build": "next build",
+		"start": "next start"
+	},
+	"dependencies": {
+		"@material-ui/core": "^4.11.0",
+		"@material-ui/icons": "^4.9.1",
+		"mui-datatables": "^3.4.1",
+		"next": "9.5.2",
+		"react": "16.13.1",
+		"react-dom": "16.13.1",
+		"react-hook-form": "^6.5.3"
+	},
+	"devDependencies": {
+		"postcss-preset-env": "^6.7.0",
+		"tailwindcss": "^1.7.3"
+	}
+}

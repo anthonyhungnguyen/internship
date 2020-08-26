@@ -26,4 +26,5 @@ public interface UserTransferRepository extends JpaRepository<UserTransfer, Stri
 	 */
 	List<UserTransfer> findAllBySenderAndReqDateBetween(String id, Date startDate, Date endDate);
 
+
 }
