@@ -1,9 +1,8 @@
 import { useSelector } from 'react-redux'
 import { deviceSelector } from '../../../slices/device'
-import Link from 'next/link'
-
+import { useRouter } from 'next/router'
 const Identity = () => {
-	useSelector
+	const router = useRouter()
 	const { device } = useSelector(deviceSelector)
 	const { id, users } = device
 	return (
@@ -15,9 +14,26 @@ const Identity = () => {
 			</div>
 			<div className="flex text-gray-700 my-3">
 				<span className="w-1/3 font-bold">Total Users</span>
-				<span className="w-2/3">{users.length}</span>
+				<span className="w-2/3">
+					<select
+						onChange={(e) =>
+							router.push({
+								pathname: '/user',
+								query: {
+									id: e.target.value
+								}
+							})}
+					>
+						<option>{users.length}</option>
+						{users.map((u) => (
+							<option key={u.id} value={u.id}>
+								{u.id}
+							</option>
+						))}
+					</select>
+				</span>
 			</div>
-			<div className="flex text-gray-700 my-3">
+			{/* <div className="flex text-gray-700 my-3">
 				<span className="w-1/3 font-bold">Users</span>
 				<span className="w-2/3">
 					<ul>
@@ -30,7 +46,7 @@ const Identity = () => {
 						))}
 					</ul>
 				</span>
-			</div>
+			</div> */}
 		</div>
 	)
 }
