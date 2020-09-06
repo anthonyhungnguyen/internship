@@ -13,13 +13,11 @@ import java.time.ZoneId;
 @Service
 public class DeviceService {
     private final DeviceRepository deviceRepository;
-    private final UserDeviceRepository userDeviceRepository;
     private final ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
 
     @Autowired
-    public DeviceService(DeviceRepository deviceRepository, UserDeviceRepository userDeviceRepository) {
+    public DeviceService(DeviceRepository deviceRepository) {
         this.deviceRepository = deviceRepository;
-        this.userDeviceRepository = userDeviceRepository;
     }
 
     public Device findDeviceById(String id) {
