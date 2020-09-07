@@ -8,16 +8,19 @@
 		"@testing-library/react": "^9.3.2",
 		"@testing-library/user-event": "^7.1.2",
 		"axios": "^0.20.0",
+		"d3": "^5.5.0",
 		"moment": "^2.27.0",
 		"rc-progress": "^3.1.0",
 		"react": "^16.13.1",
+		"react-d3-graph": "^2.5.0",
 		"react-dom": "^16.13.1",
 		"react-redux": "^7.2.1",
 		"react-router-dom": "^5.2.0",
-		"react-scripts": "3.4.3"
+		"react-scripts": "3.4.3",
+		"recharts": "^1.8.5"
 	},
 	"scripts": {
-		"start": "yarn run watch:css && PORT=3005 react-scripts start -p 3005",
+		"dev": "yarn run watch:css && PORT=3005 react-scripts start -p 3005",
 		"build": "yarn run build:css && react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
@@ -28,8 +31,16 @@
 		"extends": "react-app"
 	},
 	"browserslist": {
-		"production": [ ">0.2%", "not dead", "not op_mini all" ],
-		"development": [ "last 1 chrome version", "last 1 firefox version", "last 1 safari version" ]
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
 	},
 	"devDependencies": {
 		"autoprefixer": "^9.8.6",

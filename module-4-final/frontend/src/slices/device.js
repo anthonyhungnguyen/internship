@@ -43,12 +43,12 @@ export function fetchDevice(id) {
 	return async (dispatch) => {
 		dispatch(getDevice(id))
 		try {
-			const response = await fetch(`http://localhost:8080/api/device/${id}`)
-			const data = await response.json()
-			if (data.errorCode) {
-				dispatch(getDeviceFailure(data))
+			const response = await fetch(`http://localhost:8085/api/device/${id}`)
+			const payload = await response.json()
+			if (payload.errorCode) {
+				dispatch(getDeviceFailure(payload))
 			} else {
-				dispatch(getDeviceSuccess(data))
+				dispatch(getDeviceSuccess(payload))
 			}
 		} catch (err) {
 			dispatch(getDeviceFailure())

@@ -6,18 +6,20 @@ import TabChange from './TabChange'
 import { useDispatch, useSelector } from 'react-redux'
 import { deviceSelector, fetchDevice } from '../../slices/device'
 import Error from './Error'
+import Activity from './Activity'
+import DeviceConnection from './DeviceConnection'
 const Device = () => {
 	const dispatch = useDispatch()
-	const [ tabOpen, setTabOpen ] = useState('details')
+	const [tabOpen, setTabOpen] = useState('details')
 	const { device, loading, hasErrors } = useSelector(deviceSelector)
 
 	useEffect(
 		() => {
 			if (!device) {
-				dispatch(fetchDevice('7FB63D3E-D3EE-423A-9DBD-501A3A454287'))
+				dispatch(fetchDevice('186a0f48fcd6cc60'))
 			}
 		},
-		[ device, dispatch ]
+		[device, dispatch]
 	)
 	return (
 		<section className="w-full text-gray-700">
@@ -26,12 +28,12 @@ const Device = () => {
 			{hasErrors ? (
 				<Error />
 			) : (
-				<React.Fragment>
-					{!loading && tabOpen === 'details' && <Details />}
-					{tabOpen === 'activity' && <div>GOGO</div>}
-					{tabOpen === 'deviceconnection' && <div>HELO</div>}
-				</React.Fragment>
-			)}
+					<React.Fragment>
+						{!loading && tabOpen === 'details' && <Details />}
+						{tabOpen === 'activity' && <Activity />}
+						{tabOpen === 'deviceconnection' && <DeviceConnection />}
+					</React.Fragment>
+				)}
 		</section>
 	)
 }
