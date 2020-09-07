@@ -6,12 +6,12 @@ const Device = () => {
 	const [ tabOpen, setTabOpen ] = useState('details')
 
 	return (
-		<section className="w-full text-gray-700">
+		<section className='w-full text-gray-700'>
 			<Search />
 			<Navigation tabOpen={tabOpen} setTabOpen={setTabOpen} />
 			{tabOpen === 'details' && <Details />}
 			{tabOpen === 'activity' && <div>GOGO</div>}
-			{tabOpen === 'deviceconnection' && <div>HELO</div>}
+			{tabOpen === 'device_connection' && <div>HELO</div>}
 		</section>
 	)
 }
