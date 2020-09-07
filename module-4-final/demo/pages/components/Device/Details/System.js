@@ -1,70 +1,118 @@
+import { useSelector } from 'react-redux'
+import { deviceSelector } from '../../../slices/device'
+import moment from 'moment'
+
 const System = () => {
+	const { device } = useSelector(deviceSelector)
+	const {
+		os_version,
+		hw_capacity_bluetooth,
+		cellular_capabilities,
+		user_agent,
+		hw_screen_aspect_ratio,
+		hw_capacity_force_touch,
+		hw_capacity_gps,
+		network_wifi_mac_address,
+		os_name,
+		hw_device_string,
+		hw_storage_total,
+		os_multitasking,
+		hw_ram_total,
+		hw_screen_size,
+		hw_capacity_cellular,
+		hw_device_model,
+		zid,
+		timestamp,
+		wifi_bssid,
+		hw_capacity_nfc,
+		wifi_ssid
+	} = device
 	return (
-		<div className="bg-white p-10 rounded text-sm self-start w-1/2 flex-1">
-			<p className="text-gray-700 font-bold text-xl">System</p>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">Device type</span>
-				<span className="w-2/3">desktop</span>
+		<div className="bg-white p-10 rounded self-start w-1/2 flex-1">
+			<p className="text-gray-800 font-bold text-2xl">System</p>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Recorded At</span>
+				<span className="w-2/3">{moment(timestamp).format('YYYY-MM-DD LTS')}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
+			<div className="flex text-gray-700 my-3">
 				<span className="w-1/3 font-bold">OS</span>
-				<span className="w-2/3">MacOS</span>
+				<span className="w-2/3">{os_name}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">OS Version</span>
+				<span className="w-2/3">{os_version}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Device Model</span>
+				<span className="w-2/3">{hw_device_model}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Device String</span>
+				<span className="w-2/3">{hw_device_string}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
 				<span className="w-1/3 font-bold">User Agent</span>
-				<span className="w-2/3">
-					Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0
-				</span>
+				<span className="w-2/3">{user_agent}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">Fingerprinting Resistance</span>
-				<span className="w-2/3">None detected</span>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Bluetooth</span>
+				<span className="w-2/3">{hw_capacity_bluetooth}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">Speakers</span>
-				<span className="w-2/3">
-					<ul>
-						<li>Number of speakers: 1</li>
-					</ul>
-				</span>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Network Operator</span>
+				<span className="w-2/3">{cellular_capabilities}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">Microphones</span>
-				<span className="w-2/3">None detected</span>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Screen Aspect Ratio</span>
+				<span className="w-2/3">{hw_screen_aspect_ratio}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">CPU</span>
-				<span className="w-2/3">
-					<ul>
-						<li>Architecture: x64 (64-bit) </li>
-						<li>Number of cores: 4</li>
-					</ul>
-				</span>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Storage Total</span>
+				<span className="w-2/3">{hw_storage_total}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">Memory (RAM)</span>
-				<span className="w-2/3">8 GB or more</span>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">RAM Total</span>
+				<span className="w-2/3">{hw_ram_total}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">Battery</span>
-				<span className="w-2/3">
-					<ul>
-						<li>Level: 100% </li>
-						<li>Charging: Yes</li>
-						<li>Time remaining before charged: 0 seconds</li>
-					</ul>
-				</span>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Sreen Size</span>
+				<span className="w-2/3">{hw_screen_size}</span>
 			</div>
-			<div className="flex text-gray-600 my-2">
-				<span className="w-1/3 font-bold">Screen</span>
-				<span className="w-2/3">
-					<ul>
-						<li>Orientation (Live): Landscape</li>
-						<li>Resolution: 1920 x 1080 (pixels) </li>
-						<li>Device Pixel Ratio: 1</li>
-						<li>Color Depth: 24-bit</li>
-					</ul>
-				</span>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">ZID</span>
+				<span className="w-2/3">{zid}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Wifi Mac Address</span>
+				<span className="w-2/3">{network_wifi_mac_address}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Force Touch</span>
+				<span className="w-2/3">{hw_capacity_force_touch}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">GPS</span>
+				<span className="w-2/3">{hw_capacity_gps}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Multitasking</span>
+				<span className="w-2/3">{os_multitasking}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Cellular</span>
+				<span className="w-2/3">{hw_capacity_cellular}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">NFC</span>
+				<span className="w-2/3">{hw_capacity_nfc}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Wifi BSSID</span>
+				<span className="w-2/3">{wifi_bssid}</span>
+			</div>
+			<div className="flex text-gray-700 my-3">
+				<span className="w-1/3 font-bold">Wifi SSID</span>
+				<span className="w-2/3">{wifi_ssid}</span>
 			</div>
 		</div>
 	)

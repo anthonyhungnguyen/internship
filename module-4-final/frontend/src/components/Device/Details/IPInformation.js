@@ -1,3 +1,4 @@
+import React from 'react'
 const IPInformation = () => {
 	return (
 		<div className="bg-white p-10 rounded self-start w-full">

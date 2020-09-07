@@ -1,7 +1,7 @@
 import '../styles/globals.css'
-import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
-import rootReducer from '../slices/posts'
+import { configureStore } from '@reduxjs/toolkit'
+import rootReducer from './slices'
 
 const store = configureStore({ reducer: rootReducer })
 

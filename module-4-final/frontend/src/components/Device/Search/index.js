@@ -1,7 +1,7 @@
-import { useDispatch } from 'react-redux'
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
 import { fetchDevice, deviceSelector } from '../../../slices/device'
-import { useSelector } from 'react-redux'
 
 const Search = () => {
 	const dispatch = useDispatch()
