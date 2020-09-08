@@ -17,7 +17,6 @@ const deviceActivitySlice = createSlice({
 			state.loading = true
 		},
 		getActivitySuccess: (state, { payload }) => {
-			state.loading = false
 			state.hasErrors = false
 			state.timestamps = payload
 		},

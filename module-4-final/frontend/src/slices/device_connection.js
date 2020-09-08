@@ -75,19 +75,23 @@ export function preprocessConnection(deviceId, connections) {
 		const links = []
 		const nodeCount = [ deviceId.trim() ]
 		connections.forEach((c) => {
-			const device = c['from'].split('/')[1].trim()
-			const user = c['to'].split('/')[1].trim()
+			const user = c['from'].split('/')[1].trim()
+			const device = c['to'].split('/')[1].trim()
 			if (nodeCount.indexOf(device) < 0) {
 				nodes.push({
+					id: device,
 					name: device,
-					category: 2
+					category: 2,
+					type: 'device'
 				})
 				nodeCount.push(device)
 			}
 			if (nodeCount.indexOf(user) < 0) {
 				nodes.push({
+					id: user,
 					name: user,
-					category: 1
+					category: 1,
+					type: 'user'
 				})
 				nodeCount.push(user)
 			}

@@ -14,7 +14,7 @@ const deviceSlice = createSlice({
 	reducers: {
 		getDevice: (state, { payload }) => {
 			state.loading = true
-			state.deviceId = payload
+			state.deviceId = payload.trim()
 		},
 		getDeviceSuccess: (state, { payload }) => {
 			state.device = payload
