@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchActivity } from '../../../slices/user_device'
+import { fetchActivity, deviceActivitySelector } from '../../../slices/device_activity'
 import moment from 'moment'
 
-import { userDeviceSelector } from '../../../slices/user_device'
 import { deviceSelector } from '../../../slices/device'
 import ActiveFrequency from './ActiveFrequency'
 
 const Activity = () => {
     const dispatch = useDispatch()
     const { deviceId } = useSelector(deviceSelector)
-    const { timestamps } = useSelector(userDeviceSelector)
+    const { timestamps } = useSelector(deviceActivitySelector)
 
     useEffect(() => {
         dispatch(fetchActivity(deviceId))
@@ -18,12 +17,12 @@ const Activity = () => {
     }, [dispatch, deviceId])
     const convertDateTimeToFrequency = (timestamps) => {
         const results = {}
-        timestamps.forEach(ts => {
-            const onlyDate = moment(ts).format('DD-MM-YYYY')
-            if (onlyDate in results) {
-                results[onlyDate] += 1
+        const formatTimestamps = timestamps.map((ts) => moment(ts).format('DD-MM-YYYY')).sort()
+        formatTimestamps.forEach(ts => {
+            if (ts in results) {
+                results[ts] += 1
             } else {
-                results[onlyDate] = 1
+                results[ts] = 1
             }
         })
         const data = Object.entries(results).map((e) => ({ "date": e[0], "count": e[1] }))

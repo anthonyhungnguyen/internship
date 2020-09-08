@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -19,8 +20,13 @@ public class UserDeviceController {
         this.userDeviceService = userDeviceService;
     }
 
-    @GetMapping("user_device/{id}")
-    public List<String> getAllUserDeviceById(@PathVariable("id") String id) {
-        return userDeviceService.getAllDevicesById(id);
+    @GetMapping("user_device/{id}/timestamps")
+    public List<String> getDeviceTimestampsById(@PathVariable("id") String id) {
+        return userDeviceService.getDeviceTimestampsById(id);
+    }
+
+    @GetMapping("user_device/{id}/connections")
+    public List<Map<String, String>> getAllDevicesUsedByUsersThatUseDevice(@PathVariable("id") String id) {
+        return userDeviceService.getAllDevicesUsedByUsersThatUseDevice(id);
     }
 }

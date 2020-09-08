@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,9 +22,13 @@ public class UserDeviceService {
         this.timestampConverter = timestampConverter;
     }
 
-    public List<String> getAllDevicesById(String id) {
+    public List<String> getDeviceTimestampsById(String id) {
         List<String> deviceTimestamps =
                 userDeviceRepository.findDeviceTimestamp("devices/" + id);
         return deviceTimestamps.stream().map(timestampConverter::convertTimestamp).collect(Collectors.toList());
+    }
+
+    public List<Map<String, String>> getAllDevicesUsedByUsersThatUseDevice(String id) {
+        return userDeviceRepository.findMultipleUsersDevicesDepth2("devices/" + id);
     }
 }

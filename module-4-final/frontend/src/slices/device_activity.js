@@ -7,8 +7,8 @@ export const initialState = {
     timestamps: []
 }
 
-const userDeviceSlice = createSlice({
-    name: 'user_device',
+const deviceActivitySlice = createSlice({
+    name: 'deviceActivity',
     initialState,
     reducers: {
         getActivity: (state) => {
@@ -28,13 +28,13 @@ const userDeviceSlice = createSlice({
 })
 
 // Three actions from slice
-export const { getActivity, getActivitySuccess, getActivityFailure } = userDeviceSlice.actions
+export const { getActivity, getActivitySuccess, getActivityFailure } = deviceActivitySlice.actions
 
 // Export state selector
-export const userDeviceSelector = (state) => state.user_device
+export const deviceActivitySelector = (state) => state.deviceActivity
 
 // Export default reducer
-export default userDeviceSlice.reducer
+export default deviceActivitySlice.reducer
 
 // Asynchronous thunk action
 
@@ -42,7 +42,7 @@ export function fetchActivity(id) {
     return async (dispatch) => {
         dispatch(getActivity())
         try {
-            const response = await fetch(`http://localhost:8085/api/user_device/${id}`)
+            const response = await fetch(`http://localhost:8085/api/user_device/${id}/timestamps`)
             const payload = await response.json()
             if (payload.errorCode) {
                 dispatch(getActivityFailure(payload))

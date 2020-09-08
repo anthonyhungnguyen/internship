@@ -32,8 +32,7 @@ export default () => {
 		hw_camera_back_max_video_resolution,
 		hw_camera_number_camera,
 		hw_camera_back_max_photo_resolution,
-		hw_camera_front_max_video_resolution,
-		list_of_wifi
+		hw_camera_front_max_video_resolution
 	} = device
 	return (
 		<React.Fragment>

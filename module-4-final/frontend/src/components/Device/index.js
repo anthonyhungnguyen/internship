@@ -16,7 +16,7 @@ const Device = () => {
 	useEffect(
 		() => {
 			if (!device) {
-				dispatch(fetchDevice('186a0f48fcd6cc60'))
+				dispatch(fetchDevice('460968F8-068F-41C8-B130-2F5F7E968C9C'))
 			}
 		},
 		[device, dispatch]
