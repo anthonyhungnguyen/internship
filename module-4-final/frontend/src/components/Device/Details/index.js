@@ -5,7 +5,7 @@ import Identity from './Identity'
 import IPInformation from './IPInformation'
 const Details = () => {
 	return (
-		<div className="p-4 bg-gray-400">
+		<div className="p-4 bg-gray-300">
 			<Score />
 
 			<div className="flex mt-4 flex-wrap flex-row gap-4">

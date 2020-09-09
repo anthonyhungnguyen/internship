@@ -10,16 +10,16 @@ import Activity from './Activity'
 import DeviceConnection from './DeviceConnection'
 const Device = () => {
 	const dispatch = useDispatch()
-	const [tabOpen, setTabOpen] = useState('details')
+	const [ tabOpen, setTabOpen ] = useState('details')
 	const { device, loading, hasErrors } = useSelector(deviceSelector)
 
 	useEffect(
 		() => {
 			if (!device) {
-				dispatch(fetchDevice('460968F8-068F-41C8-B130-2F5F7E968C9C'))
+				dispatch(fetchDevice('EDF10704-E7E4-4CC6-BA25-9A30C7720D02'))
 			}
 		},
-		[device, dispatch]
+		[ device, dispatch ]
 	)
 	return (
 		<section className="w-full text-gray-700">
@@ -28,12 +28,12 @@ const Device = () => {
 			{hasErrors ? (
 				<Error />
 			) : (
-					<React.Fragment>
-						{!loading && tabOpen === 'details' && <Details />}
-						{tabOpen === 'activity' && <Activity />}
-						{tabOpen === 'deviceconnection' && <DeviceConnection />}
-					</React.Fragment>
-				)}
+				<React.Fragment>
+					{!loading && tabOpen === 'details' && <Details />}
+					{tabOpen === 'activity' && <Activity />}
+					{tabOpen === 'deviceconnection' && <DeviceConnection />}
+				</React.Fragment>
+			)}
 		</section>
 	)
 }

@@ -1,10 +1,7 @@
 import React from 'react'
-import { deviceSelector } from '../../../../slices/device'
-import { useSelector } from 'react-redux'
 import Row from '../Row'
 import moment from 'moment'
-export default () => {
-	const { device } = useSelector(deviceSelector)
+export default ({ device }) => {
 	const {
 		timestamp,
 		userId,
