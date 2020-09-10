@@ -1,26 +1,38 @@
 import React from 'react'
-import { Input, Card, Button, Row, Col, Form } from 'antd'
+import { Input, Card, Button, Form } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
-import { useDispatch } from 'react-redux'
-import { fetchDevice } from '../../../slices/device'
 
-export default () => {
-	const dispatch = useDispatch()
+export default ({ setCurrentTab, setCurrentDeviceId }) => {
 	const layout = {
-		labelCol: { span: 8 },
-		wrapperCol: { span: 8 }
+		labelCol: { span: 0 },
+		wrapperCol: { span: 0 }
 	}
 	const tailLayout = {
-		wrapperCol: { offset: 8, span: 16 }
+		wrapperCol: { offset: 12, span: 12 }
 	}
 
+	const tabList = [
+		{
+			key: 'details',
+			tab: 'Details'
+		},
+		{
+			key: 'activity',
+			tab: 'Activity'
+		},
+		{
+			key: 'connection',
+			tab: 'Connection'
+		}
+	]
+
 	const handleSearchFinish = (values) => {
-		dispatch(fetchDevice(values.deviceId))
+		setCurrentDeviceId(values.deviceId)
 	}
 
 	return (
-		<Card title="Enter Device ID">
-			<Form {...layout} onFinish={handleSearchFinish}>
+		<Card tabList={tabList} onTabChange={(tab) => setCurrentTab(tab)}>
+			<Form {...layout} onFinish={handleSearchFinish} layout="inline">
 				<Form.Item
 					label="Device ID"
 					name="deviceId"
@@ -28,7 +40,7 @@ export default () => {
 				>
 					<Input />
 				</Form.Item>
-				<Form.Item {...tailLayout}>
+				<Form.Item>
 					<Button type="primary" icon={<SearchOutlined />} htmlType="submit">
 						Search
 					</Button>

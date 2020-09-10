@@ -1,32 +1,34 @@
-import React, { useEffect } from 'react'
-import { Row, Col } from 'reactstrap'
-import { useDispatch } from 'react-redux'
-import './index.css'
+import React from 'react'
+import { Row, Col } from 'antd'
 import Score from './Score'
 import System from './System'
 import Identity from './Identity'
 import IP from './IP'
-import { fetchDevice } from '../../../slices/device'
 
 export default () => {
-	const dispatch = useDispatch()
-	useEffect(
-		() => {
-			dispatch(fetchDevice('EDF10704-E7E4-4CC6-BA25-9A30C7720D02'))
-		},
-		[ dispatch ]
-	)
 	return (
 		<div className="animated fadeIn text-gray-700">
-			<Score />
-			<Row>
-				<Col xs={6}>
+			<Row gutter={[ 24, 24 ]}>
+				<Col span={24}>
+					<Score />
+				</Col>
+			</Row>
+			<Row gutter={[ 24, 24 ]}>
+				<Col span={12}>
 					<System />
 				</Col>
 
-				<Col xs={6}>
-					<Identity />
-					<IP />
+				<Col span={12}>
+					<Row gutter={[ 24, 24 ]}>
+						<Col span={24}>
+							<Identity />
+						</Col>
+					</Row>
+					<Row>
+						<Col span={24}>
+							<IP />
+						</Col>
+					</Row>
 				</Col>
 			</Row>
 		</div>

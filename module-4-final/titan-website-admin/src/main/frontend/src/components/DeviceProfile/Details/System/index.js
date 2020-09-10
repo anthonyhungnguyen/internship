@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Card, CardHeader, CardBody } from 'reactstrap'
+import { Card } from 'antd'
 import { useSelector } from 'react-redux'
 import Android from './Android'
 import Ios from './Ios'
@@ -18,10 +18,5 @@ export default () => {
 		return <Ios device={device} />
 	}
 
-	return (
-		<Card>
-			<CardHeader>System</CardHeader>
-			<CardBody>{handleRenderSystem()}</CardBody>
-		</Card>
-	)
+	return <Card title="System">{handleRenderSystem()}</Card>
 }

@@ -33,7 +33,7 @@ export default ({ device }) => {
 		hw_camera_front_max_video_resolution
 	} = device
 	const androidField = {
-		'Recorded At': moment(timestamp).format('YYYY'),
+		'Recorded At': moment(timestamp).format('L LTS'),
 		'Last Used By': userId,
 		'User Agent': user_agent,
 		'OS Name': os_name,

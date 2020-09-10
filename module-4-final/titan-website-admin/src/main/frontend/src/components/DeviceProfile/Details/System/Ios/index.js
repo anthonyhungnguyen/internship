@@ -3,7 +3,6 @@ import { Row, Col } from 'reactstrap'
 import moment from 'moment'
 
 export default ({ device }) => {
-	console.log(device)
 	const {
 		timestamp,
 		userId,
@@ -19,7 +18,7 @@ export default ({ device }) => {
 		hw_storage_total
 	} = device
 	const iosField = {
-		'Recorded At': moment(timestamp).format('YYYY'),
+		'Recorded At': moment(timestamp).format('L LTS'),
 		'Last Used By': userId,
 		'User Agent': user_agent,
 		'OS Name': os_name,
@@ -34,8 +33,8 @@ export default ({ device }) => {
 	}
 	return (
 		<Fragment>
-			{Object.keys(iosField).map((k) => (
-				<Row className="my-2">
+			{Object.keys(iosField).map((k, i) => (
+				<Row className="my-2" key={i}>
 					<Col className="font-bold" xs={3}>
 						{k}
 					</Col>
