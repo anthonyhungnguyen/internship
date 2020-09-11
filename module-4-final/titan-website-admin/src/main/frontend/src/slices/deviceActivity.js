@@ -45,7 +45,7 @@ export function fetchActivity(id) {
 	return async (dispatch) => {
 		dispatch(getActivity())
 		try {
-			const response = await fetch(`http://localhost:8085/api/user_device/${id}/timestamps`)
+			const response = await fetch(`http://localhost:8085/api/user_device/device/${id}/timestamps`)
 			const timestamps = await response.json()
 			if (timestamps.errorCode) {
 				dispatch(getActivityFailure(timestamps))

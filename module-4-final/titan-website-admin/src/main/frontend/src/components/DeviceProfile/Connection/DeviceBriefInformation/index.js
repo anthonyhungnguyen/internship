@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Row, Col, Skeleton, Descriptions } from 'antd'
+import { Card, Skeleton, Descriptions } from 'antd'
 import { useSelector } from 'react-redux'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import { formatTimestamp } from '../../../../slices/deviceActivity'
@@ -16,7 +16,7 @@ export default ({ currentChosenDevice, device, deviceId }) => {
 				if (deviceId !== currentDeviceData) {
 					const deviceData = await fetch(`http://localhost:8085/api/device/${currentChosenDevice}`)
 					const deviceTimestamp = await fetch(
-						`http://localhost:8085/api/user_device/${currentChosenDevice}/timestamps`
+						`http://localhost:8085/api/user_device/device/${currentChosenDevice}/timestamps`
 					)
 					const data = await deviceData.json()
 					const timestamps = await deviceTimestamp.json()
@@ -56,7 +56,7 @@ export default ({ currentChosenDevice, device, deviceId }) => {
 	}
 
 	return currentDeviceData ? (
-		<div className="animated fadeIn">
+		<div className="animated fadeIn my-2">
 			<Card
 				title="Device Brief Info"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}

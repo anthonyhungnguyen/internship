@@ -1,14 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { isEmptyBindingElement } from 'typescript'
 
 export const initialState = {
 	loading: true,
 	errorInfo: {},
 	hasErrors: false,
-	connections: [],
-	sourceTargetData: {
-		nodes: [],
-		links: []
-	},
 	graphData: {}
 }
 
@@ -22,9 +18,7 @@ const deviceConnectionSlice = createSlice({
 		getConnectionSuccess: (state, { payload }) => {
 			state.loading = false
 			state.hasErrors = false
-			state.connections = payload.connections
 			state.graphData = payload.graphData
-			state.sourceTargetData = payload.formattedConnections
 		},
 		getConnectionFailure: (state, { payload }) => {
 			state.loading = false
@@ -49,7 +43,7 @@ export function fetchConnection(id) {
 	return async (dispatch) => {
 		dispatch(getConnection())
 		try {
-			const response = await fetch(`http://localhost:8085/api/user_device/${id}/connections`)
+			const response = await fetch(`http://localhost:8085/api/user_device/device/${id}/connections`)
 			const connections = await response.json()
 			const formattedConnections = preprocessConnection(id, connections)
 			const graphData = generateGraphData(formattedConnections)
@@ -64,30 +58,13 @@ export function fetchConnection(id) {
 	}
 }
 
-export function fetchMoreConnection(id) {
-	return async (dispatch, getState) => {
-		try {
-			const response = await fetch(`http://localhost:8085/api/user_device/${id}/connections`)
-			const connections = await response.json()
-			const formattedConnections = preprocessMoreConnection(id, connections, getState()['deviceConnection'])
-			const graphData = generateGraphData(formattedConnections)
-			if (connections.errorCode) {
-				dispatch(getConnectionFailure(connections))
-			} else {
-				dispatch(getConnectionSuccess({ connections, formattedConnections, graphData }))
-			}
-		} catch (err) {
-			dispatch(getConnectionFailure())
-		}
-	}
-}
-
-export const preprocessConnection = (deviceId, connections) => {
+const preprocessConnection = (deviceId, connections) => {
 	let nodes = [
 		{
 			id: deviceId,
 			name: deviceId,
-			category: 0
+			category: 0,
+			type: 'device'
 		}
 	]
 	const links = []
@@ -125,24 +102,9 @@ export const preprocessConnection = (deviceId, connections) => {
 	}
 }
 
-export const preprocessMoreConnection = (deviceId, connections, oldConnections) => {
-	const oldSourceTarget = oldConnections['sourceTargetData']
-	let nodes = []
-	let nodeCount = []
-	let links = [ ...oldSourceTarget.links ]
-	if (oldSourceTarget.nodes.length === 0) {
-		nodes = [
-			{
-				id: deviceId,
-				name: deviceId,
-				category: 0
-			}
-		]
-		nodeCount = [ deviceId.trim() ]
-	} else {
-		nodes = [ ...oldSourceTarget.nodes ]
-		nodeCount = oldSourceTarget.nodes.map((n) => n.id)
-	}
+export const preprocessMoreConnection = (connections, nodes, links) => {
+	const nodeCount = nodes.map((x) => x.id)
+
 	connections.forEach((c) => {
 		const user = c['from'].split('/')[1].trim()
 		const device = c['to'].split('/')[1].trim()
@@ -175,7 +137,7 @@ export const preprocessMoreConnection = (deviceId, connections, oldConnections) 
 	}
 }
 
-const generateGraphData = (data) => {
+export const generateGraphData = (data) => {
 	const connectionsData = {
 		type: 'force',
 		categories: [
@@ -203,7 +165,8 @@ const generateGraphData = (data) => {
 				type: 'graph',
 				layout: 'force',
 				animation: true,
-				focusNodeAdjacency: true,
+				// edgeSymbol: [ 'none', 'arrow' ],
+				animationEasing: 'elasticIn',
 				label: {
 					normal: {
 						show: true,
@@ -214,8 +177,8 @@ const generateGraphData = (data) => {
 				itemStyle: {
 					borderColor: '#fff',
 					borderWidth: 1,
-					shadowBlur: 10,
-					shadowColor: 'rgba(0, 0, 0, 0.3)'
+					shadowBlur: 5,
+					shadowColor: 'rgba(0, 0, 0, 0.1)'
 				},
 				lineStyle: {
 					color: 'source',
@@ -230,7 +193,7 @@ const generateGraphData = (data) => {
 				data: connectionsData.nodes,
 				categories: connectionsData.categories,
 				force: {
-					edgeLength: 80,
+					edgeLength: 70,
 					repulsion: 600,
 					friction: 0.3
 				},

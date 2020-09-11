@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Skeleton, BackTop, Descriptions, Badge } from 'antd'
+import { Row, Col, Skeleton, BackTop } from 'antd'
 import Score from './Score'
 import System from './System'
 import Identity from './Identity'

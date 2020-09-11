@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react'
-import { Row, Col, Descriptions, Badge } from 'antd'
+import React from 'react'
+import { Descriptions } from 'antd'
 import moment from 'moment'
 
 export default ({ device }) => {

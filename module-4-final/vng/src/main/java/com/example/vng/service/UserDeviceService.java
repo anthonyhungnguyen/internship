@@ -31,4 +31,8 @@ public class UserDeviceService {
     public List<Map<String, String>> getAllDevicesUsedByUsersThatUseDevice(String id) {
         return userDeviceRepository.findMultipleUsersDevicesDepth2("devices/" + id);
     }
+
+    public List<Map<String, String>> getDevicesRelatedToUsers(String id) {
+        return userDeviceRepository.findDevicesRelatedToUsers("users/" + id);
+    }
 }

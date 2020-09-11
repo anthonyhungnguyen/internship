@@ -11,11 +11,14 @@ import java.util.Map;
 
 @Repository
 public interface UserDeviceRepository extends ArangoRepository<UserDevice, String> {
-    @Query("FOR d, ud in 1..1 INBOUND @id user_device RETURN ud.timestamp")
-    List<String> findDeviceTimestamp(@Param("id") String id);
+    @Query("FOR d, ud in 1..1 INBOUND @deviceId user_device RETURN ud.timestamp")
+    List<String> findDeviceTimestamp(@Param("deviceId") String id);
 
-    @Query("FOR u, ud IN 1..1 INBOUND @id user_device " +
+    @Query("FOR u, ud IN 1..1 INBOUND @deviceId user_device " +
             "FOR d, new_ud IN 1..1 OUTBOUND u._id user_device " +
             "RETURN DISTINCT {from: new_ud._from, to: new_ud._to}")
-    List<Map<String, String>> findMultipleUsersDevicesDepth2(@Param("id") String id);
+    List<Map<String, String>> findMultipleUsersDevicesDepth2(@Param("deviceId") String id);
+
+    @Query("FOR u, ud in 1..1 OUTBOUND @userId user_device RETURN DISTINCT {source: ud._from, target: ud._to}")
+    List<Map<String, String>> findDevicesRelatedToUsers(@Param("userId") String id);
 }

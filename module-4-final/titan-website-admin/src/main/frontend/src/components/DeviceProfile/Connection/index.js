@@ -4,18 +4,24 @@ import Graph from './Graph'
 import { deviceSelector } from '../../../slices/device'
 import { Row, Col, BackTop } from 'antd'
 import DeviceBriefInformation from './DeviceBriefInformation'
+import UserBriefInformation from './UserBriefInformation'
 
 export default () => {
 	const { deviceId, device } = useSelector(deviceSelector)
 	const [ currentChosenDevice, setCurrentChosenDevice ] = useState(deviceId)
+	const [ currentChosenUser, setCurrentChosenUser ] = useState('')
 	return (
 		<React.Fragment>
 			<Row gutter={[ 24, 24 ]}>
 				<Col span={16}>
-					<Graph setCurrentChosenDevice={setCurrentChosenDevice} />
+					<Graph
+						setCurrentChosenDevice={setCurrentChosenDevice}
+						setCurrentChosenUser={setCurrentChosenUser}
+					/>
 				</Col>
 				<Col span={8}>
 					<DeviceBriefInformation currentChosenDevice={currentChosenDevice} device={device} />
+					<UserBriefInformation currentChosenUser={currentChosenUser} />
 				</Col>
 			</Row>
 
