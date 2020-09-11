@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Col, Row } from 'antd'
+import { Card, Col, Row, Descriptions } from 'antd'
 import { useSelector } from 'react-redux'
 import { Select } from 'antd'
 import { deviceSelector } from '../../../../slices/device'
@@ -10,18 +10,10 @@ export default () => {
 	const { deviceId, device, loading } = useSelector(deviceSelector)
 
 	return (
-		<Card title="Identity">
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Device ID
-				</Col>
-				<Col span={18}>{deviceId}</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Total Users
-				</Col>
-				<Col span={18}>
+		<Card title="Identity" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+			<Descriptions column={1} bordered>
+				<Descriptions.Item label="Device ID">{deviceId}</Descriptions.Item>
+				<Descriptions.Item label="Total Users">
 					{!loading && (
 						<Select defaultValue={device.users.length} style={{ width: 120 }}>
 							{device.users.map((u) => (
@@ -31,8 +23,8 @@ export default () => {
 							))}
 						</Select>
 					)}
-				</Col>
-			</Row>
+				</Descriptions.Item>
+			</Descriptions>
 		</Card>
 	)
 }

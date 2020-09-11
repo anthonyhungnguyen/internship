@@ -1,0 +1,14 @@
+.ant-descriptions-view,
+.ant-descriptions-row,
+.ant-descriptions-row > th {
+	border: none !important;
+}
+
+.ant-descriptions-item-label {
+	background-color: #fff !important;
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.ant-descriptions-item-content {
+	font-size: 1.1em;
+}

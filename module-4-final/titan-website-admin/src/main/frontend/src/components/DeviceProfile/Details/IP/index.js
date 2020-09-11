@@ -1,57 +1,27 @@
 import React from 'react'
-import { Row, Col, Card } from 'antd'
+import { Descriptions, Card } from 'antd'
 
 export default () => {
+	const IP = {
+		'IP Address': '1.53.255.136 (IPv4)',
+		Location: 'Unknown',
+		Country: 'Vietnam (VN)',
+		'Latitude & Longitude': '10.81420, 106.64680',
+		'Tor Relay IP Address': 'No',
+		'VPN IP Address': 'Not Detected',
+		'Proxy IP Address': 'Not Detected',
+		Hostname: 'Unknown. Could not resolve hostname.'
+	}
+
 	return (
-		<Card title="IP Details">
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					IP Address
-				</Col>
-				<Col span={18}>1.53.255.136 (IPv4)</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Location
-				</Col>
-				<Col span={18}>Unknown</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Country
-				</Col>
-				<Col span={18}>Vietnam (VN)</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Latitude & Longitude
-				</Col>
-				<Col span={18}>10.81420, 106.64680</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Tor Relay IP Address
-				</Col>
-				<Col span={18}>No</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					VPN IP Address
-				</Col>
-				<Col span={18}>Not Detected</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Proxy IP Address
-				</Col>
-				<Col span={18}>Not Detected</Col>
-			</Row>
-			<Row className="my-2">
-				<Col className="font-bold" span={6}>
-					Hostname
-				</Col>
-				<Col span={18}>Unknown. Could not resolve hostname.</Col>
-			</Row>
+		<Card title="IP Details" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+			<Descriptions column={1} bordered>
+				{Object.keys(IP).map((k, i) => (
+					<Descriptions.Item label={k} key={i}>
+						{IP[k]}
+					</Descriptions.Item>
+				))}
+			</Descriptions>
 		</Card>
 	)
 }

@@ -4,10 +4,10 @@ import { Card, Row, Col } from 'antd'
 
 export default () => {
 	return (
-		<Card title="Score">
+		<Card title="Score" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Row gutter={[ 24, 24 ]} align="middle">
 				<Col span={8}>
-					<p className="text-6xl">32.22</p>
+					<p className="text-6xl m-0">32.22</p>
 					<p className="text-xs text-gray-500 font-bold">FRAUD SCORE</p>
 					<Progress percent="33.32" showInfo={false} status="active" size="small" strokeColor="#e74c3c" />
 				</Col>

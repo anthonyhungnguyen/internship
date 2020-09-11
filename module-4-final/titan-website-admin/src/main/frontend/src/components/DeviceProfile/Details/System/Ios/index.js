@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Row, Col } from 'reactstrap'
+import { Row, Col, Descriptions, Badge } from 'antd'
 import moment from 'moment'
 
 export default ({ device }) => {
@@ -32,15 +32,12 @@ export default ({ device }) => {
 		'RAM Total': hw_ram_total
 	}
 	return (
-		<Fragment>
+		<Descriptions column={1} bordered>
 			{Object.keys(iosField).map((k, i) => (
-				<Row className="my-2" key={i}>
-					<Col className="font-bold" xs={3}>
-						{k}
-					</Col>
-					<Col xs={9}>{iosField[k]}</Col>
-				</Row>
+				<Descriptions.Item label={k} key={i}>
+					{iosField[k]}
+				</Descriptions.Item>
 			))}
-		</Fragment>
+		</Descriptions>
 	)
 }

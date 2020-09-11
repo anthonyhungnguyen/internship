@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Row, Col } from 'reactstrap'
+import { Row, Col, Descriptions, Badge } from 'antd'
 import moment from 'moment'
 
 export default ({ device }) => {
@@ -62,15 +62,12 @@ export default ({ device }) => {
 		'Camera Back Video Resolution': hw_camera_back_max_video_resolution
 	}
 	return (
-		<Fragment>
-			{Object.keys(androidField).map((k) => (
-				<Row className="my-2">
-					<Col className="font-bold" xs={3}>
-						{k}
-					</Col>
-					<Col xs={9}>{androidField[k]}</Col>
-				</Row>
+		<Descriptions column={1} bordered>
+			{Object.keys(androidField).map((k, i) => (
+				<Descriptions.Item label={k} key={i}>
+					{androidField[k]}
+				</Descriptions.Item>
 			))}
-		</Fragment>
+		</Descriptions>
 	)
 }

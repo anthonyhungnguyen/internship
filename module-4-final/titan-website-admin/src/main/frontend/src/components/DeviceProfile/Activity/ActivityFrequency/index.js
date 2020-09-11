@@ -42,7 +42,7 @@ export default function() {
 		}
 	}
 	return !loading ? (
-		<Card title="Activity Date Frequency">
+		<Card title="Activity Date Frequency" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<ReactEcharts
 				option={getOption()}
 				style={{ height: '500px', width: '100%' }}

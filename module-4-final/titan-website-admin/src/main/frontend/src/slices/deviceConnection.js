@@ -196,16 +196,34 @@ const generateGraphData = (data) => {
 		legend: {
 			data: [ 'Root Device', 'Users', 'Related Devices' ]
 		},
+		animationDurationUpdate: 3000,
+		animationEasingUpdate: 'quinticInOut',
 		series: [
 			{
 				type: 'graph',
 				layout: 'force',
 				animation: true,
+				focusNodeAdjacency: true,
 				label: {
 					normal: {
 						show: true,
 						position: 'top',
 						formatter: '{b}'
+					}
+				},
+				itemStyle: {
+					borderColor: '#fff',
+					borderWidth: 1,
+					shadowBlur: 10,
+					shadowColor: 'rgba(0, 0, 0, 0.3)'
+				},
+				lineStyle: {
+					color: 'source',
+					curveness: 0.1
+				},
+				emphasis: {
+					lineStyle: {
+						width: 5
 					}
 				},
 				draggable: true,
