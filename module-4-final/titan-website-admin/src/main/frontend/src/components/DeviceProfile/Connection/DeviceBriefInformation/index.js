@@ -29,14 +29,6 @@ export default ({ currentChosenDevice, device, deviceId }) => {
 		[ currentChosenDevice ]
 	)
 
-	useEffect(
-		() => {
-			setCurrentDeviceData(device)
-			setCurrentDeviceTimestamps(formattedTimestamps)
-		},
-		[ loading ]
-	)
-
 	const handleCalculateTotalActiveTimes = (timestamps) => {
 		let total = 0
 		timestamps.forEach((t) => (total += t['count']))
@@ -56,7 +48,7 @@ export default ({ currentChosenDevice, device, deviceId }) => {
 	}
 
 	return currentDeviceData ? (
-		<div className="animated fadeIn my-2">
+		<div className="animated fadeIn mb-2">
 			<Card
 				title="Device Brief Info"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}

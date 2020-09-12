@@ -1,15 +1,13 @@
 import React from 'react'
 import { Row, Col, Skeleton, BackTop } from 'antd'
+import { UpCircleFilled } from '@ant-design/icons'
 import Score from './Score'
 import System from './System'
 import Identity from './Identity'
 import IP from './IP'
-import { useSelector } from 'react-redux'
-import { deviceSelector } from '../../../slices/device'
 
 export default () => {
-	const { loading } = useSelector(deviceSelector)
-	return !loading ? (
+	return (
 		<div className="animated fadeIn text-gray-700">
 			<Row gutter={[ 24, 24 ]}>
 				<Col span={24}>
@@ -36,23 +34,8 @@ export default () => {
 			</Row>
 
 			<BackTop>
-				<div
-					style={{
-						color: '#fff',
-						backgroundColor: '#3498db',
-						borderRadius: 4,
-						textAlign: 'center',
-						lineHeight: '43px',
-						fontSize: '20px',
-						width: 40,
-						height: 40
-					}}
-				>
-					^
-				</div>
+				<UpCircleFilled style={{ fontSize: '30px', color: '#3498db' }} />
 			</BackTop>
 		</div>
-	) : (
-		<Skeleton active />
 	)
 }

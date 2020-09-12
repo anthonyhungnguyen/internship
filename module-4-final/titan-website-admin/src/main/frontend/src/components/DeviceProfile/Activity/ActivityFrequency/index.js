@@ -2,10 +2,10 @@ import React from 'react'
 import { useSelector } from 'react-redux/'
 import ReactEcharts from 'echarts-for-react'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
-import { Card, Skeleton } from 'antd'
+import { Card } from 'antd'
 
 export default function() {
-	const { loading, formattedTimestamps } = useSelector(deviceActivitySelector)
+	const { formattedTimestamps } = useSelector(deviceActivitySelector)
 
 	const getOption = () => {
 		return {
@@ -41,7 +41,7 @@ export default function() {
 			]
 		}
 	}
-	return !loading ? (
+	return (
 		<Card title="Activity Date Frequency" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<ReactEcharts
 				option={getOption()}
@@ -50,7 +50,5 @@ export default function() {
 				className="react_for_echarts"
 			/>
 		</Card>
-	) : (
-		<Skeleton active />
 	)
 }

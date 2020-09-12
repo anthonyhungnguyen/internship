@@ -12,7 +12,6 @@ export default () => {
 					<Progress percent="33.32" showInfo={false} status="active" size="small" strokeColor="#e74c3c" />
 				</Col>
 				<Col span={16}>
-					<p className="font-bold">Details Score</p>
 					<Row gutter={[ 40, 24 ]}>
 						<Col span={12} className="gutter-row">
 							<p className="text-4xl">17.8</p>

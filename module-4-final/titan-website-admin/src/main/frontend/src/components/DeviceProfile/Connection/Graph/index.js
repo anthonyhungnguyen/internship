@@ -4,13 +4,15 @@ import ReactEcharts from 'echarts-for-react'
 import { Card } from 'antd'
 import { deviceConnectionSelector } from '../../../../slices/deviceConnection'
 import { preprocessMoreConnection, generateGraphData } from '../../../../slices/deviceConnection'
+import copy from 'copy-to-clipboard'
 
 export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
-	const { loading, graphData } = useSelector(deviceConnectionSelector)
+	const { graphData } = useSelector(deviceConnectionSelector)
 	let ref = useRef()
 
 	const handleOnClick = async (e) => {
 		if (e.data.type === 'device') {
+			copy(e.data.id.trim())
 			setCurrentChosenDevice(e.data.id)
 		} else if (e.data.type === 'user') {
 			setCurrentChosenUser(e.data.id)
@@ -40,10 +42,9 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 		<div className="animated fadeIn">
 			<Card
 				className="w-full"
-				title="Device Depth 2-3"
+				title="Device Depth"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				loading={loading}
 			>
 				<ReactEcharts
 					ref={ref}

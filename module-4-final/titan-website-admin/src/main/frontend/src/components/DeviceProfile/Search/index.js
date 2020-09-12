@@ -7,17 +7,18 @@ import Connection from '../Connection'
 const { TabPane } = Tabs
 const { Search } = Input
 
-export default ({ currentDeviceId, setCurrentDeviceId }) => {
+export default ({ currentDeviceId, setCurrentDeviceId, activeTab, setActiveTab }) => {
 	return (
 		<Tabs
-			defaultActiveKey="1"
+			defaultActiveKey={activeTab}
 			animated={true}
+			onChange={(e) => setActiveTab(e)}
 			type="card"
 			tabBarExtraContent={
 				<Search
 					defaultValue={currentDeviceId}
 					placeholder="input device id"
-					onSearch={(deviceId) => setCurrentDeviceId(deviceId)}
+					onSearch={(deviceId) => setCurrentDeviceId(deviceId.trim())}
 					size="large"
 					enterButton
 				/>

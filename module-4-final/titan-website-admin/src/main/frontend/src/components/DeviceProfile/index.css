@@ -12,3 +12,7 @@
 .ant-descriptions-item-content {
 	font-size: 1.1em;
 }
+
+.ant-tabs-extra-content {
+	width: 30%;
+}

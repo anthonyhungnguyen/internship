@@ -32,7 +32,11 @@ public class UserDeviceService {
         return userDeviceRepository.findMultipleUsersDevicesDepth2("devices/" + id);
     }
 
-    public List<Map<String, String>> getDevicesRelatedToUsers(String id) {
+    public List<Map<String, String>> getDevicesRelatedToUser(String id) {
         return userDeviceRepository.findDevicesRelatedToUsers("users/" + id);
+    }
+
+    public List<Map<String, String>> getUsersRelatedToDevice(String id) {
+        return userDeviceRepository.findUsersRelatedToDevices("devices/" + id);
     }
 }

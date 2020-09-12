@@ -5,6 +5,7 @@ import { deviceSelector } from '../../../slices/device'
 import { Row, Col, BackTop } from 'antd'
 import DeviceBriefInformation from './DeviceBriefInformation'
 import UserBriefInformation from './UserBriefInformation'
+import { UpCircleFilled } from '@ant-design/icons'
 
 export default () => {
 	const { deviceId, device } = useSelector(deviceSelector)
@@ -26,20 +27,7 @@ export default () => {
 			</Row>
 
 			<BackTop>
-				<div
-					style={{
-						color: '#fff',
-						backgroundColor: '#3498db',
-						borderRadius: 4,
-						textAlign: 'center',
-						lineHeight: '43px',
-						fontSize: '20px',
-						width: 40,
-						height: 40
-					}}
-				>
-					^
-				</div>
+				<UpCircleFilled style={{ fontSize: '30px', color: '#3498db' }} />
 			</BackTop>
 		</React.Fragment>
 	)

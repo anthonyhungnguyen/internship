@@ -18,7 +18,7 @@ const deviceConnectionSlice = createSlice({
 		getConnectionSuccess: (state, { payload }) => {
 			state.loading = false
 			state.hasErrors = false
-			state.graphData = payload.graphData
+			state.graphData = payload
 		},
 		getConnectionFailure: (state, { payload }) => {
 			state.loading = false
@@ -43,14 +43,14 @@ export function fetchConnection(id) {
 	return async (dispatch) => {
 		dispatch(getConnection())
 		try {
-			const response = await fetch(`http://localhost:8085/api/user_device/device/${id}/connections`)
+			const response = await fetch(`http://localhost:8085/api/user_device/device_users/${id}/connections`)
 			const connections = await response.json()
 			const formattedConnections = preprocessConnection(id, connections)
 			const graphData = generateGraphData(formattedConnections)
 			if (connections.errorCode) {
 				dispatch(getConnectionFailure(connections))
 			} else {
-				dispatch(getConnectionSuccess({ connections, formattedConnections, graphData }))
+				dispatch(getConnectionSuccess(graphData))
 			}
 		} catch (err) {
 			dispatch(getConnectionFailure())
@@ -70,9 +70,9 @@ const preprocessConnection = (deviceId, connections) => {
 	const links = []
 	const nodeCount = [ deviceId.trim() ]
 
-	connections.forEach((c) => {
-		const user = c['from'].split('/')[1].trim()
-		const device = c['to'].split('/')[1].trim()
+	connections.forEach(async (c) => {
+		const user = c['source'].split('/')[1].trim()
+		const device = c['target'].split('/')[1].trim()
 		if (nodeCount.indexOf(device) < 0) {
 			nodes.push({
 				id: device,
@@ -106,12 +106,12 @@ export const preprocessMoreConnection = (connections, nodes, links) => {
 	const nodeCount = nodes.map((x) => x.id)
 
 	connections.forEach((c) => {
-		const user = c['from'].split('/')[1].trim()
-		const device = c['to'].split('/')[1].trim()
+		const user = c['source'].split('/')[1].trim()
+		const device = c['target'].split('/')[1].trim()
 		if (nodeCount.indexOf(device) < 0) {
 			nodes.push({
 				id: device,
-				name: device,
+				name: `${device}`,
 				category: 3,
 				type: 'device'
 			})
@@ -194,12 +194,12 @@ export const generateGraphData = (data) => {
 				categories: connectionsData.categories,
 				force: {
 					edgeLength: 70,
-					repulsion: 600,
-					friction: 0.3
+					repulsion: 400,
+					friction: 0.2
 				},
 				edges: connectionsData.links,
 				roam: true,
-				symbolSize: 15
+				symbolSize: 16
 			}
 		]
 	}

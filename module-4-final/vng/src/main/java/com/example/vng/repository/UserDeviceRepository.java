@@ -16,9 +16,12 @@ public interface UserDeviceRepository extends ArangoRepository<UserDevice, Strin
 
     @Query("FOR u, ud IN 1..1 INBOUND @deviceId user_device " +
             "FOR d, new_ud IN 1..1 OUTBOUND u._id user_device " +
-            "RETURN DISTINCT {from: new_ud._from, to: new_ud._to}")
+            "RETURN DISTINCT {source: new_ud._from, target: new_ud._to}")
     List<Map<String, String>> findMultipleUsersDevicesDepth2(@Param("deviceId") String id);
 
-    @Query("FOR u, ud in 1..1 OUTBOUND @userId user_device RETURN DISTINCT {source: ud._from, target: ud._to}")
+    @Query("FOR u, ud IN 1..1 OUTBOUND @userId user_device RETURN DISTINCT {source: ud._from, target: ud._to}")
     List<Map<String, String>> findDevicesRelatedToUsers(@Param("userId") String id);
+
+    @Query("FOR d, ud IN 1..1 INBOUND @deviceId user_device RETURN DISTINCT {source: ud._from, target: ud._to}")
+    List<Map<String, String>> findUsersRelatedToDevices(@Param("deviceId") String id);
 }
