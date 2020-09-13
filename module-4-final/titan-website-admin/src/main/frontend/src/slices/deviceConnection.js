@@ -62,7 +62,7 @@ const preprocessConnection = (deviceId, connections) => {
 	let nodes = [
 		{
 			id: deviceId,
-			name: deviceId,
+			name: `${deviceId} (expanded)`,
 			category: 0,
 			type: 'device'
 		}
@@ -102,8 +102,23 @@ const preprocessConnection = (deviceId, connections) => {
 	}
 }
 
-export const preprocessMoreConnection = (connections, nodes, links) => {
+// const handleDoubleClick = async (e) => {
+// 	if (e.data.type === 'device') {
+// 		const response = await fetch(`http://localhost:8085/api/user_device/device/${e.data.id}/connections`)
+// 		const connections = await response.json()
+// 		processNewGraphData(e.data.id, connections)
+// 	} else if (e.data.type === 'user') {
+// 		const response = await fetch(`http://localhost:8085/api/user_device/user/${e.data.id}/connections`)
+// 		const connections = await response.json()
+// 		processNewGraphData(e.data.id, connections)
+// 	}
+// }
+
+export const preprocessMoreConnection = (deviceId, connections, nodes, links) => {
 	const nodeCount = nodes.map((x) => x.id)
+
+	const expandedNodeIndex = nodes.findIndex((n) => n.id === deviceId)
+	nodes[expandedNodeIndex] = { ...nodes[expandedNodeIndex], name: nodes[expandedNodeIndex]['name'] + ' (expanded) ' }
 
 	connections.forEach((c) => {
 		const user = c['source'].split('/')[1].trim()
@@ -193,8 +208,8 @@ export const generateGraphData = (data) => {
 				data: connectionsData.nodes,
 				categories: connectionsData.categories,
 				force: {
-					edgeLength: 70,
-					repulsion: 400,
+					edgeLength: 90,
+					repulsion: 600,
 					friction: 0.2
 				},
 				edges: connectionsData.links,

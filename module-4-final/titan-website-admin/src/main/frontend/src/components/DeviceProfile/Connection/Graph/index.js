@@ -15,14 +15,15 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 			copy(e.data.id.trim())
 			setCurrentChosenDevice(e.data.id)
 		} else if (e.data.type === 'user') {
+			copy(e.data.id.trim())
 			setCurrentChosenUser(e.data.id)
 		}
 	}
 
-	const processNewGraphData = (connections) => {
+	const processNewGraphData = (deviceId, connections) => {
 		let echartsInstance = ref.current.getEchartsInstance()
 		const { data, edges } = echartsInstance.getOption()['series'][0]
-		const moreConnection = preprocessMoreConnection(connections, data, edges)
+		const moreConnection = preprocessMoreConnection(deviceId, connections, data, edges)
 		const newGraphData = generateGraphData(moreConnection)
 		ref.current.getEchartsInstance().setOption(newGraphData)
 	}
@@ -31,11 +32,11 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 		if (e.data.type === 'device') {
 			const response = await fetch(`http://localhost:8085/api/user_device/device/${e.data.id}/connections`)
 			const connections = await response.json()
-			processNewGraphData(connections)
+			processNewGraphData(e.data.id, connections)
 		} else if (e.data.type === 'user') {
 			const response = await fetch(`http://localhost:8085/api/user_device/user/${e.data.id}/connections`)
 			const connections = await response.json()
-			processNewGraphData(connections)
+			processNewGraphData(e.data.id, connections)
 		}
 	}
 	return (

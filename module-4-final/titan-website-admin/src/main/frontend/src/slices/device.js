@@ -5,16 +5,18 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	device: null,
-	deviceId: ''
+	deviceId: 'EDF10704-E7E4-4CC6-BA25-9A30C7720D02'
 }
 
 const deviceSlice = createSlice({
 	name: 'device',
 	initialState,
 	reducers: {
-		getDevice: (state, { payload }) => {
-			state.loading = true
+		storeDeviceId: (state, { payload }) => {
 			state.deviceId = payload.trim()
+		},
+		getDevice: (state) => {
+			state.loading = true
 		},
 		getDeviceSuccess: (state, { payload }) => {
 			state.device = payload
@@ -30,7 +32,7 @@ const deviceSlice = createSlice({
 })
 
 // Three actions from slice
-export const { getDevice, getDeviceSuccess, getDeviceFailure } = deviceSlice.actions
+export const { storeDeviceId, getDevice, getDeviceSuccess, getDeviceFailure } = deviceSlice.actions
 
 // Export state selector
 export const deviceSelector = (state) => state.device
@@ -41,7 +43,7 @@ export default deviceSlice.reducer
 // Asynchronous thunk action
 export function fetchDevice(id) {
 	return async (dispatch) => {
-		dispatch(getDevice(id))
+		dispatch(getDevice())
 		try {
 			const response = await fetch(`http://localhost:8085/api/device/${id}`)
 			const payload = await response.json()
