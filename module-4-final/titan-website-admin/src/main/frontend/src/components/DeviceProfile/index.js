@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react'
+import React, { useState, Suspense, useEffect } from 'react'
 import { Input, Tabs, Skeleton } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
 import { deviceSelector, storeDeviceId } from '../../slices/device'
@@ -14,7 +14,8 @@ const { Search } = Input
 export default React.memo(() => {
 	const dispatch = useDispatch()
 	const { deviceId, loading } = useSelector(deviceSelector)
-	const [ activeTab, setActiveTab ] = useState('details')
+	const [activeTab, setActiveTab] = useState('details')
+
 	return (
 		<Tabs
 			defaultActiveKey={activeTab}
