@@ -20,13 +20,23 @@ public class UserDeviceController {
         this.userDeviceService = userDeviceService;
     }
 
-    @GetMapping("user_device/{id}/timestamps")
+    @GetMapping("user_device/device/{id}/timestamps")
     public List<String> getDeviceTimestampsById(@PathVariable("id") String id) {
         return userDeviceService.getDeviceTimestampsById(id);
     }
 
-    @GetMapping("user_device/{id}/connections")
+    @GetMapping("user_device/device_users/{id}/connections")
     public List<Map<String, String>> getAllDevicesUsedByUsersThatUseDevice(@PathVariable("id") String id) {
         return userDeviceService.getAllDevicesUsedByUsersThatUseDevice(id);
+    }
+
+    @GetMapping("user_device/user/{id}/connections")
+    public List<Map<String, String>> getDevicesRelatedToUsers(@PathVariable("id") String id) {
+        return userDeviceService.getDevicesRelatedToUser(id);
+    }
+
+    @GetMapping("user_device/device/{id}/connections")
+    public List<Map<String, String>> getUsersRelatedToDevice(@PathVariable("id") String id) {
+        return userDeviceService.getUsersRelatedToDevice(id);
     }
 }

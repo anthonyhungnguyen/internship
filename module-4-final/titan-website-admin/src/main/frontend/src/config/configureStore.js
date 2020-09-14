@@ -1,11 +1,14 @@
-import { createStore, combineReducers } from 'redux';
-import reducers from '../reducers';
+import { combineReducers } from '@reduxjs/toolkit'
+import reducers from '../reducers'
+import deviceReducer from '../slices/device'
+import deviceActivityReducer from '../slices/deviceActivity'
+import deviceConnectionReducer from '../slices/deviceConnection'
 
-export default function configureStore() {
-  return createStore(
-    combineReducers({
-      ...reducers
-    }),
-    {},
-  );
-}
+const rootReducer = combineReducers({
+	device: deviceReducer,
+	deviceActivity: deviceActivityReducer,
+	deviceConnection: deviceConnectionReducer,
+	...reducers
+})
+
+export default rootReducer
