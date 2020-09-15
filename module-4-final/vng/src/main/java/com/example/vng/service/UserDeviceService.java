@@ -1,5 +1,7 @@
 package com.example.vng.service;
 
+import com.example.vng.model.Merchant;
+import com.example.vng.repository.TPERepository;
 import com.example.vng.repository.UserDeviceRepository;
 import com.example.vng.utilities.TimestampConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,30 +15,36 @@ import java.util.stream.Collectors;
 public class UserDeviceService {
 
     private final UserDeviceRepository userDeviceRepository;
+    private final TPERepository tpeRepository;
     private final TimestampConverter timestampConverter;
 
     @Autowired
     public UserDeviceService(UserDeviceRepository userDeviceRepository,
-            TimestampConverter timestampConverter) {
+                             TPERepository tpeRepository, TimestampConverter timestampConverter) {
         this.userDeviceRepository = userDeviceRepository;
+        this.tpeRepository = tpeRepository;
         this.timestampConverter = timestampConverter;
     }
 
     public List<String> getDeviceTimestampsById(String id) {
         List<String> deviceTimestamps =
-                userDeviceRepository.findDeviceTimestamp("devices/" + id);
+                userDeviceRepository.findDeviceTimestamp("devices/" + id, "user_use_device");
         return deviceTimestamps.stream().map(timestampConverter::convertTimestamp).collect(Collectors.toList());
     }
 
     public List<Map<String, String>> getAllDevicesUsedByUsersThatUseDevice(String id) {
-        return userDeviceRepository.findMultipleUsersDevicesDepth2("devices/" + id);
+        return userDeviceRepository.findMultipleUsersDevicesDepth2("devices/" + id, "user_use_device");
     }
 
     public List<Map<String, String>> getDevicesRelatedToUser(String id) {
-        return userDeviceRepository.findDevicesRelatedToUsers("users/" + id);
+        return userDeviceRepository.findDevicesRelatedToUsers("users/" + id, "user_use_device");
     }
 
     public List<Map<String, String>> getUsersRelatedToDevice(String id) {
-        return userDeviceRepository.findUsersRelatedToDevices("devices/" + id);
+        return userDeviceRepository.findUsersRelatedToDevices("devices/" + id, "user_use_device");
+    }
+
+    public List<Merchant> getMerchantCountByDeviceId(String id) {
+        return tpeRepository.getMerchantCountByDeviceId("devices/" + id, "transaction");
     }
 }

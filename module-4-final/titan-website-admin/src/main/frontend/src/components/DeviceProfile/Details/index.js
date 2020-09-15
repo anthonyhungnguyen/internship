@@ -17,7 +17,6 @@ export default React.memo(() => {
 		},
 		[ dispatch, deviceId ]
 	)
-
 	return !loading && !hasErrors ? (
 		<div className="animated fadeIn text-gray-700">
 			<Row gutter={[ 24, 24 ]}>

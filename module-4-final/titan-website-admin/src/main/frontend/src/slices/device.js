@@ -5,7 +5,7 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	device: null,
-	deviceId: 'EDF10704-E7E4-4CC6-BA25-9A30C7720D02'
+	deviceId: 'A321541E-966B-485B-87C2-9783FB0457F9'
 }
 
 const deviceSlice = createSlice({
@@ -47,11 +47,7 @@ export function fetchDevice(id) {
 		try {
 			const response = await fetch(`http://localhost:8085/api/device/${id}`)
 			const payload = await response.json()
-			if (payload.errorCode) {
-				dispatch(getDeviceFailure(payload))
-			} else {
-				dispatch(getDeviceSuccess(payload))
-			}
+			dispatch(getDeviceSuccess(payload))
 		} catch (err) {
 			dispatch(getDeviceFailure())
 		}

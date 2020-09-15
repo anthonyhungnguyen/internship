@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux/'
 import ReactEcharts from 'echarts-for-react'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
-import { Card } from 'antd'
+import { Card, Modal } from 'antd'
 
 export default function() {
 	const { formattedTimestamps } = useSelector(deviceActivitySelector)
+	const [ visible, setVisible ] = useState(false)
 
 	const getOption = () => {
 		return {
@@ -41,14 +42,36 @@ export default function() {
 			]
 		}
 	}
+
+	const handleToggleVisible = () => {
+		setVisible((old) => !old)
+	}
+
 	return (
-		<Card title="Activity Date Frequency" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
-			<ReactEcharts
-				option={getOption()}
-				style={{ height: '500px', width: '100%' }}
-				opts={{ renderer: 'svg' }}
-				className="react_for_echarts"
-			/>
-		</Card>
+		<React.Fragment>
+			<Card
+				title="Activity Date Frequency"
+				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
+				hoverable={true}
+				onClick={handleToggleVisible}
+			>
+				<ReactEcharts option={getOption()} opts={{ renderer: 'svg' }} className="react_for_echarts" />
+			</Card>
+			<Modal
+				title="Activity Date Frequency"
+				visible={visible}
+				onOk={handleToggleVisible}
+				onCancel={handleToggleVisible}
+				centered
+				width={1000}
+			>
+				<ReactEcharts
+					option={getOption()}
+					style={{ height: '500px', width: '100%' }}
+					opts={{ renderer: 'svg' }}
+					className="react_for_echarts"
+				/>
+			</Modal>
+		</React.Fragment>
 	)
 }

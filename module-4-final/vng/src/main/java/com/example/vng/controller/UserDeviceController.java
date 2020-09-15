@@ -1,5 +1,6 @@
 package com.example.vng.controller;
 
+import com.example.vng.model.Merchant;
 import com.example.vng.service.UserDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,5 +39,10 @@ public class UserDeviceController {
     @GetMapping("user_device/device/{id}/connections")
     public List<Map<String, String>> getUsersRelatedToDevice(@PathVariable("id") String id) {
         return userDeviceService.getUsersRelatedToDevice(id);
+    }
+
+    @GetMapping("user_device/device/{id}/merchant")
+    public List<Merchant> getMerchantCountByDeviceId(@PathVariable("id") String id) {
+        return userDeviceService.getMerchantCountByDeviceId(id);
     }
 }

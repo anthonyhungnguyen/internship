@@ -20,12 +20,15 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 		}
 	}
 
-	const processNewGraphData = (deviceId, connections) => {
+	const processNewGraphData = (id, connections) => {
 		let echartsInstance = ref.current.getEchartsInstance()
 		const { data, edges } = echartsInstance.getOption()['series'][0]
-		const moreConnection = preprocessMoreConnection(deviceId, connections, data, edges)
-		const newGraphData = generateGraphData(moreConnection)
-		ref.current.getEchartsInstance().setOption(newGraphData)
+		const nodeToExpand = data.find((d) => d.id === id)
+		if (!nodeToExpand.name.includes('expanded')) {
+			const moreConnection = preprocessMoreConnection(id, connections, data, edges)
+			const newGraphData = generateGraphData(moreConnection)
+			ref.current.getEchartsInstance().setOption(newGraphData)
+		}
 	}
 
 	const handleDoubleClick = async (e) => {

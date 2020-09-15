@@ -24,11 +24,12 @@ public class DeviceService {
     }
 
     public Device findDeviceById(String id) {
-        Device device = deviceRepository.findById(id).orElse(null);
+        Device device = deviceRepository.findById("devices/" + id).orElse(null);
         if (device != null) {
             String timestampConverted =
                     timestampConverter.convertTimestamp(device.getTimestamp());
             device.setTimestamp(timestampConverted);
+            System.out.println(device);
         }
         return device;
     }

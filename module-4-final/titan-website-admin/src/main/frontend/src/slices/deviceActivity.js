@@ -6,7 +6,8 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	timestamps: [],
-	formattedTimestamps: []
+	formattedTimestamps: [],
+	merchantFrequency: []
 }
 
 const deviceActivitySlice = createSlice({
@@ -21,6 +22,7 @@ const deviceActivitySlice = createSlice({
 			state.loading = false
 			state.timestamps = payload.timestamps
 			state.formattedTimestamps = payload.formattedTimestamps
+			state.merchantFrequency = payload.merchantFrequency
 		},
 		getActivityFailure: (state, { payload }) => {
 			state.loading = false
@@ -46,12 +48,15 @@ export function fetchActivity(id) {
 		dispatch(getActivity())
 		try {
 			const response = await fetch(`http://localhost:8085/api/user_device/device/${id}/timestamps`)
+			const merchantResponse = await fetch(`http://localhost:8085/api/user_device/device/${id}/merchant`)
+
 			const timestamps = await response.json()
+			const merchantFrequency = await merchantResponse.json()
 			if (timestamps.errorCode) {
 				dispatch(getActivityFailure(timestamps))
 			} else {
 				const formattedTimestamps = formatTimestamp(timestamps)
-				dispatch(getActivitySuccess({ timestamps, formattedTimestamps }))
+				dispatch(getActivitySuccess({ timestamps, formattedTimestamps, merchantFrequency }))
 			}
 		} catch (err) {
 			dispatch(getActivityFailure())

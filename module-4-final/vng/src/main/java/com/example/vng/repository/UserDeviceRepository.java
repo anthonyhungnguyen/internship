@@ -11,17 +11,17 @@ import java.util.Map;
 
 @Repository
 public interface UserDeviceRepository extends ArangoRepository<UserDevice, String> {
-    @Query("FOR d, ud in 1..1 INBOUND @deviceId user_device RETURN ud.timestamp")
-    List<String> findDeviceTimestamp(@Param("deviceId") String id);
+    @Query("FOR d, ud in 1..1 INBOUND @deviceId users_devices FILTER ud.type == @type RETURN ud.timestamp")
+    List<String> findDeviceTimestamp(@Param("deviceId") String id, @Param("type") String type);
 
-    @Query("FOR u, ud IN 1..1 INBOUND @deviceId user_device " +
-            "FOR d, new_ud IN 1..1 OUTBOUND u._id user_device " +
-            "RETURN DISTINCT {source: new_ud._from, target: new_ud._to}")
-    List<Map<String, String>> findMultipleUsersDevicesDepth2(@Param("deviceId") String id);
+    @Query("FOR u, ud IN 1..1 INBOUND @deviceId users_devices FILTER ud.type == @type" +
+            " FOR d, new_ud IN 1..1 OUTBOUND u._id users_devices FILTER new_ud.type == @type" +
+            " RETURN DISTINCT {source: new_ud._from, target: new_ud._to}")
+    List<Map<String, String>> findMultipleUsersDevicesDepth2(@Param("deviceId") String id, @Param("type") String type);
 
-    @Query("FOR u, ud IN 1..1 OUTBOUND @userId user_device RETURN DISTINCT {source: ud._from, target: ud._to}")
-    List<Map<String, String>> findDevicesRelatedToUsers(@Param("userId") String id);
+    @Query("FOR u, ud IN 1..1 OUTBOUND @userId users_devices FILTER ud.type == @type RETURN DISTINCT {source: ud._from, target: ud._to}")
+    List<Map<String, String>> findDevicesRelatedToUsers(@Param("userId") String id, @Param("type") String type);
 
-    @Query("FOR d, ud IN 1..1 INBOUND @deviceId user_device RETURN DISTINCT {source: ud._from, target: ud._to}")
-    List<Map<String, String>> findUsersRelatedToDevices(@Param("deviceId") String id);
+    @Query("FOR d, ud IN 1..1 INBOUND @deviceId users_devices FILTER ud.type == @type RETURN DISTINCT {source: ud._from, target: ud._to}")
+    List<Map<String, String>> findUsersRelatedToDevices(@Param("deviceId") String id, @Param("type") String type);
 }

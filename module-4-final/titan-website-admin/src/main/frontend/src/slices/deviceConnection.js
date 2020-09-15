@@ -102,22 +102,10 @@ const preprocessConnection = (deviceId, connections) => {
 	}
 }
 
-// const handleDoubleClick = async (e) => {
-// 	if (e.data.type === 'device') {
-// 		const response = await fetch(`http://localhost:8085/api/user_device/device/${e.data.id}/connections`)
-// 		const connections = await response.json()
-// 		processNewGraphData(e.data.id, connections)
-// 	} else if (e.data.type === 'user') {
-// 		const response = await fetch(`http://localhost:8085/api/user_device/user/${e.data.id}/connections`)
-// 		const connections = await response.json()
-// 		processNewGraphData(e.data.id, connections)
-// 	}
-// }
-
-export const preprocessMoreConnection = (deviceId, connections, nodes, links) => {
+export const preprocessMoreConnection = (id, connections, nodes, links) => {
 	const nodeCount = nodes.map((x) => x.id)
 
-	const expandedNodeIndex = nodes.findIndex((n) => n.id === deviceId)
+	const expandedNodeIndex = nodes.findIndex((n) => n.id === id)
 	nodes[expandedNodeIndex] = { ...nodes[expandedNodeIndex], name: nodes[expandedNodeIndex]['name'] + ' (expanded) ' }
 
 	connections.forEach((c) => {
