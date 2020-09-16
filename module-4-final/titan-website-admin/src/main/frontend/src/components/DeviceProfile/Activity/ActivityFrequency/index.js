@@ -4,13 +4,16 @@ import ReactEcharts from 'echarts-for-react'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import { Card, Modal } from 'antd'
 
-export default function() {
+export default function () {
 	const { formattedTimestamps } = useSelector(deviceActivitySelector)
-	const [ visible, setVisible ] = useState(false)
+	const [visible, setVisible] = useState(false)
 
 	const getOption = () => {
 		return {
-			color: [ '#3398DB' ],
+			title: {
+				text: `${formattedTimestamps[0].date} - ${formattedTimestamps[formattedTimestamps.length - 1].date}`
+			},
+			color: ['#3398DB'],
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: {

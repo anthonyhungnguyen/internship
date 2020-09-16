@@ -29,7 +29,6 @@ public class DeviceService {
             String timestampConverted =
                     timestampConverter.convertTimestamp(device.getTimestamp());
             device.setTimestamp(timestampConverted);
-            System.out.println(device);
         }
         return device;
     }

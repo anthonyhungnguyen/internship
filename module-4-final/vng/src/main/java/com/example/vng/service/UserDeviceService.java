@@ -1,5 +1,6 @@
 package com.example.vng.service;
 
+import com.example.vng.model.DeviceSpending;
 import com.example.vng.model.Merchant;
 import com.example.vng.repository.TPERepository;
 import com.example.vng.repository.UserDeviceRepository;
@@ -46,5 +47,15 @@ public class UserDeviceService {
 
     public List<Merchant> getMerchantCountByDeviceId(String id) {
         return tpeRepository.getMerchantCountByDeviceId("devices/" + id, "transaction");
+    }
+
+    public List<DeviceSpending> getSpendingFrequencyByDeviceId(String id) {
+        return tpeRepository.getSpendingFrequencyByDeviceId("devices/" + id,
+                "transaction", "Money Transfer",  "%dd-%mm-%yyyy");
+    }
+
+    public List<Map<String, String>> getGeolocationActivity(String id) {
+        return tpeRepository.getGeolocationActivity("devices/" + id,
+                "transaction", "0.0");
     }
 }

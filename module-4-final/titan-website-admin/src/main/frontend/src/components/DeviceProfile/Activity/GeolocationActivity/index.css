@@ -1,0 +1,7 @@
+.ant-modal-content {
+    height: 100%;
+}
+
+.ant-card-body, .ant-modal-body {
+    height: 85%;
+}

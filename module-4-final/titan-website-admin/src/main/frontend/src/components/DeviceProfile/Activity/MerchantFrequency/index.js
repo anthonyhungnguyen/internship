@@ -6,7 +6,7 @@ import ReactEcharts from 'echarts-for-react'
 
 export default React.memo(() => {
 	const { merchantFrequency } = useSelector(deviceActivitySelector)
-	const [ visible, setVisible ] = useState(false)
+	const [visible, setVisible] = useState(false)
 
 	const getOption = () => {
 		return {
