@@ -64,10 +64,13 @@ export const preprocessConnection = (deviceId, connections) => {
 	let nodes = [
 		{
 			id: deviceId,
-			name: `${deviceId} (expanded)`,
+			name: deviceId,
 			category: 0,
 			type: 'device',
-			expanded: true
+			expanded: true,
+			label: {
+				fontWeight: 'bold'
+			}
 		}
 	]
 	const links = []
@@ -92,7 +95,10 @@ export const preprocessConnection = (deviceId, connections) => {
 				name: user,
 				category: 1,
 				type: 'user',
-				expanded: true
+				expanded: true,
+				label: {
+					fontWeight: 'bold'
+				}
 			})
 			nodeCount.push(user)
 		}
@@ -107,14 +113,29 @@ export const preprocessConnection = (deviceId, connections) => {
 	}
 }
 
-export const preprocessMoreConnection = (id, connections, nodes, links) => {
+export const preprocessMoreConnection = (id, connections, nodes, links, newDepth, idList) => {
 	const nodeCount = nodes.map((x) => x.id)
-
-	const expandedNodeIndex = nodes.findIndex((n) => n.id === id)
-	nodes[expandedNodeIndex] = {
-		...nodes[expandedNodeIndex],
-		name: nodes[expandedNodeIndex]['name'] + ' (expanded) ',
-		expanded: true
+	if (newDepth) {
+		idList.forEach((eachId) => {
+			const splitId = eachId.split('/')[1]
+			const expandedNodeIndex = nodes.findIndex((n) => n.id === splitId)
+			nodes[expandedNodeIndex] = {
+				...nodes[expandedNodeIndex],
+				label: {
+					fontWeight: 'bold'
+				},
+				expanded: true
+			}
+		})
+	} else {
+		const expandedNodeIndex = nodes.findIndex((n) => n.id === id)
+		nodes[expandedNodeIndex] = {
+			...nodes[expandedNodeIndex],
+			label: {
+				fontWeight: 'bold'
+			},
+			expanded: true
+		}
 	}
 
 	connections.forEach((c) => {
@@ -208,12 +229,13 @@ export const generateGraphData = (data) => {
 				categories: connectionsData.categories,
 				force: {
 					edgeLength: 90,
-					repulsion: 600,
-					friction: 0.2
+					repulsion: 700,
+					friction: 0.3
 				},
 				edges: connectionsData.links,
 				roam: true,
-				symbolSize: 16
+				symbolSize: 16,
+				focusNodeAdjacency: true
 			}
 		]
 	}

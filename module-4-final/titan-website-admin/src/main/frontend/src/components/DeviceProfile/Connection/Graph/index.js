@@ -6,8 +6,12 @@ import { deviceConnectionSelector } from '../../../../slices/deviceConnection'
 import { preprocessMoreConnection, generateGraphData, preprocessConnection } from '../../../../slices/deviceConnection'
 import copy from 'copy-to-clipboard'
 
-export default React.memo(({ deviceId, setCurrentChosenDevice, setCurrentChosenUser }) => {
+// Used for restoring old depth
+const depthData = {}
+
+export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
 	const { graphData } = useSelector(deviceConnectionSelector)
+	depthData[2] = graphData
 	let ref = useRef()
 
 	const handleOnClick = async (e) => {
@@ -20,14 +24,43 @@ export default React.memo(({ deviceId, setCurrentChosenDevice, setCurrentChosenU
 		}
 	}
 
-	const processNewGraphData = (id, connections, sliderChange) => {
+	const processNewGraphData = (id, connections) => {
 		let echartsInstance = ref.current.getEchartsInstance()
 		const { data, edges } = echartsInstance.getOption()['series'][0]
 		const nodeToExpand = data.find((d) => d.id === id)
-		if (!nodeToExpand.expanded || sliderChange) {
-			const moreConnection = preprocessMoreConnection(id, connections, data, edges)
+		if (!nodeToExpand.expanded) {
+			const moreConnection = preprocessMoreConnection(id, connections, data, edges, false, null)
 			const newGraphData = generateGraphData(moreConnection)
 			echartsInstance.setOption(newGraphData)
+		}
+	}
+
+	const expandOneDepth = async (depth) => {
+		let echartsInstance = ref.current.getEchartsInstance()
+		const { data, edges } = echartsInstance.getOption()['series'][0]
+		if (!depthData[depth]) {
+			const unExpandedId = data
+				.filter((x) => !x.expanded)
+				.map((x) => (x.type === 'device' ? 'devices/' + x.id : 'users/' + x.id))
+			if (unExpandedId.length !== 0) {
+				const response = await fetch(`http://localhost:8085/api/user_device/device_users/moreDepth`, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json'
+					},
+					method: 'POST',
+					body: JSON.stringify(unExpandedId)
+				})
+				const connections = await response.json()
+
+				const moreConnection = preprocessMoreConnection(null, connections, data, edges, true, unExpandedId)
+				const newGraphData = generateGraphData(moreConnection)
+
+				depthData[depth] = newGraphData
+				echartsInstance.setOption(newGraphData)
+			}
+		} else {
+			echartsInstance.setOption(depthData[depth])
 		}
 	}
 
@@ -43,19 +76,6 @@ export default React.memo(({ deviceId, setCurrentChosenDevice, setCurrentChosenU
 		}
 	}
 
-	const handleDepthChange = async (depth) => {
-		let echartsInstance = ref.current.getEchartsInstance()
-		echartsInstance.showLoading()
-		const response = await fetch(
-			`http://localhost:8085/api/user_device/device_users/${deviceId}/connections/${depth}`
-		)
-		const connections = await response.json()
-		const connection = preprocessConnection(deviceId, connections)
-		const graphData = generateGraphData(connection)
-		echartsInstance.setOption(graphData)
-		echartsInstance.hideLoading()
-	}
-
 	return (
 		<div className="animated fadeIn">
 			<Card
@@ -63,7 +83,11 @@ export default React.memo(({ deviceId, setCurrentChosenDevice, setCurrentChosenU
 				title="Device Depth"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				extra={<Slider min={2} max={3} onChange={handleDepthChange} style={{ width: '40px' }} />}
+				extra={
+					<React.Fragment>
+						<Slider min={2} max={10} onChange={expandOneDepth} className="w-40" tooltipVisible />
+					</React.Fragment>
+				}
 			>
 				<ReactEcharts
 					ref={ref}

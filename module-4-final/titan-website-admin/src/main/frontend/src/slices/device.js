@@ -6,7 +6,7 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	device: null,
-	deviceId: 'A321541E-966B-485B-87C2-9783FB0457F9'
+	deviceId: '0CA30A94-6251-4727-8340-9B6BE942AACB'
 }
 
 const deviceSlice = createSlice({
@@ -20,7 +20,6 @@ const deviceSlice = createSlice({
 			state.loading = true
 		},
 		getDeviceSuccess: (state, { payload }) => {
-			console.log(payload)
 			state.device = { ...payload, timestamp: moment(parseInt(payload.timestamp) * 1000).format('lll') }
 			state.loading = false
 			state.hasErrors = false

@@ -2,10 +2,7 @@ package com.example.vng.controller;
 
 import com.example.vng.service.UserDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -53,5 +50,10 @@ public class UserDeviceController {
     @GetMapping("user_device/device/{id}/geolocation")
     public List<Map<String, Object>> getGeolocationActivity(@PathVariable("id") String id) {
         return userDeviceService.getGeolocationActivity(id);
+    }
+
+    @PostMapping("user_device/device_users/moreDepth")
+    public List<Map<String, String>> getNextDepth(@RequestBody List<String> deviceList) {
+        return userDeviceService.getNextDepth(deviceList);
     }
 }

@@ -1,14 +1,15 @@
 import React, { useEffect, Suspense } from 'react'
-import ActivityFrequency from './ActivityFrequency'
 import { BackTop, Row, Skeleton, Col } from 'antd'
 import { UpCircleFilled } from '@ant-design/icons'
 import { deviceSelector } from '../../../slices/device'
 import { deviceActivitySelector, fetchActivity } from '../../../slices/deviceActivity'
 import { useDispatch, useSelector } from 'react-redux'
-import MerchantFrequency from './MerchantFrequency'
-import TPESpending from './TPESpending'
-import GeolocationActivity from './GeolocationActivity'
 import './index.css'
+
+const ActivityFrequency = React.lazy(() => import('./ActivityFrequency'))
+const MerchantFrequency = React.lazy(() => import('./MerchantFrequency'))
+const TPESpending = React.lazy(() => import('./TPESpending'))
+const GeolocationActivity = React.lazy(() => import('./GeolocationActivity'))
 
 export default React.memo(() => {
 	const dispatch = useDispatch()

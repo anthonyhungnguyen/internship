@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux/'
-import ReactEcharts from 'echarts-for-react'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/chart/bar'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import { Card, Modal } from 'antd'
 import { FullscreenOutlined } from '@ant-design/icons'
@@ -8,7 +10,6 @@ import { FullscreenOutlined } from '@ant-design/icons'
 export default function() {
 	const { timestamps } = useSelector(deviceActivitySelector)
 	const [ visible, setVisible ] = useState(false)
-	console.log(timestamps)
 	const getOption = () => {
 		return {
 			title: {
@@ -63,7 +64,7 @@ export default function() {
 					</button>
 				}
 			>
-				<ReactEcharts option={getOption()} opts={{ renderer: 'svg' }} className="react_for_echarts" />
+				<ReactEchartsCore echarts={echarts} option={getOption()} opts={{ renderer: 'svg' }} />
 			</Card>
 			<Modal
 				title="Activity Date Frequency"
@@ -74,11 +75,11 @@ export default function() {
 				width={1000}
 				footer={null}
 			>
-				<ReactEcharts
+				<ReactEchartsCore
+					echarts={echarts}
 					option={getOption()}
 					style={{ height: '500px', width: '100%' }}
 					opts={{ renderer: 'svg' }}
-					className="react_for_echarts"
 				/>
 			</Modal>
 		</React.Fragment>

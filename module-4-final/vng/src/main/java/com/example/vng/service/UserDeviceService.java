@@ -53,6 +53,13 @@ public class UserDeviceService {
         return userDeviceRepository.findUsersRelatedToDevices(bindVars);
     }
 
+    public List<Map<String, String>> getNextDepth(List<String> deviceList) {
+        Map<String, Object> bindVars = new HashMap<>();
+        bindVars.put("deviceList", deviceList);
+        bindVars.put("type", "user_use_device");
+        return userDeviceRepository.findNextDepth(bindVars);
+    }
+
     public List<Map<String, Object>> getMerchantCountByDeviceId(String id) {
         Map<String, Object> bindVars = new HashMap<>();
         bindVars.put("deviceId", "devices/" + id);
@@ -76,4 +83,5 @@ public class UserDeviceService {
         bindVars.put("cond", "0.0");
         return tpeRepository.getGeolocationActivity(bindVars);
     }
+
 }

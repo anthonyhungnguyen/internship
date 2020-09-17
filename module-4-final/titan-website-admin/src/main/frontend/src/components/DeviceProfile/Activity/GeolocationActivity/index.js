@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Card, Modal } from 'antd'
 import { useSelector } from 'react-redux'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import 'echarts-extension-gmap/dist/echarts-extension-gmap'
-import ReactEcharts from 'echarts-for-react'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import echarts from 'echarts/lib/echarts'
 import { FullscreenOutlined, FullscreenExitOutlined, RollbackOutlined } from '@ant-design/icons'
 
 export default React.memo(() => {
@@ -27,6 +28,7 @@ export default React.memo(() => {
 			if (angle < 0) {
 				angle += 360
 			}
+			console.log(Math.floor(Math.log(960 * 360 / angle / 256) / Math.LN2) - 2 - delta)
 			return Math.floor(Math.log(960 * 360 / angle / 256) / Math.LN2) - 2 - delta
 		} else {
 			return 4
@@ -50,9 +52,6 @@ export default React.memo(() => {
 	const [ visible, setVisible ] = useState(false)
 	const [ defaultCenter, setDefaultCenter ] = useState(calculateDefaultCenter())
 	const [ defaultZoom, setDefaultZoom ] = useState(calculateZoomFactor())
-	const handleToggleVisible = () => {
-		setVisible((old) => !old)
-	}
 
 	const getOption = () => {
 		return {
@@ -124,6 +123,10 @@ export default React.memo(() => {
 		setDefaultZoom(calculateZoomFactor())
 	}
 
+	const handleToggleVisible = () => {
+		setVisible((old) => !old)
+	}
+
 	return (
 		<React.Fragment>
 			<Card
@@ -147,9 +150,9 @@ export default React.memo(() => {
 					</React.Fragment>
 				}
 			>
-				<ReactEcharts
+				<ReactEchartsCore
+					echarts={echarts}
 					option={getOption()}
-					className="react_for_echarts"
 					onEvents={{
 						click: handleOnClick
 					}}
@@ -169,10 +172,10 @@ export default React.memo(() => {
 					</button>
 				]}
 			>
-				<ReactEcharts
+				<ReactEchartsCore
+					echarts={echarts}
 					option={getOption()}
-					className="react_for_echarts"
-					style={{ height: '500px', width: '100%' }}
+					style={{ height: '600px' }}
 					onEvents={{
 						click: handleOnClick
 					}}

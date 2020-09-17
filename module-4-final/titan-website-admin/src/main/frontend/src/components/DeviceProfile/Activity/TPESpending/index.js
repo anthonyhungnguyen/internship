@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import ReactEcharts from 'echarts-for-react'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/markPoint'
+import 'echarts/lib/component/markLine'
 import { Card, Modal } from 'antd'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
@@ -61,7 +65,7 @@ export default () => {
 					</button>
 				}
 			>
-				<ReactEcharts option={getOption()} className="react_for_echarts" opts={{ renderer: 'svg' }} />
+				<ReactEchartsCore echarts={echarts} option={getOption()} opts={{ renderer: 'svg' }} />
 			</Card>
 			<Modal
 				title="Spending Statistics"
@@ -72,10 +76,10 @@ export default () => {
 				width={1000}
 				footer={null}
 			>
-				<ReactEcharts
+				<ReactEchartsCore
+					echarts={echarts}
 					option={getOption()}
 					style={{ height: '500px', width: '100%' }}
-					className="react_for_echarts"
 					opts={{ renderer: 'svg' }}
 				/>
 			</Modal>
