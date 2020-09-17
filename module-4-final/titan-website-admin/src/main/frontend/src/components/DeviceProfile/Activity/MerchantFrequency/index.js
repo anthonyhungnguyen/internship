@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux'
 import { Card, Modal } from 'antd'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import ReactEcharts from 'echarts-for-react'
+import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 
 export default React.memo(() => {
 	const { merchantFrequency } = useSelector(deviceActivitySelector)
-	const [visible, setVisible] = useState(false)
+	const [ visible, setVisible ] = useState(false)
 
 	const getOption = () => {
 		return {
@@ -17,7 +18,7 @@ export default React.memo(() => {
 			series: [
 				{
 					type: 'pie',
-					selectedMode: visible ? 'multiple' : false,
+					selectedMode: 'multiple',
 					data: merchantFrequency.map((mf) => ({
 						name: `${mf.merchant} - ${mf.merchant_count}`,
 						value: mf.merchant_count
@@ -50,9 +51,17 @@ export default React.memo(() => {
 				title="Merchant Frequency"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				onClick={handleToggleVisible}
+				extra={
+					<button onClick={handleToggleVisible}>
+						{visible ? (
+							<FullscreenExitOutlined className="text-xl" />
+						) : (
+							<FullscreenOutlined className="text-xl" />
+						)}
+					</button>
+				}
 			>
-				<ReactEcharts option={getOption()} className="react_for_echarts" />
+				<ReactEcharts option={getOption()} className="react_for_echarts" opts={{ renderer: 'svg' }} />
 			</Card>
 			<Modal
 				title="Merchant Frequency"
@@ -61,11 +70,13 @@ export default React.memo(() => {
 				onCancel={handleToggleVisible}
 				centered
 				width={1000}
+				footer={null}
 			>
 				<ReactEcharts
 					option={getOption()}
 					style={{ height: '500px', width: '100%' }}
 					className="react_for_echarts"
+					opts={{ renderer: 'svg' }}
 				/>
 			</Modal>
 		</React.Fragment>

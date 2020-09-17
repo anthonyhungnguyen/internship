@@ -25,6 +25,7 @@
 		"copy-to-clipboard": "^3.3.1",
 		"core-js": "^3.1.4",
 		"echarts": "^4.9.0",
+		"echarts-extension-gmap": "^1.1.0",
 		"echarts-for-react": "^2.0.16",
 		"enzyme": "^3.10.0",
 		"enzyme-adapter-react-16": "^1.14.0",

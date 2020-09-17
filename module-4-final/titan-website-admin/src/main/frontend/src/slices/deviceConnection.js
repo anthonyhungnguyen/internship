@@ -39,11 +39,13 @@ export default deviceConnectionSlice.reducer
 
 // Asynchronous thunk action
 
-export function fetchConnection(id) {
+export function fetchConnection(id, depth) {
 	return async (dispatch) => {
 		dispatch(getConnection())
 		try {
-			const response = await fetch(`http://localhost:8085/api/user_device/device_users/${id}/connections`)
+			const response = await fetch(
+				`http://localhost:8085/api/user_device/device_users/${id}/connections/${depth}`
+			)
 			const connections = await response.json()
 			const formattedConnections = preprocessConnection(id, connections)
 			const graphData = generateGraphData(formattedConnections)
@@ -58,13 +60,14 @@ export function fetchConnection(id) {
 	}
 }
 
-const preprocessConnection = (deviceId, connections) => {
+export const preprocessConnection = (deviceId, connections) => {
 	let nodes = [
 		{
 			id: deviceId,
 			name: `${deviceId} (expanded)`,
 			category: 0,
-			type: 'device'
+			type: 'device',
+			expanded: true
 		}
 	]
 	const links = []
@@ -78,7 +81,8 @@ const preprocessConnection = (deviceId, connections) => {
 				id: device,
 				name: device,
 				category: 2,
-				type: 'device'
+				type: 'device',
+				expanded: false
 			})
 			nodeCount.push(device)
 		}
@@ -87,7 +91,8 @@ const preprocessConnection = (deviceId, connections) => {
 				id: user,
 				name: user,
 				category: 1,
-				type: 'user'
+				type: 'user',
+				expanded: true
 			})
 			nodeCount.push(user)
 		}
@@ -106,7 +111,11 @@ export const preprocessMoreConnection = (id, connections, nodes, links) => {
 	const nodeCount = nodes.map((x) => x.id)
 
 	const expandedNodeIndex = nodes.findIndex((n) => n.id === id)
-	nodes[expandedNodeIndex] = { ...nodes[expandedNodeIndex], name: nodes[expandedNodeIndex]['name'] + ' (expanded) ' }
+	nodes[expandedNodeIndex] = {
+		...nodes[expandedNodeIndex],
+		name: nodes[expandedNodeIndex]['name'] + ' (expanded) ',
+		expanded: true
+	}
 
 	connections.forEach((c) => {
 		const user = c['source'].split('/')[1].trim()
@@ -114,9 +123,10 @@ export const preprocessMoreConnection = (id, connections, nodes, links) => {
 		if (nodeCount.indexOf(device) < 0) {
 			nodes.push({
 				id: device,
-				name: `${device}`,
-				category: 3,
-				type: 'device'
+				name: device,
+				category: 2,
+				type: 'device',
+				expanded: false
 			})
 			nodeCount.push(device)
 		}
@@ -125,7 +135,8 @@ export const preprocessMoreConnection = (id, connections, nodes, links) => {
 				id: user,
 				name: user,
 				category: 1,
-				type: 'user'
+				type: 'user',
+				expanded: false
 			})
 			nodeCount.push(user)
 		}

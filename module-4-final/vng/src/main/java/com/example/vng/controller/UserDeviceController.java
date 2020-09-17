@@ -1,7 +1,5 @@
 package com.example.vng.controller;
 
-import com.example.vng.model.DeviceSpending;
-import com.example.vng.model.Merchant;
 import com.example.vng.service.UserDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +21,13 @@ public class UserDeviceController {
     }
 
     @GetMapping("user_device/device/{id}/timestamps")
-    public List<String> getDeviceTimestampsById(@PathVariable("id") String id) {
+    public List<Map<String, Object>> getDeviceTimestampsById(@PathVariable("id") String id) {
         return userDeviceService.getDeviceTimestampsById(id);
     }
 
-    @GetMapping("user_device/device_users/{id}/connections")
-    public List<Map<String, String>> getAllDevicesUsedByUsersThatUseDevice(@PathVariable("id") String id) {
-        return userDeviceService.getAllDevicesUsedByUsersThatUseDevice(id);
+    @GetMapping("user_device/device_users/{id}/connections/{depth}")
+    public List<Map<String, String>> getAllDevicesUsedByUsersThatUseDevice(@PathVariable("id") String id, @PathVariable("depth") String depth) {
+        return userDeviceService.getAllDevicesUsedByUsersThatUseDevice(id, depth);
     }
 
     @GetMapping("user_device/user/{id}/connections")
@@ -43,17 +41,17 @@ public class UserDeviceController {
     }
 
     @GetMapping("user_device/device/{id}/merchant")
-    public List<Merchant> getMerchantCountByDeviceId(@PathVariable("id") String id) {
+    public List<Map<String, Object>> getMerchantCountByDeviceId(@PathVariable("id") String id) {
         return userDeviceService.getMerchantCountByDeviceId(id);
     }
 
     @GetMapping("user_device/device/{id}/spending")
-    public List<DeviceSpending> getSpendingFrequencyByDeviceId(@PathVariable("id") String id) {
+    public List<Map<String, Object>> getSpendingFrequencyByDeviceId(@PathVariable("id") String id) {
         return userDeviceService.getSpendingFrequencyByDeviceId(id);
     }
 
     @GetMapping("user_device/device/{id}/geolocation")
-    public List<Map<String, String>> getGeolocationActivity(@PathVariable("id") String id) {
+    public List<Map<String, Object>> getGeolocationActivity(@PathVariable("id") String id) {
         return userDeviceService.getGeolocationActivity(id);
     }
 }

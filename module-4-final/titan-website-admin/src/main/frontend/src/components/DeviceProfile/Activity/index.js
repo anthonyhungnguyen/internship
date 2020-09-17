@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import ActivityFrequency from './ActivityFrequency'
 import { BackTop, Row, Skeleton, Col } from 'antd'
 import { UpCircleFilled } from '@ant-design/icons'
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import MerchantFrequency from './MerchantFrequency'
 import TPESpending from './TPESpending'
 import GeolocationActivity from './GeolocationActivity'
+import './index.css'
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
@@ -18,25 +19,33 @@ export default React.memo(() => {
 		() => {
 			dispatch(fetchActivity(deviceId))
 		},
-		[dispatch, deviceId]
+		[ dispatch, deviceId ]
 	)
 
 	return !loading && !hasErrors ? (
 		<div className="animated fadeIn">
-			<Row gutter={[24, 24]}>
+			<Row gutter={[ 24, 24 ]}>
 				<Col span={12}>
-					<ActivityFrequency />
+					<Suspense fallback={<Skeleton active />}>
+						<ActivityFrequency />
+					</Suspense>
 				</Col>
 				<Col span={12}>
-					<MerchantFrequency />
+					<Suspense fallback={<Skeleton active />}>
+						<MerchantFrequency />
+					</Suspense>
 				</Col>
 			</Row>
-			<Row gutter={[24, 24]}>
+			<Row gutter={[ 24, 24 ]}>
 				<Col span={12}>
-					<TPESpending />
+					<Suspense fallback={<Skeleton active />}>
+						<TPESpending />
+					</Suspense>
 				</Col>
 				<Col span={12}>
-					<GeolocationActivity />
+					<Suspense fallback={<Skeleton active />}>
+						<GeolocationActivity />
+					</Suspense>
 				</Col>
 			</Row>
 			<BackTop>
@@ -44,6 +53,6 @@ export default React.memo(() => {
 			</BackTop>
 		</div>
 	) : (
-			<Skeleton active />
-		)
+		<Skeleton active />
+	)
 })

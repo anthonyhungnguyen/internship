@@ -1,12 +1,12 @@
 import React, { useRef } from 'react'
 import { useSelector } from 'react-redux'
 import ReactEcharts from 'echarts-for-react'
-import { Card } from 'antd'
+import { Card, Slider } from 'antd'
 import { deviceConnectionSelector } from '../../../../slices/deviceConnection'
-import { preprocessMoreConnection, generateGraphData } from '../../../../slices/deviceConnection'
+import { preprocessMoreConnection, generateGraphData, preprocessConnection } from '../../../../slices/deviceConnection'
 import copy from 'copy-to-clipboard'
 
-export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
+export default React.memo(({ deviceId, setCurrentChosenDevice, setCurrentChosenUser }) => {
 	const { graphData } = useSelector(deviceConnectionSelector)
 	let ref = useRef()
 
@@ -20,14 +20,14 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 		}
 	}
 
-	const processNewGraphData = (id, connections) => {
+	const processNewGraphData = (id, connections, sliderChange) => {
 		let echartsInstance = ref.current.getEchartsInstance()
 		const { data, edges } = echartsInstance.getOption()['series'][0]
 		const nodeToExpand = data.find((d) => d.id === id)
-		if (!nodeToExpand.name.includes('expanded')) {
+		if (!nodeToExpand.expanded || sliderChange) {
 			const moreConnection = preprocessMoreConnection(id, connections, data, edges)
 			const newGraphData = generateGraphData(moreConnection)
-			ref.current.getEchartsInstance().setOption(newGraphData)
+			echartsInstance.setOption(newGraphData)
 		}
 	}
 
@@ -42,6 +42,20 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 			processNewGraphData(e.data.id, connections)
 		}
 	}
+
+	const handleDepthChange = async (depth) => {
+		let echartsInstance = ref.current.getEchartsInstance()
+		echartsInstance.showLoading()
+		const response = await fetch(
+			`http://localhost:8085/api/user_device/device_users/${deviceId}/connections/${depth}`
+		)
+		const connections = await response.json()
+		const connection = preprocessConnection(deviceId, connections)
+		const graphData = generateGraphData(connection)
+		echartsInstance.setOption(graphData)
+		echartsInstance.hideLoading()
+	}
+
 	return (
 		<div className="animated fadeIn">
 			<Card
@@ -49,6 +63,7 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 				title="Device Depth"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
+				extra={<Slider min={2} max={3} onChange={handleDepthChange} style={{ width: '40px' }} />}
 			>
 				<ReactEcharts
 					ref={ref}

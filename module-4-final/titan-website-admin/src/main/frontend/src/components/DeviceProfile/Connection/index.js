@@ -12,23 +12,24 @@ export default React.memo(() => {
 	const dispatch = useDispatch()
 	const { deviceId, device } = useSelector(deviceSelector)
 	const { loading, hasErrors } = useSelector(deviceConnectionSelector)
-	const [currentChosenDevice, setCurrentChosenDevice] = useState(deviceId)
-	const [currentChosenUser, setCurrentChosenUser] = useState('')
+	const [ currentChosenDevice, setCurrentChosenDevice ] = useState(deviceId)
+	const [ currentChosenUser, setCurrentChosenUser ] = useState('')
 
 	useEffect(
 		() => {
-			dispatch(fetchConnection(deviceId))
+			dispatch(fetchConnection(deviceId, 2))
 		},
-		[dispatch, deviceId]
+		[ dispatch, deviceId ]
 	)
 
 	return !loading && !hasErrors ? (
 		<React.Fragment>
-			<Row gutter={[24, 24]}>
+			<Row gutter={[ 24, 24 ]}>
 				<Col span={16}>
 					<Graph
 						setCurrentChosenDevice={setCurrentChosenDevice}
 						setCurrentChosenUser={setCurrentChosenUser}
+						deviceId={deviceId}
 					/>
 				</Col>
 				<Col span={8}>
@@ -42,6 +43,6 @@ export default React.memo(() => {
 			</BackTop>
 		</React.Fragment>
 	) : (
-			<Skeleton />
-		)
+		<Skeleton />
+	)
 })

@@ -1,7 +1,8 @@
-import React, { useState, Suspense, useEffect } from 'react'
+import React, { useState, Suspense } from 'react'
 import { Input, Tabs, Skeleton } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
 import { deviceSelector, storeDeviceId } from '../../slices/device'
+import swal from 'sweetalert'
 import './index.css'
 
 const Details = React.lazy(() => import('./Details'))
@@ -14,7 +15,15 @@ const { Search } = Input
 export default React.memo(() => {
 	const dispatch = useDispatch()
 	const { deviceId, loading } = useSelector(deviceSelector)
-	const [activeTab, setActiveTab] = useState('details')
+	const [ activeTab, setActiveTab ] = useState('details')
+
+	const handleSearch = (newDeviceId) => {
+		if (newDeviceId) {
+			dispatch(storeDeviceId(newDeviceId))
+		} else {
+			swal('Error', 'Please re-check device ID', 'error')
+		}
+	}
 
 	return (
 		<Tabs
@@ -26,7 +35,7 @@ export default React.memo(() => {
 				<Search
 					defaultValue={deviceId}
 					placeholder="input device id"
-					onSearch={(newDeviceId) => dispatch(storeDeviceId(newDeviceId))}
+					onSearch={handleSearch}
 					size="large"
 					enterButton
 					loading={loading}

@@ -6,7 +6,6 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	timestamps: [],
-	formattedTimestamps: [],
 	merchantFrequency: [],
 	spendingFrequency: [],
 	geolocationActivity: []
@@ -23,7 +22,6 @@ const deviceActivitySlice = createSlice({
 			state.hasErrors = false
 			state.loading = false
 			state.timestamps = payload.timestamps
-			state.formattedTimestamps = payload.formattedTimestamps
 			state.merchantFrequency = payload.merchantFrequency
 			state.spendingFrequency = payload.spendingFrequency
 			state.geolocationActivity = payload.geolocationActivity
@@ -64,25 +62,17 @@ export function fetchActivity(id) {
 			if (timestamps.errorCode) {
 				dispatch(getActivityFailure(timestamps))
 			} else {
-				const formattedTimestamps = formatTimestamp(timestamps)
-				dispatch(getActivitySuccess({ timestamps, formattedTimestamps, merchantFrequency, spendingFrequency, geolocationActivity }))
+				dispatch(
+					getActivitySuccess({
+						timestamps,
+						merchantFrequency,
+						spendingFrequency,
+						geolocationActivity
+					})
+				)
 			}
 		} catch (err) {
 			dispatch(getActivityFailure())
 		}
 	}
-}
-
-export const formatTimestamp = (timestamps) => {
-	const results = {}
-	const formatTimestamps = timestamps.map((ts) => moment(ts).format('DD-MM-YYYY')).sort()
-	formatTimestamps.forEach((ts) => {
-		if (ts in results) {
-			results[ts] += 1
-		} else {
-			results[ts] = 1
-		}
-	})
-	const data = Object.entries(results).map((e) => ({ date: e[0], count: e[1] }))
-	return data
 }

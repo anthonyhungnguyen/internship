@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Card, Skeleton, Descriptions } from 'antd'
 import { useSelector } from 'react-redux'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
-import { formatTimestamp } from '../../../../slices/deviceActivity'
 import moment from 'moment'
 export default ({ currentChosenDevice, device, deviceId }) => {
-	const { formattedTimestamps } = useSelector(deviceActivitySelector)
+	const { timestamps } = useSelector(deviceActivitySelector)
 	const [ currentDeviceData, setCurrentDeviceData ] = useState(device)
-	const [ currentDeviceTimestamps, setCurrentDeviceTimestamps ] = useState(formattedTimestamps)
+	const [ currentDeviceTimestamps, setCurrentDeviceTimestamps ] = useState(timestamps)
 	useEffect(
 		() => {
 			const fetchClickedDevice = async () => {
@@ -19,7 +18,7 @@ export default ({ currentChosenDevice, device, deviceId }) => {
 					const data = await deviceData.json()
 					const timestamps = await deviceTimestamp.json()
 					setCurrentDeviceData(data)
-					setCurrentDeviceTimestamps(formatTimestamp(timestamps))
+					setCurrentDeviceTimestamps(timestamps)
 				}
 			}
 			fetchClickedDevice()

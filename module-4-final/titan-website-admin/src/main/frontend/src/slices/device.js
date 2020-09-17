@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import moment from 'moment'
 
 export const initialState = {
 	loading: true,
@@ -19,7 +20,8 @@ const deviceSlice = createSlice({
 			state.loading = true
 		},
 		getDeviceSuccess: (state, { payload }) => {
-			state.device = payload
+			console.log(payload)
+			state.device = { ...payload, timestamp: moment(parseInt(payload.timestamp) * 1000).format('lll') }
 			state.loading = false
 			state.hasErrors = false
 		},
@@ -47,7 +49,11 @@ export function fetchDevice(id) {
 		try {
 			const response = await fetch(`http://localhost:8085/api/device/${id}`)
 			const payload = await response.json()
-			dispatch(getDeviceSuccess(payload))
+			if (payload.errorCode) {
+				dispatch(getDeviceFailure(payload))
+			} else {
+				dispatch(getDeviceSuccess(payload))
+			}
 		} catch (err) {
 			dispatch(getDeviceFailure())
 		}

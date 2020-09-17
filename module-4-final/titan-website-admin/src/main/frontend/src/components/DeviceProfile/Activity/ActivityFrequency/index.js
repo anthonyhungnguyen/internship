@@ -3,17 +3,18 @@ import { useSelector } from 'react-redux/'
 import ReactEcharts from 'echarts-for-react'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import { Card, Modal } from 'antd'
+import { FullscreenOutlined } from '@ant-design/icons'
 
-export default function () {
-	const { formattedTimestamps } = useSelector(deviceActivitySelector)
-	const [visible, setVisible] = useState(false)
-
+export default function() {
+	const { timestamps } = useSelector(deviceActivitySelector)
+	const [ visible, setVisible ] = useState(false)
+	console.log(timestamps)
 	const getOption = () => {
 		return {
 			title: {
-				text: `${formattedTimestamps[0].date} - ${formattedTimestamps[formattedTimestamps.length - 1].date}`
+				text: `${timestamps[0].date} - ${timestamps[timestamps.length - 1].date}`
 			},
-			color: ['#3398DB'],
+			color: [ '#118ab2' ],
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: {
@@ -27,7 +28,7 @@ export default function () {
 				containLabel: true
 			},
 			xAxis: {
-				data: formattedTimestamps.map((e) => e.date),
+				data: timestamps.map((e) => e.date),
 				axisTick: {
 					alignWithLabel: true
 				}
@@ -36,7 +37,7 @@ export default function () {
 			series: [
 				{
 					type: 'bar',
-					data: formattedTimestamps.map((e) => e.count),
+					data: timestamps.map((e) => e.count),
 					label: {
 						show: true,
 						position: 'top'
@@ -56,7 +57,11 @@ export default function () {
 				title="Activity Date Frequency"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				onClick={handleToggleVisible}
+				extra={
+					<button onClick={handleToggleVisible}>
+						<FullscreenOutlined className="text-xl" />
+					</button>
+				}
 			>
 				<ReactEcharts option={getOption()} opts={{ renderer: 'svg' }} className="react_for_echarts" />
 			</Card>
@@ -67,6 +72,7 @@ export default function () {
 				onCancel={handleToggleVisible}
 				centered
 				width={1000}
+				footer={null}
 			>
 				<ReactEcharts
 					option={getOption()}
