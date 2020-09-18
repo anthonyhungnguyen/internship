@@ -6,12 +6,12 @@ import { deviceConnectionSelector } from '../../../../slices/deviceConnection'
 import { preprocessMoreConnection, generateGraphData, preprocessConnection } from '../../../../slices/deviceConnection'
 import copy from 'copy-to-clipboard'
 
-// Used for restoring old depth
-const depthData = {}
-
 export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
 	const { graphData } = useSelector(deviceConnectionSelector)
-	depthData[2] = graphData
+
+	// Used for restoring old depth
+	let depthData = {}
+	depthData[1] = graphData
 	let ref = useRef()
 
 	const handleOnClick = async (e) => {
@@ -85,7 +85,7 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 				hoverable={true}
 				extra={
 					<React.Fragment>
-						<Slider min={2} max={10} onChange={expandOneDepth} className="w-40" tooltipVisible />
+						<Slider min={1} max={10} onChange={expandOneDepth} className="w-40" tooltipVisible />
 					</React.Fragment>
 				}
 			>

@@ -35,7 +35,7 @@ export default ({ currentChosenDevice, device, deviceId }) => {
 	const { timestamp, id, users, os_name, os_version, hw_device_model } = currentDeviceData
 
 	const deviceBriefInfo = {
-		'Recorded At': moment(timestamp).format('L LTS'),
+		'Recorded At': moment(parseInt(timestamp) * 1000).format('L LTS'),
 		'Device ID': id,
 		'Total Users': users.length,
 		'Total Active Times': handleCalculateTotalActiveTimes(currentDeviceTimestamps),

@@ -13,8 +13,8 @@ const GeolocationActivity = React.lazy(() => import('./GeolocationActivity'))
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
-	const { deviceId } = useSelector(deviceSelector)
-	const { loading, hasErrors } = useSelector(deviceActivitySelector)
+	const { deviceId, hasErrors, errorInfo } = useSelector(deviceSelector)
+	const { loading } = useSelector(deviceActivitySelector)
 
 	useEffect(
 		() => {

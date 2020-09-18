@@ -1,18 +1,13 @@
 import React, { useState } from 'react'
 import { GoogleMap, useLoadScript } from '@react-google-maps/api'
 import { useSelector } from 'react-redux'
-import { FullscreenOutlined, FullscreenExitOutlined, RollbackOutlined } from '@ant-design/icons'
+import { FullscreenOutlined, RollbackOutlined } from '@ant-design/icons'
 import { Card, Modal, Skeleton } from 'antd'
 import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import './index.css'
 
 const containerStyle = {
 	height: '100%'
-}
-
-const center = {
-	lat: 16.243298,
-	lng: 107.635784
 }
 
 export default () => {
@@ -23,7 +18,7 @@ export default () => {
 	})
 	const [ visible, setVisible ] = useState(false)
 
-	const renderMap = () => {
+	const renderMap = React.useCallback(() => {
 		const onLoad = (map) => {
 			const bounds = new window.google.maps.LatLngBounds()
 			geolocationActivity.forEach((gl) => {
@@ -42,11 +37,15 @@ export default () => {
 			setMap(null)
 		}
 
-		return <GoogleMap center={center} onLoad={onLoad} onUnmount={onUnmount} mapContainerStyle={containerStyle} />
-	}
+		return <GoogleMap onLoad={onLoad} onUnmount={onUnmount} mapContainerStyle={containerStyle} />
+	}, [])
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
+	}
+
+	if (loadError) {
+		return <p>Map Error</p>
 	}
 
 	return (
@@ -58,15 +57,9 @@ export default () => {
 				className="w-full h-full"
 				bodyStyle={{ height: '80%' }}
 				extra={
-					<React.Fragment>
-						<button>
-							<RollbackOutlined className="text-xl" />
-						</button>
-						<span className="mx-2">|</span>
-						<button onClick={handleToggleVisible}>
-							<FullscreenOutlined className="text-xl" />
-						</button>
-					</React.Fragment>
+					<button onClick={handleToggleVisible}>
+						<FullscreenOutlined className="text-xl" />
+					</button>
 				}
 			>
 				{isLoaded ? renderMap() : <Skeleton active />}

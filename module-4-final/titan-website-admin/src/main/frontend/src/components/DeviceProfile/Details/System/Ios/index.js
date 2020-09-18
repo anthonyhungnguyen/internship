@@ -1,7 +1,5 @@
 import React from 'react'
 import { Descriptions } from 'antd'
-import moment from 'moment'
-
 export default ({ device }) => {
 	const {
 		timestamp,
@@ -18,7 +16,7 @@ export default ({ device }) => {
 		hw_storage_total
 	} = device
 	const iosField = {
-		'Recorded At': moment(timestamp).format('L LTS'),
+		'Recorded At': timestamp,
 		'Last Used By': userId,
 		'User Agent': user_agent,
 		'OS Name': os_name,

@@ -74,36 +74,18 @@ export const preprocessConnection = (deviceId, connections) => {
 		}
 	]
 	const links = []
-	const nodeCount = [ deviceId.trim() ]
 
-	connections.forEach(async (c) => {
+	connections.forEach((c) => {
 		const user = c['source'].split('/')[1].trim()
-		const device = c['target'].split('/')[1].trim()
-		if (nodeCount.indexOf(device) < 0) {
-			nodes.push({
-				id: device,
-				name: device,
-				category: 2,
-				type: 'device',
-				expanded: false
-			})
-			nodeCount.push(device)
-		}
-		if (nodeCount.indexOf(user) < 0) {
-			nodes.push({
-				id: user,
-				name: user,
-				category: 1,
-				type: 'user',
-				expanded: true,
-				label: {
-					fontWeight: 'bold'
-				}
-			})
-			nodeCount.push(user)
-		}
+		nodes.push({
+			id: user,
+			name: user,
+			category: 1,
+			type: 'user',
+			expanded: false
+		})
 		links.push({
-			source: device,
+			source: deviceId,
 			target: user
 		})
 	})
@@ -234,8 +216,7 @@ export const generateGraphData = (data) => {
 				},
 				edges: connectionsData.links,
 				roam: true,
-				symbolSize: 16,
-				focusNodeAdjacency: true
+				symbolSize: 16
 			}
 		]
 	}

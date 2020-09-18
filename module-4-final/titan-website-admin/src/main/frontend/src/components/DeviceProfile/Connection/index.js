@@ -11,14 +11,14 @@ const UserBriefInformation = React.lazy(() => import('./UserBriefInformation'))
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
-	const { deviceId, device } = useSelector(deviceSelector)
-	const { loading, hasErrors } = useSelector(deviceConnectionSelector)
+	const { deviceId, device, hasErrors, errorInfo } = useSelector(deviceSelector)
+	const { loading } = useSelector(deviceConnectionSelector)
 	const [ currentChosenDevice, setCurrentChosenDevice ] = useState(deviceId)
 	const [ currentChosenUser, setCurrentChosenUser ] = useState('')
 
 	useEffect(
 		() => {
-			dispatch(fetchConnection(deviceId, 2))
+			dispatch(fetchConnection(deviceId, 1))
 		},
 		[ dispatch, deviceId ]
 	)
@@ -48,6 +48,6 @@ export default React.memo(() => {
 			</BackTop>
 		</React.Fragment>
 	) : (
-		<Skeleton />
+		<Skeleton active />
 	)
 })

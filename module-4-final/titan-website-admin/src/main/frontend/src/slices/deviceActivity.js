@@ -49,10 +49,13 @@ export function fetchActivity(id) {
 	return async (dispatch) => {
 		dispatch(getActivity())
 		try {
-			const response = await fetch(`http://localhost:8085/api/user_device/device/${id}/timestamps`)
-			const merchantResponse = await fetch(`http://localhost:8085/api/user_device/device/${id}/merchant`)
-			const spendingResponse = await fetch(`http://localhost:8085/api/user_device/device/${id}/spending`)
-			const geolocationResponse = await fetch(`http://localhost:8085/api/user_device/device/${id}/geolocation`)
+			const allResults = await Promise.all([
+				fetch(`http://localhost:8085/api/user_device/device/${id}/timestamps`),
+				fetch(`http://localhost:8085/api/user_device/device/${id}/merchant`),
+				fetch(`http://localhost:8085/api/user_device/device/${id}/spending`),
+				fetch(`http://localhost:8085/api/user_device/device/${id}/geolocation`)
+			])
+			const [ response, merchantResponse, spendingResponse, geolocationResponse ] = allResults
 
 			const timestamps = await response.json()
 			const merchantFrequency = await merchantResponse.json()

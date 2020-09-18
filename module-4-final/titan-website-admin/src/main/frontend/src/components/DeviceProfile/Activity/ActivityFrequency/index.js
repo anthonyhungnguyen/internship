@@ -67,7 +67,7 @@ export default function() {
 					</button>
 				}
 			>
-				<ReactEchartsCore echarts={echarts} option={getOption()} opts={{ renderer: 'svg' }} />
+				<ReactEchartsCore echarts={echarts} option={getOption()} />
 			</Card>
 			<Modal
 				title="Activity Date Frequency"
@@ -78,12 +78,7 @@ export default function() {
 				width={1000}
 				footer={null}
 			>
-				<ReactEchartsCore
-					echarts={echarts}
-					option={getOption()}
-					style={{ height: '500px', width: '100%' }}
-					opts={{ renderer: 'svg' }}
-				/>
+				<ReactEchartsCore echarts={echarts} option={getOption()} style={{ height: '500px', width: '100%' }} />
 			</Modal>
 		</React.Fragment>
 	)

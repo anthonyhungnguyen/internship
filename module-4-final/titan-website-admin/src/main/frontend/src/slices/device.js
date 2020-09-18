@@ -20,7 +20,7 @@ const deviceSlice = createSlice({
 			state.loading = true
 		},
 		getDeviceSuccess: (state, { payload }) => {
-			state.device = { ...payload, timestamp: moment(parseInt(payload.timestamp) * 1000).format('lll') }
+			state.device = { ...payload, timestamp: moment(parseInt(payload.timestamp) * 1000).format('L LTS') }
 			state.loading = false
 			state.hasErrors = false
 		},

@@ -10,13 +10,14 @@ import { useDispatch, useSelector } from 'react-redux'
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
-	const { deviceId, loading, hasErrors } = useSelector(deviceSelector)
+	const { deviceId, loading, hasErrors, errorInfo } = useSelector(deviceSelector)
 	useEffect(
 		() => {
 			dispatch(fetchDevice(deviceId))
 		},
 		[ dispatch, deviceId ]
 	)
+
 	return !loading && !hasErrors ? (
 		<div className="animated fadeIn text-gray-700">
 			<Row gutter={[ 24, 24 ]}>
