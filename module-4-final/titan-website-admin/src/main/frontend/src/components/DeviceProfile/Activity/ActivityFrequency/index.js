@@ -11,41 +11,44 @@ export default function() {
 	const { timestamps } = useSelector(deviceActivitySelector)
 	const [ visible, setVisible ] = useState(false)
 	const getOption = () => {
-		return {
-			title: {
-				text: `${timestamps[0].date} - ${timestamps[timestamps.length - 1].date}`
-			},
-			color: [ '#118ab2' ],
-			tooltip: {
-				trigger: 'axis',
-				axisPointer: {
-					type: 'shadow'
-				}
-			},
-			grid: {
-				left: '3%',
-				right: '4%',
-				bottom: '3%',
-				containLabel: true
-			},
-			xAxis: {
-				data: timestamps.map((e) => e.date),
-				axisTick: {
-					alignWithLabel: true
-				}
-			},
-			yAxis: {},
-			series: [
-				{
-					type: 'bar',
-					data: timestamps.map((e) => e.count),
-					label: {
-						show: true,
-						position: 'top'
+		if (timestamps.length > 0) {
+			return {
+				title: {
+					text: `${timestamps[0].date} - ${timestamps[timestamps.length - 1].date}`
+				},
+				color: [ '#118ab2' ],
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'shadow'
 					}
-				}
-			]
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true
+				},
+				xAxis: {
+					data: timestamps.map((e) => e.date),
+					axisTick: {
+						alignWithLabel: true
+					}
+				},
+				yAxis: {},
+				series: [
+					{
+						type: 'bar',
+						data: timestamps.map((e) => e.count),
+						label: {
+							show: true,
+							position: 'top'
+						}
+					}
+				]
+			}
 		}
+		return {}
 	}
 
 	const handleToggleVisible = () => {

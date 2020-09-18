@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/component/tooltip'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/markPoint'
 import 'echarts/lib/component/markLine'
@@ -14,35 +15,38 @@ export default () => {
 	const [ visible, setVisible ] = useState(false)
 
 	const getOption = () => {
-		return {
-			title: {
-				text: `${spendingFrequency[0].date} - ${spendingFrequency[spendingFrequency.length - 1].date}`
-			},
-			tooltip: {
-				trigger: 'axis'
-			},
-			xAxis: {
-				type: 'category',
-				data: spendingFrequency.map((sf) => sf.date)
-			},
-			yAxis: {
-				type: 'value'
-			},
-			color: '#d62828',
-			series: [
-				{
-					data: spendingFrequency.map((sf) => sf.amount),
-					type: 'line',
-					markPoint: {
-						data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
-					},
-					markLine: {
-						data: [ { type: 'average', name: 'average' } ]
-					},
-					smooth: true
-				}
-			]
+		if (spendingFrequency.length > 0) {
+			return {
+				title: {
+					text: `${spendingFrequency[0].date} - ${spendingFrequency[spendingFrequency.length - 1].date}`
+				},
+				tooltip: {
+					trigger: 'axis'
+				},
+				xAxis: {
+					type: 'category',
+					data: spendingFrequency.map((sf) => sf.date)
+				},
+				yAxis: {
+					type: 'value'
+				},
+				color: '#d62828',
+				series: [
+					{
+						data: spendingFrequency.map((sf) => sf.amount),
+						type: 'line',
+						markPoint: {
+							data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
+						},
+						markLine: {
+							data: [ { type: 'average', name: 'average' } ]
+						},
+						smooth: true
+					}
+				]
+			}
 		}
+		return {}
 	}
 
 	const handleToggleVisible = () => {
