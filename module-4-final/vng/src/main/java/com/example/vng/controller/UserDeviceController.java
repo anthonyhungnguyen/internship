@@ -1,9 +1,12 @@
 package com.example.vng.controller;
 
+import com.example.vng.model.CustomQuery;
 import com.example.vng.service.UserDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,5 +58,10 @@ public class UserDeviceController {
     @PostMapping("user_device/device_users/moreDepth")
     public List<Map<String, String>> getNextDepth(@RequestBody List<String> deviceList) {
         return userDeviceService.getNextDepth(deviceList);
+    }
+
+    @PostMapping("user_device/test")
+    public ArrayList<Object> getDynamicQuery(@RequestBody CustomQuery customQuery) {
+        return userDeviceService.getDynamicQuery(customQuery);
     }
 }

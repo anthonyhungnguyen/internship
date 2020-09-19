@@ -1,25 +1,27 @@
 package com.example.vng.service;
 
+import com.example.vng.model.CustomQuery;
+import com.example.vng.repository.ArangoDBCustom;
 import com.example.vng.repository.TPERepository;
 import com.example.vng.repository.UserDeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserDeviceService {
 
     private final UserDeviceRepository userDeviceRepository;
     private final TPERepository tpeRepository;
+    private final ArangoDBCustom arangoDBCustom;
 
     @Autowired
     public UserDeviceService(UserDeviceRepository userDeviceRepository,
-                             TPERepository tpeRepository) {
+                             TPERepository tpeRepository, ArangoDBCustom arangoDBCustom) {
         this.userDeviceRepository = userDeviceRepository;
         this.tpeRepository = tpeRepository;
+        this.arangoDBCustom = arangoDBCustom;
     }
 
     public List<Map<String, Object>> getDeviceTimestampsById(String id) {
@@ -82,6 +84,10 @@ public class UserDeviceService {
         bindVars.put("type", "transaction");
         bindVars.put("cond", "0.0");
         return tpeRepository.getGeolocationActivity(bindVars);
+    }
+
+    public ArrayList<Object> getDynamicQuery(CustomQuery customQuery) {
+        return arangoDBCustom.getDataByDynamicQuery(customQuery);
     }
 
 }
