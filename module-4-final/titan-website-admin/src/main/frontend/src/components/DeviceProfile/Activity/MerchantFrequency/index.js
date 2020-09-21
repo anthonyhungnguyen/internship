@@ -1,81 +1,27 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Card, Modal } from 'antd'
-import { deviceActivitySelector } from '../../../../slices/deviceActivity'
-import ReactEchartsCore from 'echarts-for-react/lib/core'
-import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/chart/pie'
-import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
+import { Tabs, Card } from 'antd'
+import GeneralView from './GeneralView'
+import DetailsView from './DetailsView'
 
-export default React.memo(() => {
-	const { merchantFrequency } = useSelector(deviceActivitySelector)
-	const [ visible, setVisible ] = useState(false)
+const { TabPane } = Tabs
 
-	const getOption = () => {
-		return {
-			tooltip: {
-				trigger: 'item',
-				formatter: '{b} : {c} ({d}%)'
-			},
-			series: [
-				{
-					type: 'pie',
-					selectedMode: 'multiple',
-					data: merchantFrequency.map((mf) => ({
-						name: `${mf.merchant} - ${mf.merchant_count}`,
-						value: mf.merchant_count
-					})),
-					animation: true,
-					label: {
-						position: 'outer',
-						alignTo: 'none',
-						bleedMargin: 5
-					}
-				}
-			],
-			emphasis: {
-				itemStyle: {
-					shadowBlur: 10,
-					shadowOffsetX: 0,
-					shadowColor: 'rgba(0, 0, 0, 0.5)'
-				}
-			}
-		}
-	}
+export default (() => {
 
-	const handleToggleVisible = () => {
-		setVisible((old) => !old)
-	}
+    const [activeTab, setActiveTab] = useState('general')
 
-	return (
-		<React.Fragment>
-			<Card
-				title="Merchant Frequency"
-				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
-				hoverable={true}
-				extra={
-					<button onClick={handleToggleVisible}>
-						{visible ? (
-							<FullscreenExitOutlined className="text-xl" />
-						) : (
-							<FullscreenOutlined className="text-xl" />
-						)}
-					</button>
-				}
-			>
-				<ReactEchartsCore echarts={echarts} option={getOption()} />
-			</Card>
-			<Modal
-				title="Merchant Frequency"
-				visible={visible}
-				onOk={handleToggleVisible}
-				onCancel={handleToggleVisible}
-				centered
-				width={1000}
-				footer={null}
-			>
-				<ReactEchartsCore echarts={echarts} option={getOption()} style={{ height: '500px', width: '100%' }} />
-			</Modal>
-		</React.Fragment>
-	)
+    return <Tabs defaultActiveKey={activeTab}
+        animated={true}
+        onChange={(e) => setActiveTab(e)}
+        type="line"
+        tabPosition="right"
+    >
+        <TabPane tab="General View" key="general">
+            <GeneralView />
+        </TabPane>
+
+        <TabPane tab="Details View" key="details">
+            <DetailsView />
+        </TabPane>
+
+    </Tabs>
 })

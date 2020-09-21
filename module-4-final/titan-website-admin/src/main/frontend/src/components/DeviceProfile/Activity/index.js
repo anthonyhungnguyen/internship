@@ -20,12 +20,12 @@ export default React.memo(() => {
 		() => {
 			dispatch(fetchActivity(deviceId))
 		},
-		[ dispatch, deviceId ]
+		[dispatch, deviceId]
 	)
 
 	return !loading && !hasErrors ? (
 		<div className="animated fadeIn">
-			<Row gutter={[ 24, 24 ]}>
+			<Row gutter={[24, 24]}>
 				<Col span={12}>
 					<Suspense fallback={<Skeleton active />}>
 						<ActivityFrequency />
@@ -37,7 +37,7 @@ export default React.memo(() => {
 					</Suspense>
 				</Col>
 			</Row>
-			<Row gutter={[ 24, 24 ]}>
+			<Row gutter={[24, 24]}>
 				<Col span={12}>
 					<Suspense fallback={<Skeleton active />}>
 						<TPESpending />
@@ -54,6 +54,6 @@ export default React.memo(() => {
 			</BackTop>
 		</div>
 	) : (
-		<Skeleton active />
-	)
+			<Skeleton active />
+		)
 })

@@ -12,7 +12,7 @@ import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 
 export default () => {
 	const { spendingFrequency } = useSelector(deviceActivitySelector)
-	const [ visible, setVisible ] = useState(false)
+	const [visible, setVisible] = useState(false)
 
 	const getOption = () => {
 		if (spendingFrequency.length > 0) {
@@ -36,10 +36,10 @@ export default () => {
 						data: spendingFrequency.map((sf) => sf.amount),
 						type: 'line',
 						markPoint: {
-							data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
+							data: [{ type: 'max', name: 'max' }, { type: 'min', name: 'min' }]
 						},
 						markLine: {
-							data: [ { type: 'average', name: 'average' } ]
+							data: [{ type: 'average', name: 'average' }]
 						},
 						smooth: true
 					}
@@ -66,10 +66,10 @@ export default () => {
 					data: [],
 					type: 'line',
 					markPoint: {
-						data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
+						data: [{ type: 'max', name: 'max' }, { type: 'min', name: 'min' }]
 					},
 					markLine: {
-						data: [ { type: 'average', name: 'average' } ]
+						data: [{ type: 'average', name: 'average' }]
 					},
 					smooth: true
 				}
@@ -92,8 +92,8 @@ export default () => {
 						{visible ? (
 							<FullscreenExitOutlined className="text-xl" />
 						) : (
-							<FullscreenOutlined className="text-xl" />
-						)}
+								<FullscreenOutlined className="text-xl" />
+							)}
 					</button>
 				}
 			>
@@ -108,7 +108,7 @@ export default () => {
 				width={1000}
 				footer={null}
 			>
-				<ReactEchartsCore echarts={echarts} option={getOption()} style={{ height: '500px', width: '100%' }} />
+				<ReactEchartsCore echarts={echarts} option={getOption()} style={{ height: '70vh', width: '100%' }} />
 			</Modal>
 		</React.Fragment>
 	)

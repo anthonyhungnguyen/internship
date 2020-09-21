@@ -7,6 +7,7 @@ import Identity from './Identity'
 import IP from './IP'
 import { deviceSelector, fetchDevice } from '../../../slices/device'
 import { useDispatch, useSelector } from 'react-redux'
+import RecentTransaction from './RecentTransaction'
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
@@ -15,25 +16,30 @@ export default React.memo(() => {
 		() => {
 			dispatch(fetchDevice(deviceId))
 		},
-		[ dispatch, deviceId ]
+		[dispatch, deviceId]
 	)
 
 	return !loading && !hasErrors ? (
 		<div className="animated fadeIn text-gray-700">
-			<Row gutter={[ 24, 24 ]}>
+			<Row gutter={[24, 24]}>
 				<Col span={24}>
 					<Score />
 				</Col>
 			</Row>
-			<Row gutter={[ 24, 24 ]}>
+			<Row gutter={[24, 24]}>
 				<Col span={12}>
 					<System />
 				</Col>
 
 				<Col span={12}>
-					<Row gutter={[ 24, 24 ]}>
+					<Row gutter={[24, 24]}>
 						<Col span={24}>
 							<Identity />
+						</Col>
+					</Row>
+					<Row gutter={[24, 24]}>
+						<Col span={24}>
+							<RecentTransaction />
 						</Col>
 					</Row>
 					<Row>
@@ -49,6 +55,6 @@ export default React.memo(() => {
 			</BackTop>
 		</div>
 	) : (
-		<Skeleton active />
-	)
+			<Skeleton active />
+		)
 })
