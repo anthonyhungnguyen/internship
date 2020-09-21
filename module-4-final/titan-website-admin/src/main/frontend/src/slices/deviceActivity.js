@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import moment from 'moment'
 
 export const initialState = {
 	loading: true,
@@ -8,7 +7,11 @@ export const initialState = {
 	timestamps: [],
 	merchantFrequency: [],
 	spendingFrequency: [],
-	geolocationActivity: []
+	geolocationActivity: [],
+	appid: [],
+	filters: {
+		range: [ '2020-08-08', '2020-08-19' ]
+	}
 }
 
 const deviceActivitySlice = createSlice({
@@ -22,20 +25,24 @@ const deviceActivitySlice = createSlice({
 			state.hasErrors = false
 			state.loading = false
 			state.timestamps = payload.timestamps
-			state.merchantFrequency = payload.merchantFrequency
-			state.spendingFrequency = payload.spendingFrequency
-			state.geolocationActivity = payload.geolocationActivity
+			state.merchantFrequency = payload.merchant
+			state.spendingFrequency = payload.spending
+			state.geolocationActivity = payload.geolocation
+			state.appid = payload.appid
 		},
 		getActivityFailure: (state, { payload }) => {
 			state.loading = false
 			state.hasErrors = true
 			state.errorInfo = payload
+		},
+		storeDateRange: (state, { payload }) => {
+			state.filters = { ...state.filters, range: payload }
 		}
 	}
 })
 
 // Three actions from slice
-export const { getActivity, getActivitySuccess, getActivityFailure } = deviceActivitySlice.actions
+export const { getActivity, getActivitySuccess, getActivityFailure, storeDateRange } = deviceActivitySlice.actions
 
 // Export state selector
 export const deviceActivitySelector = (state) => state.deviceActivity
@@ -45,22 +52,76 @@ export default deviceActivitySlice.reducer
 
 // Asynchronous thunk action
 
-export function fetchActivity(id) {
+export function fetchActivity(id, filters) {
 	return async (dispatch) => {
 		dispatch(getActivity())
 		try {
-			const allResults = await Promise.all([
-				fetch(`http://localhost:8085/api/user_device/device/${id}/timestamps`),
-				fetch(`http://localhost:8085/api/user_device/device/${id}/merchant`),
-				fetch(`http://localhost:8085/api/user_device/device/${id}/spending`),
-				fetch(`http://localhost:8085/api/user_device/device/${id}/geolocation`)
-			])
-			const [ response, merchantResponse, spendingResponse, geolocationResponse ] = allResults
+			const queryString = `
+            LET timestamps = (
+				FOR v, e IN 1..1 INBOUND @deviceId users_devices
+				FILTER e.type == 'user_use_device' 
+				AND TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)
+				COLLECT date = DATE_FORMAT(DATE_ADD(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), 7, 'hour'), @dateFormat) WITH COUNT INTO date_count
+				RETURN {date, date_count}
+			)
+				
+			LET merchant = (
+				FOR v, e IN 1..1 INBOUND @deviceId users_devices
+				FILTER e.type == 'transaction' 
+				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+				COLLECT merchant = e.merchant WITH COUNT INTO merchant_count
+				SORT merchant_count DESC
+				RETURN {merchant, merchant_count}
+			)
+			
+			LET spending = (
+				FOR v, e IN 1..1 INBOUND @deviceId users_devices
+				FILTER e.type == 'transaction' AND e.merchant != 'Money Transfer' 
+				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+				COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), @dateFormat)
+				AGGREGATE amount = SUM(TO_NUMBER(e.amount))
+				RETURN {date, amount}
+			)
+			
+			LET geolocation = (
+				FOR v, e IN 1..1 INBOUND @deviceId users_devices
+				FILTER e.type == 'transaction' AND e.latitude != '0.0' AND e.longitude != '0.0'
+				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+				COLLECT lat = e.latitude,
+						lng = e.longitude WITH COUNT INTO location_count
+				RETURN {lat, lng, location_count}
+			)
+			
+			LET appid = (
+				FOR v, e IN 1..1 INBOUND @deviceId users_devices
+				FILTER e.type == 'transaction' 
+				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+				COLLECT app_id = e.appid WITH COUNT INTO app_id_count 
+				SORT app_id_count 
+				RETURN {app_id, app_id_count}
+			)
+			
+			
+			RETURN {timestamps, merchant, spending, geolocation, appid}
+            `
+			const response = await fetch('http://localhost:8085/api/user_device/test', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					query: queryString,
+					bindVars: {
+						deviceId: `devices/${id}`,
+						dateFormat: '%dd-%mm-%yyyy',
+						fromDate: filters.range[0],
+						toDate: filters.range[1]
+					}
+				})
+			})
 
-			const timestamps = await response.json()
-			const merchantFrequency = await merchantResponse.json()
-			const spendingFrequency = await spendingResponse.json()
-			const geolocationActivity = await geolocationResponse.json()
+			const data = await response.json()
+			const { timestamps, merchant, spending, geolocation, appid } = data[0]
 
 			if (timestamps.errorCode) {
 				dispatch(getActivityFailure(timestamps))
@@ -68,9 +129,10 @@ export function fetchActivity(id) {
 				dispatch(
 					getActivitySuccess({
 						timestamps,
-						merchantFrequency,
-						spendingFrequency,
-						geolocationActivity
+						merchant,
+						spending,
+						geolocation,
+						appid
 					})
 				)
 			}

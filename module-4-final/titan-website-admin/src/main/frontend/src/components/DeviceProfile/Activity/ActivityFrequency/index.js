@@ -7,16 +7,16 @@ import { deviceActivitySelector } from '../../../../slices/deviceActivity'
 import { Card, Modal } from 'antd'
 import { FullscreenOutlined } from '@ant-design/icons'
 
-export default function () {
+export default function() {
 	const { timestamps } = useSelector(deviceActivitySelector)
-	const [visible, setVisible] = useState(false)
+	const [ visible, setVisible ] = useState(false)
 	const getOption = () => {
 		if (timestamps.length > 0) {
 			return {
 				title: {
 					text: `${timestamps[0].date} - ${timestamps[timestamps.length - 1].date}`
 				},
-				color: ['#118ab2'],
+				color: [ '#118ab2' ],
 				tooltip: {
 					trigger: 'axis',
 					axisPointer: {
@@ -39,7 +39,7 @@ export default function () {
 				series: [
 					{
 						type: 'bar',
-						data: timestamps.map((e) => e.count),
+						data: timestamps.map((e) => e.date_count),
 						label: {
 							show: true,
 							position: 'top'

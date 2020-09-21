@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { isEmptyBindingElement } from 'typescript'
 
 export const initialState = {
 	loading: true,
