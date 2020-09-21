@@ -1,13 +1,11 @@
 package com.example.vng.repository;
 
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.springframework.annotation.BindVars;
 import com.arangodb.springframework.annotation.Query;
 import com.arangodb.springframework.repository.ArangoRepository;
 import com.example.vng.model.UserDevice;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import ReactEcharts from 'echarts-for-react'
+import { useDispatch, useSelector } from 'react-redux'
+import { dataSelector } from '../../slices/graph'
+import { storeGraphData } from '../../slices/graph'
 
-export default ({ type, id }) => {
-	const [ graph, setGraph ] = useState({})
+export default () => {
+	const dispatch = useDispatch()
+	const { graph, id, options } = useSelector(dataSelector)
+	const { idType, edgeType } = options
 
 	useEffect(
 		() => {
@@ -13,18 +18,17 @@ export default ({ type, id }) => {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						query:
-							'FOR v, e IN @fromDepth..@toDepth %s @id @@col FILTER e.type == @type %s LIMIT @limit RETURN %s',
+						query: 'FOR v, e IN @fromDepth..@toDepth %s @id @@col %s %s LIMIT @limit RETURN %s',
 						bindVars: {
 							'@col': 'users_devices',
 							fromDepth: 1,
 							toDepth: 1,
-							id: `${type}/${id}`,
-							type: 'user_use_device',
+							id: `${idType}/${id}`,
 							limit: null
 						},
 						options: {
 							direction: 'ANY',
+							filter: edgeType !== 'all' ? `FILTER e.type == '${edgeType}'` : '',
 							collect: 'COLLECT source = e._from, target = e._to',
 							return: '{source, target}'
 						}
@@ -34,7 +38,7 @@ export default ({ type, id }) => {
 				const connections = buildConnections(data)
 				const graph = buildGraph(connections)
 
-				setGraph(graph)
+				dispatch(storeGraphData(graph))
 			}
 
 			const buildConnections = (data) => {
@@ -44,7 +48,7 @@ export default ({ type, id }) => {
 						id: id,
 						name: id,
 						category: 0,
-						type: type,
+						type: idType,
 						expanded: true
 					}
 				]
@@ -152,8 +156,8 @@ export default ({ type, id }) => {
 
 			fetchData()
 		},
-		[ id ]
+		[ id, dispatch, edgeType ]
 	)
 
-	return <ReactEcharts option={graph} style={{ height: '100%', width: '100%' }} />
+	return graph ? <ReactEcharts option={graph} style={{ height: '100%', width: '100%' }} /> : null
 }
