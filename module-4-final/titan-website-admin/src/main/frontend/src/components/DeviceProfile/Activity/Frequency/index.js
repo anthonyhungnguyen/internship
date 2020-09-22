@@ -58,7 +58,7 @@ export default function() {
 	return (
 		<React.Fragment>
 			<Card
-				title="Activity Date Frequency"
+				title="Frequency"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
 				extra={
@@ -66,11 +66,12 @@ export default function() {
 						<FullscreenOutlined className="text-xl" />
 					</button>
 				}
+				className="h-full"
 			>
 				<ReactEchartsCore echarts={echarts} option={getOption()} />
 			</Card>
 			<Modal
-				title="Activity Date Frequency"
+				title="Frequency"
 				visible={visible}
 				onOk={handleToggleVisible}
 				onCancel={handleToggleVisible}

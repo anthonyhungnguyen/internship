@@ -12,7 +12,7 @@ import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 
 export default () => {
 	const { spendingFrequency } = useSelector(deviceActivitySelector)
-	const [visible, setVisible] = useState(false)
+	const [ visible, setVisible ] = useState(false)
 
 	const getOption = () => {
 		if (spendingFrequency.length > 0) {
@@ -36,10 +36,10 @@ export default () => {
 						data: spendingFrequency.map((sf) => sf.amount),
 						type: 'line',
 						markPoint: {
-							data: [{ type: 'max', name: 'max' }, { type: 'min', name: 'min' }]
+							data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
 						},
 						markLine: {
-							data: [{ type: 'average', name: 'average' }]
+							data: [ { type: 'average', name: 'average' } ]
 						},
 						smooth: true
 					}
@@ -66,10 +66,10 @@ export default () => {
 					data: [],
 					type: 'line',
 					markPoint: {
-						data: [{ type: 'max', name: 'max' }, { type: 'min', name: 'min' }]
+						data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
 					},
 					markLine: {
-						data: [{ type: 'average', name: 'average' }]
+						data: [ { type: 'average', name: 'average' } ]
 					},
 					smooth: true
 				}
@@ -84,7 +84,7 @@ export default () => {
 	return (
 		<React.Fragment>
 			<Card
-				title="Spending Statistics"
+				title="Monetary"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
 				extra={
@@ -92,15 +92,15 @@ export default () => {
 						{visible ? (
 							<FullscreenExitOutlined className="text-xl" />
 						) : (
-								<FullscreenOutlined className="text-xl" />
-							)}
+							<FullscreenOutlined className="text-xl" />
+						)}
 					</button>
 				}
 			>
 				<ReactEchartsCore echarts={echarts} option={getOption()} />
 			</Card>
 			<Modal
-				title="Spending Statistics"
+				title="Monetary"
 				visible={visible}
 				onOk={handleToggleVisible}
 				onCancel={handleToggleVisible}

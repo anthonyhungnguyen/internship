@@ -10,7 +10,7 @@ export const initialState = {
 	geolocationActivity: [],
 	appid: [],
 	filters: {
-		range: [ '2020-08-08', '2020-08-19' ]
+		range: [ '2020-08-01', '2020-08-31' ]
 	}
 }
 
@@ -103,7 +103,8 @@ export function fetchActivity(id, filters) {
 			
 			
 			RETURN {timestamps, merchant, spending, geolocation, appid}
-            `
+			`
+			console.log(filters)
 			const response = await fetch('http://localhost:8085/api/user_device/test', {
 				method: 'POST',
 				headers: {

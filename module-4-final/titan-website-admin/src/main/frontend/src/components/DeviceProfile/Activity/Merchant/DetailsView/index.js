@@ -69,43 +69,25 @@ export default () => {
 		appid &&
 		excludedList && (
 			<React.Fragment>
-				<Card
-					title="Merchant Frequency"
-					headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
-					hoverable={true}
-					extra={
-						<button onClick={handleToggleVisible}>
-							{visible ? (
-								<FullscreenExitOutlined className="text-xl" />
-							) : (
-								<FullscreenOutlined className="text-xl" />
-							)}
-						</button>
-					}
-				>
-					<span className="mx-2 font-bold">APP ID</span>
-					<Select
-						mode="multiple"
-						style={{ width: '50%', margin: 'center' }}
-						placeholder="Please select"
-						defaultValue={appid
-							.filter((x) => !excludedList.includes(x.app_id))
-							.reverse()
-							.map((x) => x.app_id)}
-						onSelect={handleSelectAppId}
-						onDeselect={handleDeselectAppId}
-						options={appid.map((x) => ({
-							value: x.app_id
-						}))}
-						onClear={handleOnClear}
-						allowClear={true}
-						maxTagCount={4}
-					/>
-					<ReactEchartsCore echarts={echarts} option={getGraphOptions(appid, excludedList)} />
-				</Card>
+				<span className="mx-2 font-bold">APP ID</span>
+				<Select
+					mode="multiple"
+					style={{ width: '50%', margin: 'center' }}
+					placeholder="Please select"
+					defaultValue={appid.filter((x) => !excludedList.includes(x.app_id)).reverse().map((x) => x.app_id)}
+					onSelect={handleSelectAppId}
+					onDeselect={handleDeselectAppId}
+					options={appid.map((x) => ({
+						value: x.app_id
+					}))}
+					onClear={handleOnClear}
+					allowClear={true}
+					maxTagCount={4}
+				/>
+				<ReactEchartsCore echarts={echarts} option={getGraphOptions(appid, excludedList)} />
 
 				<Modal
-					title="Merchant Frequency"
+					title="Merchant"
 					visible={visible}
 					onOk={handleToggleVisible}
 					onCancel={handleToggleVisible}

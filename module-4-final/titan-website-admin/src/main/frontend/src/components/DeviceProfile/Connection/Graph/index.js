@@ -1,10 +1,12 @@
 import React, { useRef } from 'react'
 import { useSelector } from 'react-redux'
-import ReactEcharts from 'echarts-for-react'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { Card, Slider } from 'antd'
 import { deviceConnectionSelector } from '../../../../slices/deviceConnection'
 import { preprocessMoreConnection, generateGraphData, preprocessConnection } from '../../../../slices/deviceConnection'
 import copy from 'copy-to-clipboard'
+import 'echarts/lib/chart/graph'
+import echarts from 'echarts/lib/echarts'
 
 export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
 	const { graphData } = useSelector(deviceConnectionSelector)
@@ -89,7 +91,8 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 					</React.Fragment>
 				}
 			>
-				<ReactEcharts
+				<ReactEchartsCore
+					echarts={echarts}
 					ref={ref}
 					option={graphData}
 					style={{ height: '800px', width: '100%' }}

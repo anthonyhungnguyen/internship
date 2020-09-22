@@ -7,10 +7,9 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/pie'
 import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 
-
 export default React.memo(() => {
 	const { merchantFrequency } = useSelector(deviceActivitySelector)
-	const [visible, setVisible] = useState(false)
+	const [ visible, setVisible ] = useState(false)
 
 	const getOption = () => {
 		return {
@@ -50,22 +49,8 @@ export default React.memo(() => {
 
 	return (
 		<React.Fragment>
-			<Card
-				title="Merchant Frequency"
-				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
-				hoverable={true}
-				extra={
-					<button onClick={handleToggleVisible}>
-						{visible ? (
-							<FullscreenExitOutlined className="text-xl" />
-						) : (
-								<FullscreenOutlined className="text-xl" />
-							)}
-					</button>
-				}
-			>
-				<ReactEchartsCore echarts={echarts} option={getOption()} />
-			</Card>
+			<ReactEchartsCore echarts={echarts} option={getOption()} />
+
 			<Modal
 				title="Merchant Frequency"
 				visible={visible}

@@ -51,7 +51,7 @@ export default () => {
 	return (
 		<React.Fragment>
 			<Card
-				title={geolocationActivity.length !== 0 ? 'Geolocation Activity' : 'Geolocation Activity - No records'}
+				title={geolocationActivity.length !== 0 ? 'Geolocation' : 'Geolocation - No records'}
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
 				className="w-full h-full"
@@ -65,7 +65,7 @@ export default () => {
 				{isLoaded ? renderMap() : <Skeleton active />}
 			</Card>
 			<Modal
-				title={geolocationActivity.length !== 0 ? 'Geolocation Activity' : 'Geolocation Activity - No records'}
+				title={geolocationActivity.length !== 0 ? 'Geolocation' : 'Geolocation - No records'}
 				visible={visible}
 				onOk={handleToggleVisible}
 				onCancel={handleToggleVisible}

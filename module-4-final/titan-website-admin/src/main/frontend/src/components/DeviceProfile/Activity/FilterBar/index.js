@@ -27,6 +27,7 @@ export default () => {
 							moment(filters.range[0], 'YYYY-MM-DD'),
 							moment(filters.range[1], 'YYYY-MM-DD')
 						]}
+						disabledDate={(current) => current >= moment(filters.range[1], 'YYYY-MM-DD')}
 					/>
 				</Col>
 			</Row>

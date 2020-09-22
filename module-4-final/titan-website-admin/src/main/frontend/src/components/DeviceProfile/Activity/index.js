@@ -7,10 +7,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import './index.css'
 import FilterBar from './FilterBar'
 
-const ActivityFrequency = React.lazy(() => import('./ActivityFrequency'))
-const MerchantFrequency = React.lazy(() => import('./MerchantFrequency'))
-const TPESpending = React.lazy(() => import('./TPESpending'))
-const GeolocationActivity = React.lazy(() => import('./GeolocationActivity'))
+const Frequency = React.lazy(() => import('./Frequency'))
+const Merchant = React.lazy(() => import('./Merchant'))
+const Monetary = React.lazy(() => import('./Monetary'))
+const Geolocation = React.lazy(() => import('./Geolocation'))
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
@@ -38,24 +38,24 @@ export default React.memo(() => {
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
 							<Suspense fallback={<Skeleton active />}>
-								<ActivityFrequency />
+								<Frequency />
 							</Suspense>
 						</Col>
 						<Col span={12}>
 							<Suspense fallback={<Skeleton active />}>
-								<MerchantFrequency />
+								<Merchant />
 							</Suspense>
 						</Col>
 					</Row>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
 							<Suspense fallback={<Skeleton active />}>
-								<TPESpending />
+								<Monetary />
 							</Suspense>
 						</Col>
 						<Col span={12}>
 							<Suspense fallback={<Skeleton active />}>
-								<GeolocationActivity />
+								<Geolocation />
 							</Suspense>
 						</Col>
 					</Row>

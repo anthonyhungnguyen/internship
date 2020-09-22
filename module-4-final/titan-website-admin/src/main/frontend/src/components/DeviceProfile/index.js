@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { deviceSelector, storeDeviceId } from '../../slices/device'
 import swal from 'sweetalert'
 import './index.css'
+import Tool from './Tool'
 
 const Details = React.lazy(() => import('./Details'))
 const Activity = React.lazy(() => import('./Activity'))
@@ -15,7 +16,7 @@ const { Search } = Input
 export default React.memo(() => {
 	const dispatch = useDispatch()
 	const { deviceId, loading } = useSelector(deviceSelector)
-	const [ activeTab, setActiveTab ] = useState('details')
+	const [ activeTab, setActiveTab ] = useState('overview')
 
 	const handleSearch = (newDeviceId) => {
 		if (newDeviceId) {
@@ -42,7 +43,7 @@ export default React.memo(() => {
 				/>
 			}
 		>
-			<TabPane tab="Details" key="details">
+			<TabPane tab="Overview" key="overview">
 				<Suspense fallback={<Skeleton active />}>
 					<Details />
 				</Suspense>
@@ -55,6 +56,11 @@ export default React.memo(() => {
 			<TabPane tab="Connection" key="connection">
 				<Suspense fallback={<Skeleton active />}>
 					<Connection />
+				</Suspense>
+			</TabPane>
+			<TabPane tab="Tool" key="tool">
+				<Suspense fallback={<Skeleton active />}>
+					<Tool />
 				</Suspense>
 			</TabPane>
 		</Tabs>

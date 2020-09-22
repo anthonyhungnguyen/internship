@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import moment from 'moment'
+import { storeDateRange } from './deviceActivity'
 
 export const initialState = {
 	loading: true,
@@ -47,6 +48,29 @@ export function fetchDevice(id) {
 		dispatch(getDevice())
 		try {
 			const response = await fetch(`http://localhost:8085/api/device/${id}`)
+
+			const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					query: `LET dates = (FOR v, e IN 1..1 ANY @deviceId users_devices
+							FILTER e.type == 'transaction'
+							SORT DATE_TIMESTAMP(DATE_ISO8601(e.reqDate))
+							RETURN e.reqDate)
+						
+							RETURN [DATE_FORMAT(dates[0], @dateFormat), DATE_FORMAT(dates[-1], @dateFormat)]`,
+					bindVars: {
+						deviceId: `devices/${id}`,
+						dateFormat: '%yyyy-%mm-%dd'
+					}
+				})
+			})
+
+			const lastReqDate = await lastReqDateResponse.json()
+			dispatch(storeDateRange(lastReqDate[0]))
+
 			const payload = await response.json()
 			if (payload.errorCode) {
 				dispatch(getDeviceFailure(payload))
