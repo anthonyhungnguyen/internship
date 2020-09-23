@@ -39,7 +39,7 @@ const ActionCodeInfo = React.lazy(() => import('./components/ActionCodeInfo'))
 
 const CheckAccumulation = React.lazy(() => import('./components/CheckAccumulation'))
 const ManualData = React.lazy(() => import('./components/ManualData'))
-const DeviceProfile = React.lazy(() => import('./components/DeviceProfile'))
+const DeviceProfile = React.lazy(() => import('./components/Profile'))
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [

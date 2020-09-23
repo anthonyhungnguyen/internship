@@ -103,7 +103,6 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 			nodes[expandedNodeIndex] = {
 				...nodes[expandedNodeIndex],
 				label: {
-					show: false,
 					fontWeight: 'bold'
 				},
 				expanded: true
@@ -127,7 +126,7 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 			nodes.push({
 				id: device,
 				name: device,
-				category: 1,
+				category: 2,
 				type: 'device',
 				expanded: false
 			})
@@ -137,7 +136,7 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 			nodes.push({
 				id: user,
 				name: user,
-				category: 0,
+				category: 1,
 				type: 'user',
 				expanded: false
 			})
@@ -149,7 +148,6 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 				target: user
 			})
 		}
-		
 	})
 	return {
 		nodes,
@@ -215,7 +213,7 @@ export const generateGraphData = (data) => {
 				force: {
 					edgeLength: 90,
 					repulsion: 700,
-					friction: 0.3
+					friction: 0.2
 				},
 				edges: connectionsData.links,
 				roam: true,
