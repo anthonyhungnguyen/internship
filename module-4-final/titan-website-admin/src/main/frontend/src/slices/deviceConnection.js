@@ -103,6 +103,7 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 			nodes[expandedNodeIndex] = {
 				...nodes[expandedNodeIndex],
 				label: {
+					show: false,
 					fontWeight: 'bold'
 				},
 				expanded: true
@@ -126,7 +127,7 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 			nodes.push({
 				id: device,
 				name: device,
-				category: 2,
+				category: 1,
 				type: 'device',
 				expanded: false
 			})
@@ -136,16 +137,19 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 			nodes.push({
 				id: user,
 				name: user,
-				category: 1,
+				category: 0,
 				type: 'user',
 				expanded: false
 			})
 			nodeCount.push(user)
 		}
-		links.push({
-			source: device,
-			target: user
-		})
+		if (!links.find((x) => x.source === user && x.target === device)) {
+			links.push({
+				source: device,
+				target: user
+			})
+		}
+		
 	})
 	return {
 		nodes,
