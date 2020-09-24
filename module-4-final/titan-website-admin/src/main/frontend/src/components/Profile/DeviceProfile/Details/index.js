@@ -36,12 +36,7 @@ export default React.memo(() => {
 						<Col span={24}>
 							<Identity />
 						</Col>
-					</Row>
-					<Row gutter={[ 24, 24 ]}>
-						<Col span={24}>
-							<RecentTransaction />
-						</Col>
-					</Row>
+					</Row>	
 					<Row>
 						<Col span={24}>
 							<IP />
