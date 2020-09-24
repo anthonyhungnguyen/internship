@@ -103,19 +103,7 @@ export default {
 		{
 			name: 'Profile',
 			icon: 'icon-equalizer',
-			url: '/profile',
-			children: [
-				{
-					name: 'Device',
-					url: '/profile-devices',
-					icon: 'icon-puzzle'
-				},
-				{
-					name: 'User',
-					url: '/profile-users',
-					icon: 'icon-puzzle'
-				}
-			]
+			url: '/profile'
 		}
 	]
 }

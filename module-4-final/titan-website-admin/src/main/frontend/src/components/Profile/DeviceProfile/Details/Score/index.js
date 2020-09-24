@@ -1,17 +1,123 @@
-import React from 'react';
-import { Progress } from 'antd';
-import { Card, Row, Col, Tooltip } from 'antd';
-import { deviceSelector } from '../../../../../slices/device';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react'
+import { Progress } from 'antd'
+import { Card, Row, Col, Tooltip } from 'antd'
+import { deviceSelector } from '../../../../../slices/device'
+import { useSelector } from 'react-redux'
 
 export default () => {
-	const { score } = useSelector(deviceSelector);
-	const {hardware} = score
+	const { deviceId } = useSelector(deviceSelector)
+	const [ hardware, setHardware ] = useState(null)
+
+	useEffect(() => {
+		const fetchHardwareScore = async () => {
+			const calculateScore = (scoreList) => {
+				let score = 0
+				const scoreData = []
+
+				const list_weight_1 = [
+					'hw_cpu_name',
+					'hw_screen_aspect_ratio',
+					'hw_screen_class',
+					'battery_type',
+					'hw_cpu_speed',
+					'hw_cpu_core_count',
+					'hw_cpu_supported_64_bit_abis',
+					'hw_cpu_supported_32_bit_abis',
+					'hw_cpu_processor',
+					'hw_cpu_supported_abis'
+				]
+				const list_weight_2 = [ 'hw_board', 'hw_screen_size', 'hw_cpu_min_speed', 'os_version' ]
+				const list_weight_3 = [
+					'hw_screen_pixel_density',
+					'hw_ram_total',
+					'hw_storage_total',
+					'hw_screen_refresh_rate'
+				]
+				scoreList.forEach((s) => {
+					if (![ 'nan', '', '0.0', '0' ].includes(s['value'])) {
+						if (list_weight_1.includes(s['field'])) {
+							const fieldScore = 3 * (1 - s['percent'])
+							score += fieldScore
+							scoreData.push({ field: s['field'], score: fieldScore })
+						} else if (list_weight_2.includes(s['field'])) {
+							const fieldScore = 2 * (1 - s['percent'])
+							score += fieldScore
+							scoreData.push({ field: s['field'], score: fieldScore })
+						} else if (list_weight_3.includes(s['field'])) {
+							const fieldScore = 1 - s['percent']
+							score += fieldScore
+							scoreData.push({ field: s['field'], score: fieldScore })
+						}
+					}
+				})
+				return { score, scoreData }
+			}
+			const scoreResponse = await fetch('http://localhost:8085/api/user_device/test', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					query: `LET fields = @fields
+
+					LET model = (FOR v, e IN 1..1 ANY @id device_devicemodel RETURN e._to)[0]
+					
+					LET devices_included = (FOR v, e IN 1..1 INBOUND model device_devicemodel RETURN DOCUMENT(e._from))
+					
+					LET total_devices = COUNT(devices_included)
+					
+					LET id_doc = DOCUMENT(@id)
+					
+					FOR lf in fields
+						LET field_count = COUNT(FOR v IN devices_included FILTER v[lf] == id_doc[lf] RETURN v)
+						RETURN {field: lf, value: id_doc[lf], percent: field_count/total_devices}
+					
+					`,
+					bindVars: {
+						fields: [
+							'hw_board',
+							'hw_cpu_name',
+							'hw_screen_aspect_ratio',
+							'hw_screen_class',
+							'battery_type',
+							'hw_screen_pixel_density',
+							'hw_cpu_speed',
+							'hw_screen_refresh_rate',
+							'hw_cpu_supported_64_bit_abis',
+							'hw_cpu_core_count',
+							'hw_cpu_supported_32_bit_abis',
+							'hw_cpu_processor',
+							'hw_screen_size',
+							'hw_cpu_supported_abis',
+							'hw_ram_total',
+							'hw_cpu_min_speed',
+							'hw_storage_total',
+							'os_version'
+						],
+						id: `devices/${deviceId}`
+					}
+				})
+			})
+			const scorePercent = await scoreResponse.json()
+			const { score, scoreData } = calculateScore(scorePercent)
+			setHardware({
+				score: score.toPrecision(2),
+				scoreData
+			})
+		}
+		fetchHardwareScore()
+	}, [])
 
 	const renderHardwareScoreDetails = (scoreData) => {
-		return <Card>
-			{scoreData.map(x => <p>{x.field}: {x.score}</p>)}
-		</Card>
+		return (
+			<div>
+				{scoreData.map((x) => (
+					<p>
+						<span className="font-bold">{x.field}</span>: {x.score.toPrecision(2)}
+					</p>
+				))}
+			</div>
+		)
 	}
 
 	return (
@@ -24,18 +130,29 @@ export default () => {
 				</Col>
 				<Col span={16}>
 					<Row gutter={[ 40, 24 ]}>
-						<Tooltip placement="topLeft" title={renderHardwareScoreDetails(score.scoreData)}>
-							<Col span={12} className="gutter-row" onClick={() => console.log('hello')}>
-								<p className="text-4xl">{hardware.score}</p>
-								<p className="text-xs text-gray-500 font-bold">HARDWARE SCORE</p>
-								<Progress
-									percent={hardware.score / 30 * 100}
-									showInfo={false}
-									status="active"
-									strokeColor={hardware.score > 10 ? hardware.score > 19 ? '#e74c3c' : '#f1c40f' : '#2ecc71'}
-								/>
-							</Col>
-						</Tooltip>
+						{hardware && (
+							<Tooltip placement="topLeft" title={renderHardwareScoreDetails(hardware.scoreData)}>
+								<Col span={12} className="gutter-row" onClick={() => console.log('hello')}>
+									<p className="text-4xl">{hardware.score}</p>
+									<p className="text-xs text-gray-500 font-bold">HARDWARE SCORE (0-30)</p>
+									<Progress
+										percent={hardware.score / 30 * 100}
+										showInfo={false}
+										status="active"
+										size="small"
+										strokeColor={
+											hardware.score > 10 ? hardware.score > 19 ? (
+												'#e74c3c'
+											) : (
+												'#f1c40f'
+											) : (
+												'#2ecc71'
+											)
+										}
+									/>
+								</Col>
+							</Tooltip>
+						)}
 
 						<Col span={12} className="gutter-row">
 							<p className="text-4xl">13.42</p>
@@ -76,5 +193,5 @@ export default () => {
 				</Col>
 			</Row>
 		</Card>
-	);
-};
+	)
+}

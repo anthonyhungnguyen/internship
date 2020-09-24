@@ -39,7 +39,7 @@ const ActionCodeInfo = React.lazy(() => import('./components/ActionCodeInfo'))
 
 const CheckAccumulation = React.lazy(() => import('./components/CheckAccumulation'))
 const ManualData = React.lazy(() => import('./components/ManualData'))
-const DeviceProfile = React.lazy(() => import('./components/Profile'))
+const Profile = React.lazy(() => import('./components/Profile'))
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -81,7 +81,7 @@ const routes = [
 	{ path: '/reload-config', exact: true, name: 'ReloadConfig', component: ReloadConfig },
 	{ path: '/role-management', name: 'RoleManagement', component: RoleManagement },
 	{ path: '/nav-management', name: 'NavManagement', component: NavManagement },
-	{ path: '/profile-devices', name: 'Device Profile', component: DeviceProfile }
+	{ path: '/profile', name: 'Profile', component: Profile }
 ]
 
 export default routes

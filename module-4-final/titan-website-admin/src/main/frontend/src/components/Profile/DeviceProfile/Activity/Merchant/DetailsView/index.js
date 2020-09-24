@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/bar'
-import { Card, Modal, Select } from 'antd'
+import { Card, Modal, Select, Button } from 'antd'
 import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons'
 import { deviceActivitySelector } from '../../../../../../slices/deviceActivity'
 
@@ -20,30 +20,47 @@ export default () => {
 		const processedData = data.filter((d) => !excludedList.includes(d.app_id))
 
 		return {
+			legend: {
+				data: [ 'App Frequency', 'App Monetary' ]
+			},
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: {
 					type: 'shadow'
 				}
 			},
-			grid: {
-				left: '3%',
-				right: '4%',
-				bottom: '3%',
-				containLabel: true
-			},
-			yAxis: {
-				type: 'value',
-				boundaryGap: [ 0, 0.01 ]
-			},
-			xAxis: {
-				type: 'category',
-				data: processedData.map((x) => x.app_id)
-			},
+			xAxis: [
+				{
+					type: 'category',
+					data: processedData.map((x) => x.app_id)
+				}
+			],
+			yAxis: [
+				{
+					name: 'Frequency',
+					type: 'value',
+					scale: true,
+					min: 0,
+					boundaryGap: [ 0, 0.01 ]
+				},
+				{
+					name: 'Monetary',
+					type: 'value',
+					scale: true,
+					boundaryGap: [ 0, 0.01 ]
+				}
+			],
 			series: [
 				{
+					name: 'Count',
 					type: 'bar',
 					data: processedData.map((x) => x.app_id_count)
+				},
+				{
+					name: 'Monetary',
+					type: 'line',
+					yAxisIndex: 1,
+					data: processedData.map((x) => x.app_total)
 				}
 			]
 		}
@@ -65,25 +82,39 @@ export default () => {
 		setExcludedList(appid.map((d) => d.app_id))
 	}
 
+	const handleAddAllAppID = () => {
+		setExcludedList([])
+	}
+
 	return (
 		appid &&
 		excludedList && (
 			<React.Fragment>
-				<span className="mx-2 font-bold">APP ID</span>
-				<Select
-					mode="multiple"
-					style={{ width: '50%', margin: 'center' }}
-					placeholder="Please select"
-					defaultValue={appid.filter((x) => !excludedList.includes(x.app_id)).reverse().map((x) => x.app_id)}
-					onSelect={handleSelectAppId}
-					onDeselect={handleDeselectAppId}
-					options={appid.map((x) => ({
-						value: x.app_id
-					}))}
-					onClear={handleOnClear}
-					allowClear={true}
-					maxTagCount={4}
-				/>
+				<div className="flex justify-around">
+					<div>
+						<p className="font-bold">APP ID</p>
+						<Select
+							mode="multiple"
+							style={{ width: '100%' }}
+							placeholder="Please select"
+							defaultValue={appid
+								.filter((x) => !excludedList.includes(x.app_id))
+								.reverse()
+								.map((x) => x.app_id)}
+							onSelect={handleSelectAppId}
+							onDeselect={handleDeselectAppId}
+							options={appid.map((x) => ({
+								value: x.app_id
+							}))}
+							onClear={handleOnClear}
+							allowClear={true}
+							maxTagCount={6}
+						/>
+					</div>
+					<div>
+						<Button onClick={handleAddAllAppID}>Add All</Button>
+					</div>
+				</div>
 				<ReactEchartsCore echarts={echarts} option={getGraphOptions(appid, excludedList)} renderer="canvas" />
 
 				<Modal

@@ -22,7 +22,10 @@ export default React.memo(() => {
 					type: 'pie',
 					selectedMode: 'multiple',
 					data: merchantFrequency.map((mf) => ({
-						name: `${mf.merchant} - ${mf.merchant_count}`,
+						name: `${mf.merchant} - ${mf.merchant_count} - ${mf.merchant_total.toLocaleString('en-EN', {
+							style: 'currency',
+							currency: 'VND'
+						})}`,
 						value: mf.merchant_count
 					})),
 					animation: true,

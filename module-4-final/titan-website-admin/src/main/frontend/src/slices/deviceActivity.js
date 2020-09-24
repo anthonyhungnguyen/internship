@@ -69,9 +69,10 @@ export function fetchActivity(id, filters) {
 				FOR v, e IN 1..1 INBOUND @deviceId users_devices
 				FILTER e.type == 'transaction' 
 				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-				COLLECT merchant = e.merchant WITH COUNT INTO merchant_count
+				COLLECT merchant = e.merchant
+				AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))
 				SORT merchant_count DESC
-				RETURN {merchant, merchant_count}
+				RETURN {merchant, merchant_count,merchant_total}
 			)
 			
 			LET spending = (
@@ -96,15 +97,15 @@ export function fetchActivity(id, filters) {
 				FOR v, e IN 1..1 INBOUND @deviceId users_devices
 				FILTER e.type == 'transaction' 
 				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-				COLLECT app_id = e.appid WITH COUNT INTO app_id_count 
-				SORT app_id_count 
-				RETURN {app_id, app_id_count}
+				COLLECT app_id = e.appid 
+				AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)
+				SORT app_id_count, app_total
+				RETURN {app_id, app_id_count, app_total}
 			)
 			
 			
 			RETURN {timestamps, merchant, spending, geolocation, appid}
 			`
-			console.log(filters)
 			const response = await fetch('http://localhost:8085/api/user_device/test', {
 				method: 'POST',
 				headers: {

@@ -95,7 +95,7 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 					echarts={echarts}
 					ref={ref}
 					option={graphData}
-					style={{ height: '800px', width: '100%' }}
+					style={{ height: '65vh', width: '100%' }}
 					renderer="canvas"
 					onEvents={{
 						click: handleOnClick,

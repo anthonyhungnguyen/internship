@@ -176,15 +176,12 @@ export const generateGraphData = (data) => {
 		legend: {
 			data: [ 'Root Device', 'Users', 'Related Devices' ]
 		},
-		animationDurationUpdate: 3000,
-		animationEasingUpdate: 'quinticInOut',
 		series: [
 			{
 				type: 'graph',
 				layout: 'force',
-				animation: true,
+				animation: false,
 				// edgeSymbol: [ 'none', 'arrow' ],
-				animationEasing: 'elasticIn',
 				label: {
 					normal: {
 						show: true,
@@ -207,14 +204,15 @@ export const generateGraphData = (data) => {
 						width: 5
 					}
 				},
-				draggable: true,
 				data: connectionsData.nodes,
 				categories: connectionsData.categories,
 				force: {
+					initLayout: 'circular',
 					edgeLength: 90,
 					repulsion: 700,
 					friction: 0.2
 				},
+				draggable: true,
 				edges: connectionsData.links,
 				roam: true,
 				symbolSize: 16
