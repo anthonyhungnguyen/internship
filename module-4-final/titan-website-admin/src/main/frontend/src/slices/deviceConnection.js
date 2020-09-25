@@ -38,14 +38,27 @@ export default deviceConnectionSlice.reducer
 
 // Asynchronous thunk action
 
-export function fetchConnection(id, depth) {
+export function fetchConnection(id) {
 	return async (dispatch) => {
 		dispatch(getConnection())
 		try {
-			const response = await fetch(
-				`http://localhost:8085/api/user_device/device_users/${id}/connections/${depth}`
-			)
-			const connections = await response.json()
+			const graphDataResponse = await fetch(`http://localhost:8085/api/user_device/test`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					query: `FOR v, e IN 1..1 ANY @id GRAPH "test"
+							COLLECT source = e._from, target = e._to
+							RETURN {source, target}`,
+					bindVars: {
+						id: `devices/${id}`
+					}
+				})
+			})
+
+			const connections = await graphDataResponse.json()
+
 			const formattedConnections = preprocessConnection(id, connections)
 			const graphData = generateGraphData(formattedConnections)
 			if (connections.errorCode) {
@@ -94,6 +107,28 @@ export const preprocessConnection = (deviceId, connections) => {
 	}
 }
 
+const generateInTypeFromOutType = (type) => {
+	switch (type) {
+		case 'devices':
+			return 'device'
+		case 'users':
+			return 'user'
+		case 'card_account':
+			return 'card_account'
+	}
+}
+
+const generateCategoryFromType = (type) => {
+	switch (type) {
+		case 'devices':
+			return 2
+		case 'users':
+			return 1
+		case 'card_account':
+			return 3
+	}
+}
+
 export const preprocessMoreConnection = (id, connections, nodes, links, newDepth, idList) => {
 	const nodeCount = nodes.map((x) => x.id)
 	if (newDepth) {
@@ -120,32 +155,34 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 	}
 
 	connections.forEach((c) => {
-		const user = c['source'].split('/')[1].trim()
-		const device = c['target'].split('/')[1].trim()
-		if (nodeCount.indexOf(device) < 0) {
+		const fromType = c['source'].split('/')[0]
+		const toType = c['target'].split('/')[0]
+		const from = c['source'].split('/')[1].trim()
+		const to = c['target'].split('/')[1].trim()
+		if (nodeCount.indexOf(from) < 0) {
 			nodes.push({
-				id: device,
-				name: device,
-				category: 2,
-				type: 'device',
+				id: from,
+				name: from,
+				category: generateCategoryFromType(fromType),
+				type: generateInTypeFromOutType(fromType),
 				expanded: false
 			})
-			nodeCount.push(device)
+			nodeCount.push(from)
 		}
-		if (nodeCount.indexOf(user) < 0) {
+		if (nodeCount.indexOf(to) < 0) {
 			nodes.push({
-				id: user,
-				name: user,
-				category: 1,
-				type: 'user',
+				id: to,
+				name: to,
+				category: generateCategoryFromType(toType),
+				type: generateInTypeFromOutType(toType),
 				expanded: false
 			})
-			nodeCount.push(user)
+			nodeCount.push(to)
 		}
-		if (!links.find((x) => x.source === user && x.target === device)) {
+		if (!links.find((x) => x.source === from && x.target === to)) {
 			links.push({
-				source: device,
-				target: user
+				source: to,
+				target: from
 			})
 		}
 	})
@@ -167,6 +204,9 @@ export const generateGraphData = (data) => {
 			},
 			{
 				name: 'Related Devices'
+			},
+			{
+				name: 'Related Card'
 			}
 		],
 		nodes: data.nodes,
@@ -174,8 +214,9 @@ export const generateGraphData = (data) => {
 	}
 	const options = {
 		legend: {
-			data: [ 'Root Device', 'Users', 'Related Devices' ]
+			data: [ 'Root Device', 'Users', 'Related Devices', 'Related Card' ]
 		},
+
 		series: [
 			{
 				type: 'graph',
@@ -186,7 +227,8 @@ export const generateGraphData = (data) => {
 					normal: {
 						show: true,
 						position: 'top',
-						formatter: '{b}'
+						formatter: '{b}',
+						fontSize: 11
 					}
 				},
 				itemStyle: {
@@ -206,16 +248,17 @@ export const generateGraphData = (data) => {
 				},
 				data: connectionsData.nodes,
 				categories: connectionsData.categories,
+				// focusNodeAdjacency: true,
 				force: {
 					initLayout: 'circular',
-					edgeLength: 90,
-					repulsion: 700,
+					edgeLength: 100,
+					repulsion: 1500,
 					friction: 0.2
 				},
 				draggable: true,
 				edges: connectionsData.links,
 				roam: true,
-				symbolSize: 16
+				symbolSize: 14
 			}
 		]
 	}

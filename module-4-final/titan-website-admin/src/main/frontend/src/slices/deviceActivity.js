@@ -58,17 +58,15 @@ export function fetchActivity(id, filters) {
 		try {
 			const queryString = `
             LET timestamps = (
-				FOR v, e IN 1..1 INBOUND @deviceId users_devices
-				FILTER e.type == 'user_use_device' 
-				AND TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)
+				FOR v, e IN 1..1 ANY @deviceId user_device_onboard
+				FILTER TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)
 				COLLECT date = DATE_FORMAT(DATE_ADD(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), 7, 'hour'), @dateFormat) WITH COUNT INTO date_count
 				RETURN {date, date_count}
 			)
 				
 			LET merchant = (
-				FOR v, e IN 1..1 INBOUND @deviceId users_devices
-				FILTER e.type == 'transaction' 
-				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+				FOR v, e IN 1..1 ANY @deviceId user_device_transaction
+				FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 				COLLECT merchant = e.merchant
 				AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))
 				SORT merchant_count DESC
@@ -76,17 +74,16 @@ export function fetchActivity(id, filters) {
 			)
 			
 			LET spending = (
-				FOR v, e IN 1..1 INBOUND @deviceId users_devices
-				FILTER e.type == 'transaction' AND e.merchant != 'Money Transfer' 
-				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+				FOR v, e IN 1..1 ANY @deviceId user_device_transaction
+				FILTER e.merchant != 'Money Transfer' AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 				COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), @dateFormat)
-				AGGREGATE amount = SUM(TO_NUMBER(e.amount))
-				RETURN {date, amount}
+				AGGREGATE amount = SUM(TO_NUMBER(e.amount)), frequency = count(e.reqDate)
+				RETURN {date, amount, frequency}
 			)
 			
 			LET geolocation = (
-				FOR v, e IN 1..1 INBOUND @deviceId users_devices
-				FILTER e.type == 'transaction' AND e.latitude != '0.0' AND e.longitude != '0.0'
+				FOR v, e IN 1..1 ANY @deviceId user_device_transaction
+				FILTER e.latitude != '0.0' AND e.longitude != '0.0'
 				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 				COLLECT lat = e.latitude,
 						lng = e.longitude WITH COUNT INTO location_count
@@ -94,9 +91,8 @@ export function fetchActivity(id, filters) {
 			)
 			
 			LET appid = (
-				FOR v, e IN 1..1 INBOUND @deviceId users_devices
-				FILTER e.type == 'transaction' 
-				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+				FOR v, e IN 1..1 ANY @deviceId user_device_transaction
+				FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 				COLLECT app_id = e.appid 
 				AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)
 				SORT app_id_count, app_total

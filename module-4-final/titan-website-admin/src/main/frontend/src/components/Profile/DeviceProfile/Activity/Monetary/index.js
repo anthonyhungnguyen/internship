@@ -11,6 +11,7 @@ export default () => {
 	const getOption = () => {
 		if (spendingFrequency.length > 0) {
 			const dates = spendingFrequency.map((sf) => sf.date)
+			const dateFrequency = spendingFrequency.map((sf) => sf.frequency)
 			const amount = spendingFrequency.map((sf) => sf.amount)
 			const amountSum = amount.reduce((a, b) => a + b)
 
@@ -21,8 +22,17 @@ export default () => {
 						currency: 'VND'
 					})}`
 				},
+				legend: {
+					data: [ 'Frequency', 'Monetary' ]
+				},
 				tooltip: {
-					trigger: 'axis'
+					trigger: 'axis',
+					axisPointer: {
+						type: 'cross',
+						crossStyle: {
+							color: '#999'
+						}
+					}
 				},
 				dataZoom: [
 					{
@@ -63,15 +73,33 @@ export default () => {
 					name: 'Date',
 					data: dates
 				},
-				yAxis: {
-					type: 'value',
-					name: 'VND'
-				},
-				color: '#27ae60',
+				yAxis: [
+					{
+						name: 'Frequency',
+						type: 'value',
+						scale: true,
+						min: 0,
+						boundaryGap: [ 0.2, 0.2 ]
+					},
+					{
+						name: 'VND',
+						type: 'value',
+						scale: true,
+						min: 0,
+						boundaryGap: [ 0.2, 0.2 ]
+					}
+				],
 				series: [
 					{
+						name: 'Frequency',
+						type: 'bar',
+						data: dateFrequency
+					},
+					{
+						name: 'Monetary',
 						data: amount,
 						type: 'line',
+						yAxisIndex: 1,
 						markPoint: {
 							data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
 						},

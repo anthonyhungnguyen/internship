@@ -1,12 +1,10 @@
 import React, { useRef } from 'react'
 import { useSelector } from 'react-redux'
-import ReactEchartsCore from 'echarts-for-react/lib/core'
+import ReactEcharts from 'echarts-for-react'
 import { Card, Slider } from 'antd'
 import { deviceConnectionSelector } from '../../../../../slices/deviceConnection'
 import { preprocessMoreConnection, generateGraphData } from '../../../../../slices/deviceConnection'
 import copy from 'copy-to-clipboard'
-import 'echarts/lib/chart/graph'
-import echarts from 'echarts/lib/echarts'
 
 export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
 	const { graphData } = useSelector(deviceConnectionSelector)
@@ -23,6 +21,8 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 		} else if (e.data.type === 'user') {
 			copy(e.data.id.trim())
 			setCurrentChosenUser(e.data.id)
+		} else if (e.data.type === 'card_account') {
+			copy(e.data.id.trim())
 		}
 	}
 
@@ -37,21 +37,39 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 		}
 	}
 
+	const generateUnexpandedId = (item) => {
+		switch (item.type) {
+			case 'device':
+				return 'devices/' + item.id
+			case 'user':
+				return 'users/' + item.id
+			case 'card_account':
+				return 'card_account/' + item.id
+		}
+	}
+
 	const expandOneDepth = async (depth) => {
 		let echartsInstance = ref.current.getEchartsInstance()
 		const { data, edges } = echartsInstance.getOption()['series'][0]
 		if (!depthData[depth]) {
-			const unExpandedId = data
-				.filter((x) => !x.expanded)
-				.map((x) => (x.type === 'device' ? 'devices/' + x.id : 'users/' + x.id))
+			const unExpandedId = data.filter((x) => !x.expanded).map((x) => generateUnexpandedId(x))
 			if (unExpandedId.length !== 0) {
-				const response = await fetch(`http://localhost:8085/api/user_device/device_users/moreDepth`, {
+				const response = await fetch(`http://localhost:8085/api/user_device/test`, {
+					method: 'POST',
 					headers: {
-						Accept: 'application/json',
 						'Content-Type': 'application/json'
 					},
-					method: 'POST',
-					body: JSON.stringify(unExpandedId)
+					body: JSON.stringify({
+						query: `
+						LET idList = @idList
+						FOR id in idList
+							FOR v, e IN 1..1 ANY id GRAPH "test"
+									COLLECT source = e._from, target = e._to
+									RETURN {source, target}`,
+						bindVars: {
+							idList: unExpandedId
+						}
+					})
 				})
 				const connections = await response.json()
 
@@ -91,8 +109,7 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 					</React.Fragment>
 				}
 			>
-				<ReactEchartsCore
-					echarts={echarts}
+				<ReactEcharts
 					ref={ref}
 					option={graphData}
 					style={{ height: '65vh', width: '100%' }}

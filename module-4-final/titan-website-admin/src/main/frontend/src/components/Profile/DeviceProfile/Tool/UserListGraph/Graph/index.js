@@ -30,7 +30,7 @@ export default ({ userList }) => {
 						query: `LET userList = @userList
 
 						FOR u IN userList
-							FOR v, e IN 1..1 ANY u users_devices
+							FOR v, e IN 1..1 ANY u user_device_onboard
 								COLLECT source = e._from, target = e._to, type = e.type
 								RETURN {source, target, type}`,
 						bindVars: {

@@ -56,8 +56,7 @@ export function fetchDevice(id) {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						query: `LET dates = (FOR v, e IN 1..1 ANY @deviceId users_devices
-							FILTER e.type == 'transaction'
+						query: `LET dates = (FOR v, e IN 1..1 ANY @deviceId user_device_transaction
 							SORT DATE_TIMESTAMP(DATE_ISO8601(e.reqDate))
 							RETURN e.reqDate)
 						

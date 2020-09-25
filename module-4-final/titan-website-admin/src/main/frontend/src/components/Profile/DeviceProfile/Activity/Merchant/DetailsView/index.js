@@ -93,7 +93,8 @@ export default () => {
 					markPoint: {
 						data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
 					},
-					data: data.map((x) => x.app_total)
+					data: data.map((x) => x.app_total),
+					smooth: true
 				}
 			]
 		}

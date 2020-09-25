@@ -49,7 +49,7 @@ export default React.memo(() => {
 					})),
 					animation: true,
 					label: {
-						position: 'outer',
+						position: 'outside',
 						alignTo: 'none',
 						bleedMargin: 5
 					}
