@@ -4,6 +4,10 @@ export const initialState = {
 	loading: true,
 	errorInfo: {},
 	hasErrors: false,
+	cardAccount: {
+		status: [],
+		bank: []
+	},
 	timestamps: [],
 	merchantFrequency: [],
 	spendingFrequency: [],
@@ -24,6 +28,8 @@ const userActivitySlice = createSlice({
 		getActivitySuccess: (state, { payload }) => {
 			state.hasErrors = false
 			state.loading = false
+			state.cardAccount.status = payload.cardAccountStatus
+			state.cardAccount.bank = payload.bankStatus
 			state.timestamps = payload.timestamps
 			state.merchantFrequency = payload.merchant
 			state.spendingFrequency = payload.spending
@@ -42,7 +48,7 @@ const userActivitySlice = createSlice({
 })
 
 // Three actions from slice
-export const { getActivity, getActivitySuccess, getActivityFailure, storeDateRange } = deviceActivitySlice.actions
+export const { getActivity, getActivitySuccess, getActivityFailure, storeDateRange } = userActivitySlice.actions
 
 // Export state selector
 export const userActivitySelector = (state) => state.userActivity
@@ -57,50 +63,49 @@ export function fetchActivity(id, filters) {
 		dispatch(getActivity())
 		try {
 			const queryString = `
-            LET timestamps = (
-				FOR v, e IN 1..1 ANY @id user_device_onboard
-				FILTER TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)
-				COLLECT date = DATE_FORMAT(DATE_ADD(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), 7, 'hour'), @dateFormat) WITH COUNT INTO date_count
-				RETURN {date, date_count}
+            LET cardAccountStatus = (
+				FOR v, e IN 1..1 ANY @id user_card_account
+				COLLECT status = e.requestStatus WITH COUNT INTO status_count
+				RETURN {status, status_count}
 			)
-				
+			LET bankStatus = (
+				FOR v,e IN 1..1 ANY @id user_card_account
+				COLLECT bName = e.bankname, status = e.requestStatus WITH count INTO status_count 
+				RETURN {bName, status, status_count}
+			)
+			
+			LET spending = (
+				FOR v, e IN 1..1 ANY @id user_device_transaction
+				COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')
+				AGGREGATE amount = SUM(TO_NUMBER(e.amount)), frequency = count(e.reqDate)
+				RETURN {date, amount, frequency}
+			)
+
 			LET merchant = (
 				FOR v, e IN 1..1 ANY @id user_device_transaction
-				FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 				COLLECT merchant = e.merchant
 				AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))
 				SORT merchant_count DESC
 				RETURN {merchant, merchant_count,merchant_total}
 			)
-			
-			LET spending = (
-				FOR v, e IN 1..1 ANY @id user_device_transaction
-				FILTER e.merchant != 'Money Transfer' AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-				COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), @dateFormat)
-				AGGREGATE amount = SUM(TO_NUMBER(e.amount)), frequency = count(e.reqDate)
-				RETURN {date, amount, frequency}
-			)
-			
-			LET geolocation = (
-				FOR v, e IN 1..1 ANY @id user_device_transaction
-				FILTER e.latitude != '0.0' AND e.longitude != '0.0'
-				AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-				COLLECT lat = e.latitude,
-						lng = e.longitude WITH COUNT INTO location_count
-				RETURN {lat, lng, location_count}
-			)
-			
+
 			LET appid = (
 				FOR v, e IN 1..1 ANY @id user_device_transaction
-				FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 				COLLECT app_id = e.appid 
 				AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)
 				SORT app_id_count, app_total
 				RETURN {app_id, app_id_count, app_total}
 			)
+
+			LET geolocation = (
+				FOR v, e IN 1..1 ANY @id user_device_transaction
+				FILTER e.latitude != '0.0' AND e.longitude != '0.0'
+				COLLECT lat = e.latitude,
+						lng = e.longitude WITH COUNT INTO location_count
+				RETURN {lat, lng, location_count}
+			)
 			
-			
-			RETURN {timestamps, merchant, spending, geolocation, appid}
+			RETURN {cardAccountStatus, bankStatus, spending, merchant, appid, geolocation}
 			`
 			const response = await fetch('http://localhost:8085/api/user_device/test', {
 				method: 'POST',
@@ -110,27 +115,25 @@ export function fetchActivity(id, filters) {
 				body: JSON.stringify({
 					query: queryString,
 					bindVars: {
-						id: `users/${id}`,
-						dateFormat: '%dd-%mm-%yyyy',
-						fromDate: filters.range[0],
-						toDate: filters.range[1]
+						id: `users/${id}`
 					}
 				})
 			})
 
 			const data = await response.json()
-			const { timestamps, merchant, spending, geolocation, appid } = data[0]
 
-			if (timestamps.errorCode) {
-				dispatch(getActivityFailure(timestamps))
+			if (data.errorCode) {
+				dispatch(getActivityFailure(data.errorCode))
 			} else {
+				const { cardAccountStatus, bankStatus, spending, merchant, appid, geolocation } = data[0]
 				dispatch(
 					getActivitySuccess({
-						timestamps,
-						merchant,
+						cardAccountStatus,
+						bankStatus,
 						spending,
-						geolocation,
-						appid
+						merchant,
+						appid,
+						geolocation
 					})
 				)
 			}

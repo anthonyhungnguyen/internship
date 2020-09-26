@@ -4,12 +4,16 @@ import generalReducer from '../slices/general'
 import deviceReducer from '../slices/device'
 import deviceActivityReducer from '../slices/deviceActivity'
 import deviceConnectionReducer from '../slices/deviceConnection'
+import userActivityReducer from '../slices/userActivity'
+import userConnectionReducer from '../slices/userConnection'
 
 const rootReducer = combineReducers({
 	general: generalReducer,
 	device: deviceReducer,
 	deviceActivity: deviceActivityReducer,
 	deviceConnection: deviceConnectionReducer,
+	userActivity: userActivityReducer,
+	userConnection: userConnectionReducer,
 	...reducers
 })
 

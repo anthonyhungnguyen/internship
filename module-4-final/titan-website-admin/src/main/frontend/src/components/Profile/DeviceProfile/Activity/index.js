@@ -7,11 +7,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import './index.css'
 import FilterBar from './FilterBar'
 import { generalSelector } from '../../../../slices/general'
-
-const Frequency = React.lazy(() => import('./Frequency'))
-const Merchant = React.lazy(() => import('./Merchant'))
-const Monetary = React.lazy(() => import('./Monetary'))
-const Geolocation = React.lazy(() => import('./Geolocation'))
+import Frequency from './Frequency'
+import Merchant from './Merchant'
+import Monetary from './Monetary'
+import Geolocation from './Geolocation'
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
@@ -30,35 +29,25 @@ export default React.memo(() => {
 		<div className="animated fadeIn">
 			<Row gutter={[ 24, 24 ]}>
 				<Col span={24}>
-					<Suspense fallback={<Skeleton active />}>
-						<FilterBar />
-					</Suspense>
+					<FilterBar />
 				</Col>
 			</Row>
 			{!loading && !hasErrors ? (
 				<React.Fragment>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
-							<Suspense fallback={<Skeleton active />}>
-								<Frequency />
-							</Suspense>
+							<Frequency />
 						</Col>
 						<Col span={12}>
-							<Suspense fallback={<Skeleton active />}>
-								<Merchant />
-							</Suspense>
+							<Merchant />
 						</Col>
 					</Row>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
-							<Suspense fallback={<Skeleton active />}>
-								<Monetary />
-							</Suspense>
+							<Monetary />
 						</Col>
 						<Col span={12}>
-							<Suspense fallback={<Skeleton active />}>
-								<Geolocation />
-							</Suspense>
+							<Geolocation />
 						</Col>
 					</Row>
 				</React.Fragment>

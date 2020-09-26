@@ -22,6 +22,7 @@ public class UserDeviceService {
         this.userDeviceRepository = userDeviceRepository;
         this.tpeRepository = tpeRepository;
         this.arangoDBCustom = arangoDBCustom;
+
     }
 
     public List<Map<String, Object>> getDeviceTimestampsById(String id) {

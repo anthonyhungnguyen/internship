@@ -86,7 +86,10 @@ export default () => {
 						type: 'value',
 						scale: true,
 						min: 0,
-						boundaryGap: [ 0.2, 0.2 ]
+						boundaryGap: [ 0.2, 0.2 ],
+						splitLine: {
+							show: false
+						}
 					}
 				],
 				series: [

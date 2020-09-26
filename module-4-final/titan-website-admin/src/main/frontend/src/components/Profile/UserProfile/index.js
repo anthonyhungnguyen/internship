@@ -8,6 +8,7 @@ const { TabPane } = Tabs
 const { Search } = Input
 
 const Activity = React.lazy(() => import('./Activity'))
+const Connection = React.lazy(() => import('./Connection'))
 
 export default () => {
 	const { id } = useSelector(generalSelector)
@@ -48,7 +49,9 @@ export default () => {
 				</Suspense>
 			</TabPane>
 			<TabPane tab="Connection" key="connection">
-				<Suspense fallback={<Skeleton active />} />
+				<Suspense fallback={<Skeleton active />}>
+					<Connection />
+				</Suspense>
 			</TabPane>
 			<TabPane tab="Tool" key="tool">
 				<Suspense fallback={<Skeleton active />} />

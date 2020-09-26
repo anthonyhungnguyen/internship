@@ -6,7 +6,7 @@ import DetailsView from './DetailsView'
 const { TabPane } = Tabs
 
 export default () => {
-	const [ activeTab, setActiveTab ] = useState('general')
+	const [ activeTab, setActiveTab ] = useState('overview')
 
 	return (
 		<Card
@@ -15,13 +15,13 @@ export default () => {
 			hoverable={true}
 			extra={
 				<Tabs defaultActiveKey={activeTab} animated={true} onChange={(e) => setActiveTab(e)} type="line">
-					<TabPane tab="General" key="general" />
+					<TabPane tab="Overview" key="overview" />
 
 					<TabPane tab="Details" key="details" />
 				</Tabs>
 			}
 		>
-			{activeTab === 'general' && <GeneralView />}
+			{activeTab === 'overview' && <GeneralView />}
 			{activeTab === 'details' && <DetailsView />}
 		</Card>
 	)

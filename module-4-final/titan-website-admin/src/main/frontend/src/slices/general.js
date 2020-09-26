@@ -4,7 +4,7 @@ export const initialState = {
 	loading: true,
 	errorInfo: {},
 	hasErrors: false,
-	id: 'A321541E-966B-485B-87C2-9783FB0457F9',
+	id: '160516000000002',
 	type: null
 }
 
