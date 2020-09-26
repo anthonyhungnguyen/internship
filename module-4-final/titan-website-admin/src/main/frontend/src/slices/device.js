@@ -7,16 +7,13 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	device: null,
-	deviceId: '0CA30A94-6251-4727-8340-9B6BE942AACB'
+	users: null
 }
 
 const deviceSlice = createSlice({
 	name: 'device',
 	initialState,
 	reducers: {
-		storeDeviceId: (state, { payload }) => {
-			state.deviceId = payload.trim()
-		},
 		getDevice: (state) => {
 			state.loading = true
 		},
@@ -29,12 +26,15 @@ const deviceSlice = createSlice({
 			state.errorInfo = payload
 			state.loading = false
 			state.hasErrors = true
+		},
+		storeUserList: (state, { payload }) => {
+			state.users = payload
 		}
 	}
 })
 
 // Three actions from slice
-export const { storeDeviceId, getDevice, getDeviceSuccess, getDeviceFailure } = deviceSlice.actions
+export const { storeDeviceId, getDevice, getDeviceSuccess, getDeviceFailure, storeUserList } = deviceSlice.actions
 
 // Export state selector
 export const deviceSelector = (state) => state.device
@@ -71,6 +71,26 @@ export function fetchDevice(id) {
 				dispatch(storeDateRange(lastReqDate[0]))
 			}
 			fetchDateRange()
+
+			const fetchUserList = async (id) => {
+				const userListResponse = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @deviceId user_device_onboard
+								COLLECT user = e._from
+								RETURN user`,
+						bindVars: {
+							deviceId: `devices/${id}`
+						}
+					})
+				})
+				const userList = await userListResponse.json()
+				dispatch(storeUserList(userList))
+			}
+			fetchUserList(id)
 
 			const payload = await response.json()
 			if (payload.errorCode) {

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Input, Tabs, Skeleton } from 'antd'
 import { deviceSelector, storeDeviceId } from '../../../slices/device'
 import swal from 'sweetalert'
+import { generalSelector, storeId } from '../../../slices/general'
 
 const { TabPane } = Tabs
 
@@ -15,12 +16,13 @@ const Tool = React.lazy(() => import('./Tool'))
 
 export default React.memo(() => {
 	const [ activeTab, setActiveTab ] = useState('overview')
-	const { deviceId, loading } = useSelector(deviceSelector)
+	const { id } = useSelector(generalSelector)
+	const { loading } = useSelector(deviceSelector)
 	const dispatch = useDispatch()
 
 	const handleSearch = (newDeviceId) => {
 		if (newDeviceId) {
-			dispatch(storeDeviceId(newDeviceId))
+			dispatch(storeId(newDeviceId))
 		} else {
 			swal('Error', 'Please re-check device ID', 'error')
 		}
@@ -34,7 +36,7 @@ export default React.memo(() => {
 			tabBarExtraContent={
 				<Search
 					addonBefore="Device"
-					defaultValue={deviceId}
+					defaultValue={id}
 					placeholder="input device id"
 					onSearch={handleSearch}
 					size="large"

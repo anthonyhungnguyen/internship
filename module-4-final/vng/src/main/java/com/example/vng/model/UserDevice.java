@@ -11,7 +11,7 @@ import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
-@Edge("users_devices")
+@Edge("use_device_onboard")
 @Getter
 @Setter
 @ToString

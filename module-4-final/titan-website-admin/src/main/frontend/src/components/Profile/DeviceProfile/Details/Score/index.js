@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Progress } from 'antd'
 import { Card, Row, Col, Tooltip } from 'antd'
-import { deviceSelector } from '../../../../../slices/device'
 import { useSelector } from 'react-redux'
+import { generalSelector } from '../../../../../slices/general'
 
 export default () => {
-	const { deviceId } = useSelector(deviceSelector)
+	const { id } = useSelector(generalSelector)
 	const [ hardware, setHardware ] = useState(null)
 
 	useEffect(() => {
@@ -94,7 +94,7 @@ export default () => {
 							'hw_storage_total',
 							'os_version'
 						],
-						id: `devices/${deviceId}`
+						id: `devices/${id}`
 					}
 				})
 			})

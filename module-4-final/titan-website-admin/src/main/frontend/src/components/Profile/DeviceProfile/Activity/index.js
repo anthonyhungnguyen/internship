@@ -6,6 +6,7 @@ import { deviceActivitySelector, fetchActivity, storeDateRange } from '../../../
 import { useDispatch, useSelector } from 'react-redux'
 import './index.css'
 import FilterBar from './FilterBar'
+import { generalSelector } from '../../../../slices/general'
 
 const Frequency = React.lazy(() => import('./Frequency'))
 const Merchant = React.lazy(() => import('./Merchant'))
@@ -14,14 +15,15 @@ const Geolocation = React.lazy(() => import('./Geolocation'))
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
-	const { deviceId, hasErrors } = useSelector(deviceSelector)
+	const { id } = useSelector(generalSelector)
+	const { hasErrors } = useSelector(deviceSelector)
 	const { loading, filters } = useSelector(deviceActivitySelector)
 
 	useEffect(
 		() => {
-			dispatch(fetchActivity(deviceId, filters))
+			dispatch(fetchActivity(id, filters))
 		},
-		[ dispatch, deviceId, filters ]
+		[ dispatch, id, filters ]
 	)
 
 	return (

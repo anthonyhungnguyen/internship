@@ -1,14 +1,26 @@
 import React, { useState, Suspense } from 'react'
 import { Input, Tabs, Skeleton } from 'antd'
+import { useSelector, useDispatch } from 'react-redux'
 import swal from 'sweetalert'
+import { generalSelector, storeId } from '../../../slices/general'
 
 const { TabPane } = Tabs
 const { Search } = Input
 
-export default () => {
-	const [ activeTab, setActiveTab ] = useState('overview')
+const Activity = React.lazy(() => import('./Activity'))
 
-	const handleSearch = (newDeviceId) => {}
+export default () => {
+	const { id } = useSelector(generalSelector)
+	const [ activeTab, setActiveTab ] = useState('overview')
+	const dispatch = useDispatch()
+
+	const handleSearch = (newId) => {
+		if (newId) {
+			dispatch(storeId(newId))
+		} else {
+			swal('Error', 'Please re-check device ID', 'error')
+		}
+	}
 
 	return (
 		<Tabs
@@ -19,6 +31,7 @@ export default () => {
 			tabBarExtraContent={
 				<Search
 					addonBefore="User"
+					defaultValue={id}
 					placeholder="input user id"
 					onSearch={handleSearch}
 					size="large"
@@ -30,7 +43,9 @@ export default () => {
 				<Suspense fallback={<Skeleton active />} />
 			</TabPane>
 			<TabPane tab="Activity" key="activity">
-				<Suspense fallback={<Skeleton active />} />
+				<Suspense fallback={<Skeleton active />}>
+					<Activity />
+				</Suspense>
 			</TabPane>
 			<TabPane tab="Connection" key="connection">
 				<Suspense fallback={<Skeleton active />} />

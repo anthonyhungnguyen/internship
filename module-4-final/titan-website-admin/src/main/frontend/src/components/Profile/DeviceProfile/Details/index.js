@@ -7,16 +7,17 @@ import Identity from './Identity'
 import IP from './IP'
 import { deviceSelector, fetchDevice } from '../../../../slices/device'
 import { useDispatch, useSelector } from 'react-redux'
-import RecentTransaction from './RecentTransaction'
+import { generalSelector } from '../../../../slices/general'
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
-	const { deviceId, loading, hasErrors, errorInfo } = useSelector(deviceSelector)
+	const { id } = useSelector(generalSelector)
+	const { loading, hasErrors, errorInfo } = useSelector(deviceSelector)
 	useEffect(
 		() => {
-			dispatch(fetchDevice(deviceId))
+			dispatch(fetchDevice(id))
 		},
-		[ dispatch, deviceId ]
+		[ dispatch, id ]
 	)
 
 	return !loading && !hasErrors ? (
@@ -36,7 +37,7 @@ export default React.memo(() => {
 						<Col span={24}>
 							<Identity />
 						</Col>
-					</Row>	
+					</Row>
 					<Row>
 						<Col span={24}>
 							<IP />

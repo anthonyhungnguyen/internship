@@ -4,6 +4,7 @@ import { deviceSelector } from '../../../../slices/device'
 import { Row, Col, BackTop, Skeleton } from 'antd'
 import { UpCircleFilled } from '@ant-design/icons'
 import { deviceConnectionSelector, fetchConnection } from '../../../../slices/deviceConnection'
+import { generalSelector } from '../../../../slices/general'
 
 const Graph = React.lazy(() => import('./Graph'))
 const DeviceBriefInformation = React.lazy(() => import('./DeviceBriefInformation'))
@@ -11,16 +12,17 @@ const UserBriefInformation = React.lazy(() => import('./UserBriefInformation'))
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
-	const { deviceId, device, hasErrors, errorInfo } = useSelector(deviceSelector)
+	const { id } = useSelector(generalSelector)
+	const { device, hasErrors, errorInfo } = useSelector(deviceSelector)
 	const { loading } = useSelector(deviceConnectionSelector)
-	const [ currentChosenDevice, setCurrentChosenDevice ] = useState(deviceId)
+	const [ currentChosenDevice, setCurrentChosenDevice ] = useState(id)
 	const [ currentChosenUser, setCurrentChosenUser ] = useState('')
 
 	useEffect(
 		() => {
-			dispatch(fetchConnection(deviceId, 1))
+			dispatch(fetchConnection(id, 1))
 		},
-		[ dispatch, deviceId ]
+		[ dispatch, id ]
 	)
 
 	return !loading && !hasErrors ? (
@@ -31,7 +33,7 @@ export default React.memo(() => {
 						<Graph
 							setCurrentChosenDevice={setCurrentChosenDevice}
 							setCurrentChosenUser={setCurrentChosenUser}
-							deviceId={deviceId}
+							deviceId={id}
 						/>
 					</Suspense>
 				</Col>
