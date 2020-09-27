@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Tabs, Card } from 'antd'
-import GeneralView from './GeneralView'
-import DetailsView from './DetailsView'
+import Overview from './Overview'
+import Details from './Details'
 
 const { TabPane } = Tabs
 
@@ -21,8 +21,8 @@ export default () => {
 				</Tabs>
 			}
 		>
-			{activeTab === 'overview' && <GeneralView />}
-			{activeTab === 'details' && <DetailsView />}
+			{activeTab === 'overview' && <Overview />}
+			{activeTab === 'details' && <Details />}
 		</Card>
 	)
 }

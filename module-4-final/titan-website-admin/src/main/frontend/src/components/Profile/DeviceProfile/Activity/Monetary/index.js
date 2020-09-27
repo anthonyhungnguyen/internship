@@ -114,7 +114,11 @@ export default () => {
 				]
 			}
 		}
-		return {}
+		return {
+			title: {
+				text: 'No Records'
+			}
+		}
 	}
 
 	const handleToggleVisible = () => {

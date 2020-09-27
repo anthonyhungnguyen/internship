@@ -141,8 +141,11 @@ export default () => {
 					}
 				}
 			}
-		} else {
-			return {}
+		}
+		return {
+			title: {
+				text: 'No Records'
+			}
 		}
 	}
 

@@ -17,10 +17,8 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 	const handleOnClick = async (e) => {
 		if (e.data.type === 'device') {
 			copy(e.data.id.trim())
-			setCurrentChosenDevice(e.data.id)
 		} else if (e.data.type === 'user') {
 			copy(e.data.id.trim())
-			setCurrentChosenUser(e.data.id)
 		} else if (e.data.type === 'card_account') {
 			copy(e.data.id.trim())
 		}

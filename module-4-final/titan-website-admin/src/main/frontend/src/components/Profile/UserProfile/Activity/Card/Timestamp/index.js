@@ -1,38 +1,49 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux/'
+import { useSelector } from 'react-redux'
+import { userActivitySelector } from '../../../../../../slices/userActivity'
+import { Modal } from 'antd'
 import ReactEcharts from 'echarts-for-react'
-import { deviceActivitySelector } from '../../../../../slices/deviceActivity'
-import { Card, Modal } from 'antd'
 
-export default function() {
-	const { timestamps } = useSelector(deviceActivitySelector)
+export default () => {
+	const { cardAccount } = useSelector(userActivitySelector)
+	const { timestamp } = cardAccount
 	const [ visible, setVisible ] = useState(false)
-	const getOption = () => {
-		if (timestamps.length > 0) {
-			const dates = timestamps.map((e) => e.date)
-			const eachDateCount = timestamps.map((e) => e.date_count)
-			const totalCount = eachDateCount.reduce((a, b) => a + b)
 
+	const processTimestamp = (timestamp) => {
+		const result = []
+		const allTimestamps = [ ...new Set(timestamp.map((b) => b.date)) ]
+		allTimestamps.forEach((t) => {
+			const everyDay = { name: t }
+			let success = 0
+			let fail = 0
+			timestamp.filter((eb) => eb.date === t).forEach((eb) => {
+				if (eb.status > 0) {
+					success += eb.status_count
+				} else {
+					fail += eb.status_count
+				}
+			})
+			everyDay['success'] = success
+			everyDay['fail'] = fail
+			result.push(everyDay)
+		})
+		return result
+	}
+	const getOption = () => {
+		if (timestamp.length > 0) {
+			const result = processTimestamp(timestamp)
+			console.log(result)
 			return {
-				title: {
-					text: `Total Active Times: ${totalCount}`
+				tooltip: {
+					trigger: 'item',
+					formatter: '{b} : {c}'
 				},
 				legend: {
-					data: [ 'App Frequency', 'App Monetary' ]
+					data: [ 'Success', 'Fail' ]
 				},
-				dataZoom: [
-					{
-						type: 'slider',
-						show: true,
-						xAxisIndex: [ 0 ]
-					},
-					{
-						type: 'inside',
-						show: true,
-						xAxisIndex: [ 0 ]
-					}
-				],
-				color: [ '#118ab2' ],
+				grid: {
+					bottom: 80
+				},
 				tooltip: {
 					trigger: 'axis',
 					axisPointer: {
@@ -42,12 +53,40 @@ export default function() {
 						}
 					}
 				},
+				dataZoom: [
+					{
+						type: 'slider',
+						xAxisIndex: [ 0 ],
+						show: true,
+						start: 95
+					},
+					{
+						type: 'inside',
+						show: true,
+						xAxisIndex: [ 0 ]
+					}
+				],
+				xAxis: [
+					{
+						type: 'category',
+						name: 'Bank',
+						data: result.map((r) => r.name)
+					}
+				],
+				yAxis: [
+					{
+						name: 'Frequency',
+						type: 'value',
+						scale: true,
+						min: 0
+					}
+				],
 				toolbox: {
 					show: true,
 					feature: {
 						saveAsImage: {
-							title: 'Save Device Frequency',
-							name: 'device_frequency'
+							title: 'Save',
+							name: 'device_merchant_general'
 						},
 						restore: {
 							show: true,
@@ -64,29 +103,39 @@ export default function() {
 						}
 					}
 				},
-				xAxis: {
-					name: 'Date',
-					data: dates,
-					axisTick: {
-						alignWithLabel: true
-					}
-				},
-				yAxis: {
-					name: 'Frequency'
-				},
 				series: [
 					{
-						type: 'bar',
-						data: eachDateCount,
+						name: 'Success',
+						type: 'line',
+						data: result.map((r) => r.success),
 						label: {
-							show: true,
-							position: 'top'
+							show: true
 						},
 						markLine: {
 							data: [ { type: 'average', name: 'average' } ]
-						}
+						},
+						smooth: true
+					},
+					{
+						name: 'Fail',
+						type: 'line',
+						data: result.map((r) => r.fail),
+						label: {
+							show: true
+						},
+						markLine: {
+							data: [ { type: 'average', name: 'average' } ]
+						},
+						smooth: true
 					}
-				]
+				],
+				emphasis: {
+					itemStyle: {
+						shadowBlur: 10,
+						shadowOffsetX: 0,
+						shadowColor: 'rgba(0, 0, 0, 0.5)'
+					}
+				}
 			}
 		}
 		return {
@@ -102,16 +151,10 @@ export default function() {
 
 	return (
 		<React.Fragment>
-			<Card
-				title="Frequency"
-				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
-				hoverable={true}
-				className="h-full"
-			>
-				<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} renderer="canvas" />
-			</Card>
+			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
+
 			<Modal
-				title="Frequency"
+				title="Mapping Status"
 				visible={visible}
 				onOk={handleToggleVisible}
 				onCancel={handleToggleVisible}
@@ -120,7 +163,13 @@ export default function() {
 				footer={null}
 				renderer="canvas"
 			>
-				<ReactEcharts theme={'infographic'} option={getOption()} style={{ height: '70vh', width: '100%' }} />
+				<ReactEcharts
+					theme={'infographic'}
+					style={{ height: '35vh' }}
+					option={getOption()}
+					renderer="canvas"
+					style={{ height: '70vh', width: '100%' }}
+				/>
 			</Modal>
 		</React.Fragment>
 	)

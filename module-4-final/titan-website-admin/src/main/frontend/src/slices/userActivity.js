@@ -5,6 +5,7 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	cardAccount: {
+		timestamp: [],
 		status: [],
 		bank: []
 	},
@@ -29,6 +30,7 @@ const userActivitySlice = createSlice({
 			state.hasErrors = false
 			state.loading = false
 			state.cardAccount.status = payload.cardAccountStatus
+			state.cardAccount.timestamp = payload.cardAccountStatusEachDay
 			state.cardAccount.bank = payload.bankStatus
 			state.timestamps = payload.timestamps
 			state.merchantFrequency = payload.merchant
@@ -68,6 +70,14 @@ export function fetchActivity(id, filters) {
 				COLLECT status = e.requestStatus WITH COUNT INTO status_count
 				RETURN {status, status_count}
 			)
+
+			LET cardAccountStatusEachDay = (
+				FOR v, e IN 1..1 ANY @id user_card_account
+				COLLECT date = DATE_FORMAT(DATE_ISO8601(e.reqDate), "%yyyy-%mm-%dd"), status = e.requestStatus WITH COUNT INTO status_count
+				SORT DATE_TIMESTAMP(date)
+				RETURN {date, status, status_count}
+			)
+
 			LET bankStatus = (
 				FOR v,e IN 1..1 ANY @id user_card_account
 				COLLECT bName = e.bankname, status = e.requestStatus WITH count INTO status_count 
@@ -105,7 +115,7 @@ export function fetchActivity(id, filters) {
 				RETURN {lat, lng, location_count}
 			)
 			
-			RETURN {cardAccountStatus, bankStatus, spending, merchant, appid, geolocation}
+			RETURN {cardAccountStatus, cardAccountStatusEachDay, bankStatus, spending, merchant, appid, geolocation}
 			`
 			const response = await fetch('http://localhost:8085/api/user_device/test', {
 				method: 'POST',
@@ -125,10 +135,19 @@ export function fetchActivity(id, filters) {
 			if (data.errorCode) {
 				dispatch(getActivityFailure(data.errorCode))
 			} else {
-				const { cardAccountStatus, bankStatus, spending, merchant, appid, geolocation } = data[0]
+				const {
+					cardAccountStatus,
+					cardAccountStatusEachDay,
+					bankStatus,
+					spending,
+					merchant,
+					appid,
+					geolocation
+				} = data[0]
 				dispatch(
 					getActivitySuccess({
 						cardAccountStatus,
+						cardAccountStatusEachDay,
 						bankStatus,
 						spending,
 						merchant,

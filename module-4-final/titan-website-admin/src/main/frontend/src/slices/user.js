@@ -1,29 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
-import moment from 'moment'
-import { storeDateRange } from './deviceActivity'
 
 export const initialState = {
 	loading: true,
 	errorInfo: {},
 	hasErrors: false,
 	user: null,
-	userId: '191213478006900'
+	devices: [],
+	cards: []
 }
 
 const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		storeUserId: (state, { payload }) => {
-			state.deviceId = payload.trim()
-		},
 		getUser: (state) => {
 			state.loading = true
 		},
 		getUserSuccess: (state, { payload }) => {
-			state.user = { ...payload, timestamp: moment(parseInt(payload.timestamp) * 1000).format('L LTS') }
+			state.user = null
 			state.loading = false
 			state.hasErrors = false
+			state.devices = payload.devices
+			state.cards = payload.cards
 		},
 		getUserFailure: (state, { payload }) => {
 			state.errorInfo = payload
@@ -37,48 +35,48 @@ const userSlice = createSlice({
 export const { storeUserId, getUser, getUserSuccess, getUserFailure } = userSlice.actions
 
 // Export state selector
-export const userSelector = (state) => state.device
+export const userSelector = (state) => state.user
 
 // Export default reducer
 export default userSlice.reducer
 
 // Asynchronous thunk action
-export function fetchDevice(id) {
+export function fetchUser(id) {
 	return async (dispatch) => {
-		dispatch(getDevice())
+		dispatch(getUser())
 		try {
-			const response = await fetch(`http://localhost:8085/api/device/${id}`)
-
-			const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
+			const response = await fetch('http://localhost:8085/api/user_device/test', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					query: `LET dates = (FOR v, e IN 1..1 ANY @userId users_devices
-							FILTER e.type == 'transaction'
-							SORT DATE_TIMESTAMP(DATE_ISO8601(e.reqDate))
-							RETURN e.reqDate)
+					query: `
+					LET devices_related = (FOR v, e IN 1..1 ANY @id user_device_onboard
+						COLLECT devices = e._to
+						RETURN devices)
+					
+					LET cards_related = (FOR v, e IN 1..1 ANY @id user_card_account
+						COLLECT cards = e._to
+						RETURN cards)
 						
-							RETURN [DATE_FORMAT(dates[0], @dateFormat), DATE_FORMAT(dates[-1], @dateFormat)]`,
+					RETURN {devices: devices_related, cards: cards_related}
+					`,
 					bindVars: {
-						deviceId: `users/${id}`,
-						dateFormat: '%yyyy-%mm-%dd'
+						id: `users/${id}`
 					}
 				})
 			})
 
-			const lastReqDate = await lastReqDateResponse.json()
-			dispatch(storeDateRange(lastReqDate[0]))
-
-			const payload = await response.json()
-			if (payload.errorCode) {
-				dispatch(getDeviceFailure(payload))
+			const data = await response.json()
+			if (data.errorCode) {
+				dispatch(getUserFailure(data))
 			} else {
-				dispatch(getDeviceSuccess(payload))
+				const { devices, cards } = data[0]
+				dispatch(getUserSuccess({ devices, cards }))
 			}
 		} catch (err) {
-			dispatch(getDeviceFailure())
+			dispatch(getUserFailure())
 		}
 	}
 }

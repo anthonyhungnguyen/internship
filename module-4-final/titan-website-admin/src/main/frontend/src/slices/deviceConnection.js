@@ -101,9 +101,10 @@ export const preprocessConnection = (deviceId, connections) => {
 			target: user
 		})
 	})
+	let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)
 	return {
-		nodes,
-		links
+		nodes: newNodes,
+		links: links
 	}
 }
 
@@ -127,6 +128,32 @@ const generateCategoryFromType = (type) => {
 		case 'card_account':
 			return 3
 	}
+}
+
+const configureSymbolSizeBasedOnDegree = (nodes, links) => {
+	const newNodes = []
+	nodes.forEach((n) => {
+		let outDegreeCount = 0
+		let inDegreeCount = 0
+		links.forEach((l) => {
+			if (l.source === n.id) {
+				outDegreeCount += 1
+			} else if (l.target === n.id) {
+				inDegreeCount += 1
+			}
+		})
+		const totalDegree = inDegreeCount + outDegreeCount
+		const symbolSize = adjustSymbolSize(totalDegree)
+		newNodes.push({ ...n, symbolSize: symbolSize, value: symbolSize })
+	})
+	return newNodes
+}
+
+const adjustSymbolSize = (totalDegree) => {
+	if (totalDegree < 5) {
+		return 5
+	}
+	return totalDegree
 }
 
 export const preprocessMoreConnection = (id, connections, nodes, links, newDepth, idList) => {
@@ -186,9 +213,10 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 			})
 		}
 	})
+	let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)
 	return {
-		nodes,
-		links
+		nodes: newNodes,
+		links: links
 	}
 }
 
@@ -221,11 +249,11 @@ export const generateGraphData = (data) => {
 			{
 				type: 'graph',
 				layout: 'force',
-				animation: false,
+				animation: true,
 				// edgeSymbol: [ 'none', 'arrow' ],
 				label: {
 					normal: {
-						show: true,
+						show: data.nodes.length < 100 ? true : false,
 						position: 'top',
 						formatter: '{b}',
 						fontSize: 11
@@ -239,7 +267,8 @@ export const generateGraphData = (data) => {
 				},
 				lineStyle: {
 					color: 'source',
-					curveness: 0.1
+					curveness: 0.1,
+					width: 0.5
 				},
 				emphasis: {
 					lineStyle: {
@@ -248,12 +277,11 @@ export const generateGraphData = (data) => {
 				},
 				data: connectionsData.nodes,
 				categories: connectionsData.categories,
-				// focusNodeAdjacency: true,
+				focusNodeAdjacency: true,
 				force: {
-					initLayout: 'circular',
-					edgeLength: 100,
-					repulsion: 1500,
-					friction: 0.2
+					edgeLength: 80,
+					repulsion: 600,
+					friction: 0.1
 				},
 				draggable: true,
 				edges: connectionsData.links,
