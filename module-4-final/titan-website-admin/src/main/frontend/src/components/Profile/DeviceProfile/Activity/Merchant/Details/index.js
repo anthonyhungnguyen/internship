@@ -1,14 +1,54 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import ReactEcharts from 'echarts-for-react'
-import { Modal } from 'antd'
-import { deviceActivitySelector } from '../../../../../../slices/deviceActivity'
+import { Modal, Skeleton } from 'antd'
+import { generalSelector } from '../../../../../../slices/general'
+import { deviceSelector } from '../../../../../../slices/device'
 
 export default () => {
-	const { appid } = useSelector(deviceActivitySelector)
+	const { id } = useSelector(generalSelector)
+	const { filters } = useSelector(deviceSelector)
 	const [ visible, setVisible ] = useState(false)
+	const [ appid, setAppId ] = useState(null)
+
+	useEffect(
+		() => {
+			const fetchAppIDFrequency = async () => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+								FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+								COLLECT app_id = e.appid 
+								AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)
+								SORT app_id_count, app_total
+								RETURN {app_id, app_id_count, app_total}`,
+						bindVars: {
+							id: `devices/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
+						}
+					})
+				})
+
+				const data = await response.json()
+				setAppId(data)
+			}
+			fetchAppIDFrequency()
+		},
+		[ id ]
+	)
 
 	const getGraphOptions = (data) => {
+		const formatMarkPoint = (params) => {
+			params.data.value = params.data.value.toLocaleString('en-EN', {
+				style: 'currency',
+				currency: 'VND'
+			})
+		}
 		if (appid.length > 0) {
 			return {
 				legend: {
@@ -92,12 +132,22 @@ export default () => {
 						type: 'line',
 						yAxisIndex: 1,
 						markPoint: {
+							label: {
+								formatter: formatMarkPoint
+							},
 							data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
 						},
 						data: data.map((x) => x.app_total),
 						smooth: true
 					}
-				]
+				],
+				emphasis: {
+					itemStyle: {
+						shadowBlur: 10,
+						shadowOffsetX: 0,
+						shadowColor: 'rgba(0, 0, 0, 0.5)'
+					}
+				}
 			}
 		}
 		return {
@@ -111,33 +161,33 @@ export default () => {
 		setVisible((old) => !old)
 	}
 
-	return (
-		appid && (
-			<React.Fragment>
+	return appid ? (
+		<React.Fragment>
+			<ReactEcharts
+				theme={'infographic'}
+				option={getGraphOptions(appid)}
+				renderer="canvas"
+				style={{ height: '35vh' }}
+			/>
+
+			<Modal
+				title="Merchant"
+				visible={visible}
+				onOk={handleToggleVisible}
+				onCancel={handleToggleVisible}
+				centered
+				width={1000}
+				footer={null}
+			>
 				<ReactEcharts
 					theme={'infographic'}
 					option={getGraphOptions(appid)}
+					style={{ height: '70vh', width: '100%' }}
 					renderer="canvas"
-					style={{ height: '35vh' }}
 				/>
-
-				<Modal
-					title="Merchant"
-					visible={visible}
-					onOk={handleToggleVisible}
-					onCancel={handleToggleVisible}
-					centered
-					width={1000}
-					footer={null}
-				>
-					<ReactEcharts
-						theme={'infographic'}
-						option={getGraphOptions(appid)}
-						style={{ height: '70vh', width: '100%' }}
-						renderer="canvas"
-					/>
-				</Modal>
-			</React.Fragment>
-		)
+			</Modal>
+		</React.Fragment>
+	) : (
+		<Skeleton active />
 	)
 }

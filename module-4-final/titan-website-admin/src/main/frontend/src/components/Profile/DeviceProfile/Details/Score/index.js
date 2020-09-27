@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Progress } from 'antd'
+import { Progress, Skeleton, Spin } from 'antd'
 import { Card, Row, Col, Tooltip } from 'antd'
 import { useSelector } from 'react-redux'
 import { generalSelector } from '../../../../../slices/general'
@@ -130,9 +130,9 @@ export default () => {
 				</Col>
 				<Col span={16}>
 					<Row gutter={[ 40, 24 ]}>
-						{hardware && (
+						{hardware ? (
 							<Tooltip placement="topLeft" title={renderHardwareScoreDetails(hardware.scoreData)}>
-								<Col span={12} className="gutter-row" onClick={() => console.log('hello')}>
+								<Col span={12} className="gutter-row">
 									<p className="text-4xl">{hardware.score}</p>
 									<p className="text-xs text-gray-500 font-bold">HARDWARE SCORE (0-30)</p>
 									<Progress
@@ -152,6 +152,10 @@ export default () => {
 									/>
 								</Col>
 							</Tooltip>
+						) : (
+							<Col span={12} className="gutter-row">
+								<Skeleton active />
+							</Col>
 						)}
 
 						<Col span={12} className="gutter-row">

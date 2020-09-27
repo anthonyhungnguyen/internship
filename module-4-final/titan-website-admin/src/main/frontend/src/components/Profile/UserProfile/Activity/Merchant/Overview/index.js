@@ -1,11 +1,40 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Modal } from 'antd'
+import { Modal, Skeleton } from 'antd'
 import ReactEcharts from 'echarts-for-react'
-import { userActivitySelector } from '../../../../../../slices/userActivity'
+import { generalSelector } from '../../../../../../slices/general'
 export default React.memo(() => {
-	const { merchantFrequency } = useSelector(userActivitySelector)
 	const [ visible, setVisible ] = useState(false)
+	const { id } = useSelector(generalSelector)
+	const [ merchantFrequency, setMerchantFrequency ] = useState(null)
+
+	useEffect(
+		() => {
+			const fetchGeneralMerchantAcitivty = async () => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+						COLLECT merchant = e.merchant
+						AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))
+						SORT merchant_count DESC
+						RETURN {merchant, merchant_count,merchant_total}`,
+						bindVars: {
+							id: `users/${id}`
+						}
+					})
+				})
+
+				const data = await response.json()
+				setMerchantFrequency(data)
+			}
+			fetchGeneralMerchantAcitivty()
+		},
+		[ id ]
+	)
 
 	const getOption = () => {
 		if (merchantFrequency.length > 0) {
@@ -74,8 +103,7 @@ export default React.memo(() => {
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
-
-	return (
+	return merchantFrequency ? (
 		<React.Fragment>
 			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
 
@@ -98,5 +126,7 @@ export default React.memo(() => {
 				/>
 			</Modal>
 		</React.Fragment>
+	) : (
+		<Skeleton active />
 	)
 })

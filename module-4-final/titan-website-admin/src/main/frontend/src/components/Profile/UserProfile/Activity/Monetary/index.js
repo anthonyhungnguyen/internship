@@ -1,13 +1,48 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import ReactEcharts from 'echarts-for-react'
-import { Card, Modal } from 'antd'
-import { userActivitySelector } from '../../../../../slices/userActivity'
+import { Card, Modal, Skeleton } from 'antd'
+import { generalSelector } from '../../../../../slices/general'
 export default () => {
-	const { spendingFrequency } = useSelector(userActivitySelector)
 	const [ visible, setVisible ] = useState(false)
+	const { id } = useSelector(generalSelector)
+	const [ spendingFrequency, setSpendingFrequency ] = useState(null)
+
+	useEffect(
+		() => {
+			const fetchMonetaryFrequency = async () => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+						COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')
+						AGGREGATE amount = SUM(TO_NUMBER(e.amount)), frequency = count(e.reqDate)
+						RETURN {date, amount, frequency}`,
+						bindVars: {
+							id: `users/${id}`
+						}
+					})
+				})
+
+				const data = await response.json()
+				setSpendingFrequency(data)
+			}
+			fetchMonetaryFrequency()
+		},
+		[ id ]
+	)
 
 	const getOption = () => {
+		const formatMarkPoint = (params) => {
+			params.data.value = params.data.value.toLocaleString('en-EN', {
+				style: 'currency',
+				currency: 'VND'
+			})
+		}
+
 		if (spendingFrequency.length > 0) {
 			const dates = spendingFrequency.map((sf) => sf.date)
 			const dateFrequency = spendingFrequency.map((sf) => sf.frequency)
@@ -103,9 +138,15 @@ export default () => {
 						type: 'line',
 						yAxisIndex: 1,
 						markPoint: {
+							label: {
+								formatter: formatMarkPoint
+							},
 							data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
 						},
 						markLine: {
+							label: {
+								formatter: formatMarkPoint
+							},
 							data: [ { type: 'average', name: 'average' } ]
 						},
 						smooth: true
@@ -124,7 +165,7 @@ export default () => {
 		setVisible((old) => !old)
 	}
 
-	return (
+	return spendingFrequency ? (
 		<React.Fragment>
 			<Card
 				title="Monetary"
@@ -146,5 +187,7 @@ export default () => {
 				<ReactEcharts option={getOption()} style={{ height: '70vh', width: '100%' }} renderer="canvas" />
 			</Modal>
 		</React.Fragment>
+	) : (
+		<Skeleton active />
 	)
 }

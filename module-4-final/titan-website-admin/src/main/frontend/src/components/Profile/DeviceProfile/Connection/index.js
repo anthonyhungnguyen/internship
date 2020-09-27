@@ -7,16 +7,17 @@ import { deviceConnectionSelector, fetchConnection } from '../../../../slices/de
 import { generalSelector } from '../../../../slices/general'
 
 const Graph = React.lazy(() => import('./Graph'))
-const DeviceBriefInformation = React.lazy(() => import('./DeviceBriefInformation'))
-const UserBriefInformation = React.lazy(() => import('./UserBriefInformation'))
+const Device = React.lazy(() => import('./Brief/Device'))
+const User = React.lazy(() => import('./Brief/User'))
 
 export default React.memo(() => {
 	const dispatch = useDispatch()
-	const { id } = useSelector(generalSelector)
-	const { device, hasErrors, errorInfo } = useSelector(deviceSelector)
+	const { id, type } = useSelector(generalSelector)
+	const { hasErrors } = useSelector(deviceSelector)
 	const { loading } = useSelector(deviceConnectionSelector)
-	const [ currentChosenDevice, setCurrentChosenDevice ] = useState(id)
-	const [ currentChosenUser, setCurrentChosenUser ] = useState('')
+	const [ currentChosenId, setCurrentChosenId ] = useState(id)
+	const [ currentType, setCurrentType ] = useState(type)
+	const [ currentLoading, setCurrentLoading ] = useState(false)
 
 	useEffect(
 		() => {
@@ -25,23 +26,52 @@ export default React.memo(() => {
 		[ dispatch, id ]
 	)
 
+	useEffect(
+		() => {
+			const fetchType = async () => {
+				setCurrentLoading(true)
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `LET checkList = ["devices/", "users/"]
+
+								FOR cl IN checkList
+									RETURN {type: cl, isnull: IS_NULL(DOCUMENT(CONCAT(cl, @id)))}`,
+						bindVars: {
+							id: currentChosenId
+						}
+					})
+				})
+				const data = await response.json()
+				const idType = data.filter((x) => !x.isnull)
+				const type = idType[0].type.replace('s/', '')
+				setCurrentType(type)
+				setCurrentLoading(false)
+			}
+			fetchType()
+		},
+		[ currentChosenId ]
+	)
 	return !loading && !hasErrors ? (
 		<React.Fragment>
 			<Row gutter={[ 24, 24 ]}>
 				<Col span={16}>
 					<Suspense fallback={<Skeleton active />}>
-						<Graph
-							setCurrentChosenDevice={setCurrentChosenDevice}
-							setCurrentChosenUser={setCurrentChosenUser}
-							deviceId={id}
-						/>
+						<Graph setCurrentChosenId={setCurrentChosenId} id={id} />
 					</Suspense>
 				</Col>
 				<Col span={8}>
-					<Suspense fallback={<Skeleton active />}>
-						<DeviceBriefInformation currentChosenDevice={currentChosenDevice} device={device} />
-						<UserBriefInformation currentChosenUser={currentChosenUser} />
-					</Suspense>
+					{!currentLoading ? (
+						<Suspense fallback={<Skeleton active />}>
+							{currentType === 'device' && <Device id={currentChosenId} />}
+							{currentType === 'user' && <User id={currentChosenId} />}
+						</Suspense>
+					) : (
+						<Skeleton active />
+					)}
 				</Col>
 			</Row>
 

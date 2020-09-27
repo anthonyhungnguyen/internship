@@ -1,11 +1,45 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Modal } from 'antd'
-import { deviceActivitySelector } from '../../../../../../slices/deviceActivity'
+import { Modal, Skeleton } from 'antd'
 import ReactEcharts from 'echarts-for-react'
+import { generalSelector } from '../../../../../../slices/general'
+import { deviceSelector } from '../../../../../../slices/device'
 export default React.memo(() => {
-	const { merchantFrequency } = useSelector(deviceActivitySelector)
+	const { id } = useSelector(generalSelector)
+	const { filters } = useSelector(deviceSelector)
 	const [ visible, setVisible ] = useState(false)
+	const [ merchantFrequency, setMerchantFrequency ] = useState(null)
+
+	useEffect(
+		() => {
+			const fetchGeneralMerchantAcitivty = async () => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+							FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+							COLLECT merchant = e.merchant
+							AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))
+							SORT merchant_count DESC
+							RETURN {merchant, merchant_count, merchant_total}`,
+						bindVars: {
+							id: `devices/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
+						}
+					})
+				})
+
+				const data = await response.json()
+				setMerchantFrequency(data)
+			}
+			fetchGeneralMerchantAcitivty()
+		},
+		[ id ]
+	)
 
 	const getOption = () => {
 		if (merchantFrequency.length > 0) {
@@ -75,7 +109,7 @@ export default React.memo(() => {
 		setVisible((old) => !old)
 	}
 
-	return (
+	return merchantFrequency ? (
 		<React.Fragment>
 			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
 
@@ -98,5 +132,7 @@ export default React.memo(() => {
 				/>
 			</Modal>
 		</React.Fragment>
+	) : (
+		<Skeleton active />
 	)
 })

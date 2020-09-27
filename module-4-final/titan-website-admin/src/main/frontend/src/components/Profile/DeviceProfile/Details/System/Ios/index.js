@@ -16,7 +16,6 @@ export default ({ device }) => {
 		hw_storage_total
 	} = device
 	const iosField = {
-		'Recorded At': timestamp,
 		'Last Used By': userId,
 		'User Agent': user_agent,
 		'OS Name': os_name,

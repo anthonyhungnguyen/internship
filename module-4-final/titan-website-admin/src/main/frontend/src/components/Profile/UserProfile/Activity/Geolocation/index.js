@@ -1,26 +1,44 @@
 import React, { useState } from 'react'
-import { GoogleMap, useLoadScript } from '@react-google-maps/api'
 import { useSelector } from 'react-redux'
+import { GoogleMap, useLoadScript } from '@react-google-maps/api'
 import { FullscreenOutlined, RollbackOutlined } from '@ant-design/icons'
 import { Card, Modal, Skeleton } from 'antd'
 import './index.css'
-import { userActivitySelector } from '../../../../../slices/userActivity'
-
+import { generalSelector } from '../../../../../slices/general'
 const containerStyle = {
 	height: '100%'
 }
 
 export default () => {
 	const [ map, setMap ] = useState(null)
-	const { geolocationActivity } = useSelector(userActivitySelector)
+	const { id } = useSelector(generalSelector)
 	const { isLoaded, loadError } = useLoadScript({
 		googleMapsApiKey: 'AIzaSyDmbl-UzpILeyTFM5_UbvCRiLHa5-6yhpU'
 	})
 	const [ visible, setVisible ] = useState(false)
 	const renderMap = React.useCallback(() => {
-		const onLoad = (map) => {
+		const onLoad = async (map) => {
+			const response = await fetch('http://localhost:8085/api/user_device/test', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+					FILTER e.latitude != '0.0' AND e.longitude != '0.0'
+					COLLECT lat = e.latitude,
+							lng = e.longitude WITH COUNT INTO location_count
+					RETURN {lat, lng, location_count}`,
+					bindVars: {
+						id: `users/${id}`
+					}
+				})
+			})
+
+			const data = await response.json()
+
 			const bounds = new window.google.maps.LatLngBounds()
-			geolocationActivity.forEach((gl) => {
+			data.forEach((gl) => {
 				const marker = new window.google.maps.Marker({
 					position: new window.google.maps.LatLng(parseFloat(gl.lat), parseFloat(gl.lng)),
 					map: map,
@@ -50,7 +68,7 @@ export default () => {
 	return (
 		<React.Fragment>
 			<Card
-				title={geolocationActivity.length !== 0 ? 'Geolocation' : 'Geolocation - No records'}
+				title={'Geolocation'}
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
 				className="w-full h-full"
@@ -64,7 +82,7 @@ export default () => {
 				{isLoaded ? renderMap() : <Skeleton active />}
 			</Card>
 			<Modal
-				title={geolocationActivity.length !== 0 ? 'Geolocation' : 'Geolocation - No records'}
+				title={'Geolocation'}
 				visible={visible}
 				onOk={handleToggleVisible}
 				onCancel={handleToggleVisible}

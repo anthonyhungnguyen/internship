@@ -2,12 +2,12 @@ import React from 'react'
 import { DatePicker, Card, Row, Col } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { storeDateRange, userActivitySelector } from '../../../../../slices/userActivity'
+import { userSelector } from '../../../../../slices/user'
 const { RangePicker } = DatePicker
 
 export default () => {
 	const dispatch = useDispatch()
-	const { filters } = useSelector(userActivitySelector)
+	const { filters, storeDateRange } = useSelector(userSelector)
 
 	const handleRangeChange = (_, dateStrings) => {
 		if (!dateStrings.includes('')) {

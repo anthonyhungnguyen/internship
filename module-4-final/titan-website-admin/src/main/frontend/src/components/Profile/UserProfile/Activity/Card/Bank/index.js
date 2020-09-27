@@ -1,13 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { userActivitySelector } from '../../../../../../slices/userActivity'
-import { Modal } from 'antd'
+import { Modal, Skeleton } from 'antd'
 import ReactEcharts from 'echarts-for-react'
+import { generalSelector } from '../../../../../../slices/general'
 
 export default () => {
-	const { cardAccount } = useSelector(userActivitySelector)
-	const { bank } = cardAccount
+	const { id } = useSelector(generalSelector)
 	const [ visible, setVisible ] = useState(false)
+	const [ bank, setBank ] = useState(null)
+
+	useEffect(
+		() => {
+			const fetchBankActivity = async () => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v,e IN 1..1 ANY @id user_card_account
+								COLLECT bName = e.bankname, status = e.requestStatus WITH count INTO status_count 
+								RETURN {bName, status, status_count}`,
+						bindVars: {
+							id: `users/${id}`
+						}
+					})
+				})
+
+				const data = await response.json()
+				setBank(data)
+			}
+			fetchBankActivity()
+		},
+		[ id ]
+	)
 
 	const processBank = (bank) => {
 		const result = []
@@ -153,7 +179,7 @@ export default () => {
 		setVisible((old) => !old)
 	}
 
-	return (
+	return bank ? (
 		<React.Fragment>
 			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
 
@@ -176,5 +202,7 @@ export default () => {
 				/>
 			</Modal>
 		</React.Fragment>
+	) : (
+		<Skeleton active />
 	)
 }

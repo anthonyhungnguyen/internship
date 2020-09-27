@@ -6,7 +6,7 @@ import { deviceConnectionSelector } from '../../../../../slices/deviceConnection
 import { preprocessMoreConnection, generateGraphData } from '../../../../../slices/deviceConnection'
 import copy from 'copy-to-clipboard'
 
-export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
+export default React.memo(({ setCurrentChosenId }) => {
 	const { graphData } = useSelector(deviceConnectionSelector)
 
 	// Used for restoring old depth
@@ -17,8 +17,10 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 	const handleOnClick = async (e) => {
 		if (e.data.type === 'device') {
 			copy(e.data.id.trim())
+			setCurrentChosenId(e.data.id.trim())
 		} else if (e.data.type === 'user') {
 			copy(e.data.id.trim())
+			setCurrentChosenId(e.data.id.trim())
 		} else if (e.data.type === 'card_account') {
 			copy(e.data.id.trim())
 		}

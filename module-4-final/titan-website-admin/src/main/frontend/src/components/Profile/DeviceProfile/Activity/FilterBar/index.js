@@ -1,13 +1,13 @@
 import React from 'react'
 import { DatePicker, Card, Row, Col } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
-import { deviceActivitySelector, storeDateRange } from '../../../../../slices/deviceActivity'
 import moment from 'moment'
+import { deviceSelector, storeDateRange } from '../../../../../slices/device'
 const { RangePicker } = DatePicker
 
 export default () => {
 	const dispatch = useDispatch()
-	const { filters } = useSelector(deviceActivitySelector)
+	const { filters } = useSelector(deviceSelector)
 
 	const handleRangeChange = (_, dateStrings) => {
 		if (!dateStrings.includes('')) {

@@ -1,12 +1,46 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux/'
 import ReactEcharts from 'echarts-for-react'
-import { deviceActivitySelector } from '../../../../../slices/deviceActivity'
-import { Card, Modal } from 'antd'
+import { Card, Modal, Skeleton } from 'antd'
+import { generalSelector } from '../../../../../slices/general'
+import { deviceSelector } from '../../../../../slices/device'
 
 export default function() {
-	const { timestamps } = useSelector(deviceActivitySelector)
+	const { id } = useSelector(generalSelector)
+	const { filters } = useSelector(deviceSelector)
 	const [ visible, setVisible ] = useState(false)
+	const [ timestamps, setTimestamps ] = useState(null)
+
+	useEffect(
+		() => {
+			const deviceOnBoardFrequency = async () => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_device_onboard
+							FILTER TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)
+							COLLECT date = DATE_FORMAT(DATE_ADD(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), 7, 'hour'), @dateFormat) WITH COUNT INTO date_count
+							RETURN {date, date_count}`,
+						bindVars: {
+							id: `devices/${id}`,
+							dateFormat: '%dd-%mm-%yyyy',
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
+						}
+					})
+				})
+
+				const data = await response.json()
+				setTimestamps(data)
+			}
+			deviceOnBoardFrequency()
+		},
+		[ id ]
+	)
+
 	const getOption = () => {
 		if (timestamps.length > 0) {
 			const dates = timestamps.map((e) => e.date)
@@ -24,6 +58,7 @@ export default function() {
 					{
 						type: 'slider',
 						show: true,
+						start: 80,
 						xAxisIndex: [ 0 ]
 					},
 					{
@@ -100,7 +135,7 @@ export default function() {
 		setVisible((old) => !old)
 	}
 
-	return (
+	return timestamps ? (
 		<React.Fragment>
 			<Card
 				title="Frequency"
@@ -123,5 +158,7 @@ export default function() {
 				<ReactEcharts theme={'infographic'} option={getOption()} style={{ height: '70vh', width: '100%' }} />
 			</Modal>
 		</React.Fragment>
+	) : (
+		<Skeleton active />
 	)
 }

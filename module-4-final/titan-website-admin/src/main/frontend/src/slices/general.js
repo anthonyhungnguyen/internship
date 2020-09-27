@@ -4,7 +4,7 @@ export const initialState = {
 	loading: true,
 	errorInfo: {},
 	hasErrors: false,
-	id: '160516000000002',
+	id: '200519000033119',
 	type: null
 }
 

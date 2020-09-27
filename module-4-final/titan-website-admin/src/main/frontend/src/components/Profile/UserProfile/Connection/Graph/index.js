@@ -9,7 +9,7 @@ import {
 	userConnectionSelector
 } from '../../../../../slices/userConnection'
 
-export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => {
+export default React.memo(({ setCurrentChosenId }) => {
 	const { graphData } = useSelector(userConnectionSelector)
 
 	// Used for restoring old depth
@@ -19,8 +19,10 @@ export default React.memo(({ setCurrentChosenDevice, setCurrentChosenUser }) => 
 
 	const handleOnClick = async (e) => {
 		if (e.data.type === 'device') {
+			setCurrentChosenId(e.data.id)
 			copy(e.data.id.trim())
 		} else if (e.data.type === 'user') {
+			setCurrentChosenId(e.data.id)
 			copy(e.data.id.trim())
 		} else if (e.data.type === 'card_account') {
 			copy(e.data.id.trim())

@@ -6,7 +6,14 @@ export const initialState = {
 	hasErrors: false,
 	user: null,
 	devices: [],
-	cards: []
+	cards: [],
+	date: {
+		lastOnboard: null,
+		lastTransaction: null
+	},
+	filters: {
+		range: [ '2020-08-01', '2020-08-31' ]
+	}
 }
 
 const userSlice = createSlice({
@@ -27,12 +34,19 @@ const userSlice = createSlice({
 			state.errorInfo = payload
 			state.loading = false
 			state.hasErrors = true
+		},
+		storeLastDate: (state, { payload }) => {
+			state.date.lastOnboard = payload.last_device_onboard
+			state.date.lastTransaction = payload.last_device_transaction
+		},
+		storeDateRange: (state, { payload }) => {
+			state.filters = { ...state.filters, range: payload }
 		}
 	}
 })
 
 // Three actions from slice
-export const { storeUserId, getUser, getUserSuccess, getUserFailure } = userSlice.actions
+export const { storeUserId, storeLastDate, getUser, getUserSuccess, getUserFailure, storeDateRange } = userSlice.actions
 
 // Export state selector
 export const userSelector = (state) => state.user
@@ -45,6 +59,35 @@ export function fetchUser(id) {
 	return async (dispatch) => {
 		dispatch(getUser())
 		try {
+			const fetchLastOnboardAndTransactionDate = async (id) => {
+				const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `LET last_device_onboard = FIRST((FOR v, e IN 1..1 ANY @id user_device_onboard
+									SORT e.timestamp DESC
+									LET date = DATE_ISO8601(TO_NUMBER(e.timestamp * 1000))
+									RETURN date))
+								
+								LET last_device_transaction = FIRST((FOR v, e IN 1..1 ANY @id user_device_transaction
+									SORT DATE_ISO8601(e.reqDate) DESC
+									LET date = DATE_ISO8601(e.reqDate)
+									RETURN date))
+									
+								RETURN {last_device_onboard, last_device_transaction}`,
+						bindVars: {
+							id: `users/${id}`
+						}
+					})
+				})
+				const lastReqDateData = await lastReqDateResponse.json()
+				const { last_device_onboard, last_device_transaction } = lastReqDateData[0]
+				dispatch(storeLastDate({ last_device_onboard, last_device_transaction }))
+			}
+			fetchLastOnboardAndTransactionDate(id)
+
 			const response = await fetch('http://localhost:8085/api/user_device/test', {
 				method: 'POST',
 				headers: {

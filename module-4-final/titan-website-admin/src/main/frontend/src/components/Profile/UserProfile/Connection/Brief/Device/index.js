@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Descriptions, Skeleton } from 'antd'
 import moment from 'moment'
-import { useSelector, useDispatch } from 'react-redux'
-import { Select } from 'antd'
-import { deviceSelector, storeLastDate } from '../../../../../slices/device'
 import copy from 'copy-to-clipboard'
-import { generalSelector } from '../../../../../slices/general'
+import { Select } from 'antd'
 
 const { Option } = Select
 
-export default () => {
-	const { id } = useSelector(generalSelector)
-	const { date } = useSelector(deviceSelector)
+export default ({ id }) => {
+	const [ date, setDate ] = useState(null)
 	const [ users, setUsers ] = useState(null)
-	const dispatch = useDispatch()
+	const [ device, setDevice ] = useState(null)
 
 	useEffect(
 		() => {
-			const fetchLastOnboardAndTransactionDate = async (id) => {
+			const fetchLastOnboardAndTransactionDate = async () => {
 				const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
 					method: 'POST',
 					headers: {
@@ -42,11 +38,13 @@ export default () => {
 				})
 				const lastReqDateData = await lastReqDateResponse.json()
 				const { last_device_onboard, last_device_transaction } = lastReqDateData[0]
-
-				dispatch(storeLastDate({ last_device_onboard, last_device_transaction }))
+				setDate({
+					lastOnboard: last_device_onboard,
+					lastTransaction: last_device_transaction
+				})
 			}
 
-			const fetchUserList = async (id) => {
+			const fetchUserList = async () => {
 				const userListResponse = await fetch('http://localhost:8085/api/user_device/test', {
 					method: 'POST',
 					headers: {
@@ -65,24 +63,47 @@ export default () => {
 				setUsers(userList)
 			}
 
-			fetchLastOnboardAndTransactionDate(id)
-			fetchUserList(id)
+			const fetchDeviceBasicInfo = async () => {
+				const deviceResponse = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `RETURN KEEP(DOCUMENT(@id), ['user_agent', 'os_version', 'os_name', 'device_model', 'hw_device_model'])`,
+						bindVars: {
+							id: `devices/${id}`
+						}
+					})
+				})
+				const data = await deviceResponse.json()
+				setDevice(data[0])
+			}
+
+			fetchLastOnboardAndTransactionDate()
+			fetchUserList()
+			fetchDeviceBasicInfo()
 		},
-		[ id, dispatch ]
+		[ id ]
 	)
 
-	return users && !date.dateLoading ? (
-		<Card title="Identity" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+	return date && users && device ? (
+		<Card title="Device Brief Info" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Descriptions column={1} bordered>
 				<Descriptions.Item label="User ID">{id}</Descriptions.Item>
+				<Descriptions.Item label="User Agent">{device.user_agent}</Descriptions.Item>
 				<Descriptions.Item label="Last Device Onboard">
 					{date.lastOnboard ? moment(date.lastOnboard).format('L LTS') : 'Unknown'}
 				</Descriptions.Item>
 				<Descriptions.Item label="Last Device Transaction">
 					{date.lastTransaction ? moment(date.lastTransaction).format('L LTS') : 'Unknown'}
 				</Descriptions.Item>
-				<Descriptions.Item label="Total Users">
-					<Select defaultValue={users.length} style={{ width: 180 }} onSelect={(e) => copy(e)}>
+				<Descriptions.Item label={`Total Users (${users.length})`}>
+					<Select
+						defaultValue={users[0].split('/')[1].trim()}
+						style={{ width: 180 }}
+						onSelect={(e) => copy(e)}
+					>
 						{users.map((u) => {
 							const userId = u.split('/')[1].trim()
 							return (
@@ -93,6 +114,11 @@ export default () => {
 						})}
 					</Select>
 				</Descriptions.Item>
+				<Descriptions.Item label="OS Name" className="text-capitalize">
+					{device.os_name}
+				</Descriptions.Item>
+				<Descriptions.Item label="OS Version">{device.os_version}</Descriptions.Item>
+				<Descriptions.Item label="Device Model">{device.hw_device_model}</Descriptions.Item>
 			</Descriptions>
 		</Card>
 	) : (
