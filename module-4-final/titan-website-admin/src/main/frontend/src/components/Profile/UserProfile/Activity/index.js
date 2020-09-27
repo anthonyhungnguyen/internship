@@ -10,10 +10,7 @@ import Geolocation from './Geolocation'
 import { userSelector } from '../../../../slices/user'
 
 export default () => {
-	const hasErrors = false
-	const { id } = useSelector(generalSelector)
-	const { loading } = useSelector(userSelector)
-	const dispatch = useDispatch()
+	const { loading, hasErrors } = useSelector(userSelector)
 
 	return (
 		<div className="animated fadeIn">

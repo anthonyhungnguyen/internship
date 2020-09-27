@@ -13,11 +13,10 @@ const User = React.lazy(() => import('./Brief/User'))
 export default React.memo(() => {
 	const dispatch = useDispatch()
 	const { id, type } = useSelector(generalSelector)
-	const { hasErrors } = useSelector(deviceSelector)
-	const { loading } = useSelector(userConnectionSelector)
+	const { loading, hasErrors } = useSelector(userConnectionSelector)
 	const [ currentChosenId, setCurrentChosenId ] = useState(id)
 	const [ currentType, setCurrentType ] = useState(type)
-	const [ currentLoading, setCurrentLoading ] = useState(false)
+	const [ currentLoading, setCurrentLoading ] = useState(true)
 
 	useEffect(
 		() => {
@@ -51,7 +50,9 @@ export default React.memo(() => {
 				setCurrentType(type)
 				setCurrentLoading(false)
 			}
-			fetchType()
+			if (!loading && !hasErrors) {
+				fetchType()
+			}
 		},
 		[ currentChosenId ]
 	)

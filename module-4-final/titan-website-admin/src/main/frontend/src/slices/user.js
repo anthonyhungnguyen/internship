@@ -59,58 +59,18 @@ export function fetchUser(id) {
 	return async (dispatch) => {
 		dispatch(getUser())
 		try {
-			const fetchLastOnboardAndTransactionDate = async (id) => {
-				const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `LET last_device_onboard = FIRST((FOR v, e IN 1..1 ANY @id user_device_onboard
-									SORT e.timestamp DESC
-									LET date = DATE_ISO8601(TO_NUMBER(e.timestamp * 1000))
-									RETURN date))
-								
-								LET last_device_transaction = FIRST((FOR v, e IN 1..1 ANY @id user_device_transaction
-									SORT DATE_ISO8601(e.reqDate) DESC
-									LET date = DATE_ISO8601(e.reqDate)
-									RETURN date))
-									
-								RETURN {last_device_onboard, last_device_transaction}`,
-						bindVars: {
-							id: `users/${id}`
-						}
-					})
-				})
-				const lastReqDateData = await lastReqDateResponse.json()
-				const { last_device_onboard, last_device_transaction } = lastReqDateData[0]
-				dispatch(storeLastDate({ last_device_onboard, last_device_transaction }))
-			}
-			fetchLastOnboardAndTransactionDate(id)
-
 			const response = await fetch('http://localhost:8085/api/user_device/test', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					query: `
-					LET devices_related = (FOR v, e IN 1..1 ANY @id user_device_onboard
-						COLLECT devices = e._to
-						RETURN devices)
-					
-					LET cards_related = (FOR v, e IN 1..1 ANY @id user_card_account
-						COLLECT cards = e._to
-						RETURN cards)
-						
-					RETURN {devices: devices_related, cards: cards_related}
-					`,
+					query: `RETURN DOCUMENT(@id)`,
 					bindVars: {
 						id: `users/${id}`
 					}
 				})
 			})
-
 			const data = await response.json()
 			if (data.errorCode) {
 				dispatch(getUserFailure(data))
