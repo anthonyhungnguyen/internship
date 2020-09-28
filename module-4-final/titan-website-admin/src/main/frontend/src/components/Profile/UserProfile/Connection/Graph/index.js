@@ -6,7 +6,7 @@ import copy from 'copy-to-clipboard';
 import { generateGraphData, preprocessMoreConnection } from '../../../../../slices/util';
 import { userSelector } from '../../../../../slices/user';
 
-export default React.memo(({ setCurrentChosenId }) => {
+export default React.memo(({ setCurrentChosenId, setCurrentType }) => {
 	const { graphData } = useSelector(userSelector);
 
 	// Used for restoring old depth
@@ -16,13 +16,17 @@ export default React.memo(({ setCurrentChosenId }) => {
 
 	const handleOnClick = async (e) => {
 		if (e.data.type === 'device') {
-			setCurrentChosenId(e.data.id);
 			copy(e.data.id.trim());
+			setCurrentChosenId(e.data.id.trim());
+			setCurrentType(e.data.type);
 		} else if (e.data.type === 'user') {
-			setCurrentChosenId(e.data.id);
 			copy(e.data.id.trim());
+			setCurrentChosenId(e.data.id.trim());
+			setCurrentType(e.data.type);
 		} else if (e.data.type === 'card_account') {
 			copy(e.data.id.trim());
+			setCurrentChosenId(e.data.id.trim());
+			setCurrentType(e.data.type);
 		}
 	};
 

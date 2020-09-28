@@ -88,17 +88,17 @@ export default React.memo(({ setCurrentChosenId, setCurrentType }) => {
 		}
 	};
 
-	const handleDoubleClick = async (e) => {
-		if (e.data.type === 'device') {
-			const response = await fetch(`http://localhost:8085/api/user_device/device/${e.data.id}/connections`);
-			const connections = await response.json();
-			processNewGraphData(e.data.id, connections);
-		} else if (e.data.type === 'user') {
-			const response = await fetch(`http://localhost:8085/api/user_device/user/${e.data.id}/connections`);
-			const connections = await response.json();
-			processNewGraphData(e.data.id, connections);
-		}
-	};
+	// const handleDoubleClick = async (e) => {
+	// 	if (e.data.type === 'device') {
+	// 		const response = await fetch(`http://localhost:8085/api/user_device/device/${e.data.id}/connections`);
+	// 		const connections = await response.json();
+	// 		processNewGraphData(e.data.id, connections);
+	// 	} else if (e.data.type === 'user') {
+	// 		const response = await fetch(`http://localhost:8085/api/user_device/user/${e.data.id}/connections`);
+	// 		const connections = await response.json();
+	// 		processNewGraphData(e.data.id, connections);
+	// 	}
+	// };
 
 	return (
 		<div className="animated fadeIn">
@@ -119,8 +119,8 @@ export default React.memo(({ setCurrentChosenId, setCurrentType }) => {
 					style={{ height: '65vh', width: '100%' }}
 					renderer="canvas"
 					onEvents={{
-						click: handleOnClick,
-						dblclick: handleDoubleClick
+						click: handleOnClick
+						// dblclick: handleDoubleClick
 					}}
 				/>
 			</Card>
