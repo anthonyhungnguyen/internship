@@ -1,33 +1,33 @@
 export const preprocessMoreConnection = (id, connections, nodes, links, newDepth, idList) => {
-	const nodeCount = nodes.map((x) => x.id);
+	const nodeCount = nodes.map((x) => x.id)
 	if (newDepth) {
 		idList.forEach((eachId) => {
-			const splitId = eachId.split('/')[1];
-			const expandedNodeIndex = nodes.findIndex((n) => n.id === splitId);
+			const splitId = eachId.split('/')[1]
+			const expandedNodeIndex = nodes.findIndex((n) => n.id === splitId)
 			nodes[expandedNodeIndex] = {
 				...nodes[expandedNodeIndex],
 				label: {
 					fontWeight: 'bold'
 				},
 				expanded: true
-			};
-		});
+			}
+		})
 	} else {
-		const expandedNodeIndex = nodes.findIndex((n) => n.id === id);
+		const expandedNodeIndex = nodes.findIndex((n) => n.id === id)
 		nodes[expandedNodeIndex] = {
 			...nodes[expandedNodeIndex],
 			label: {
 				fontWeight: 'bold'
 			},
 			expanded: true
-		};
+		}
 	}
 
 	connections.forEach((c) => {
-		const fromType = c['source'].split('/')[0];
-		const toType = c['target'].split('/')[0];
-		const from = c['source'].split('/')[1].trim();
-		const to = c['target'].split('/')[1].trim();
+		const fromType = c['source'].split('/')[0]
+		const toType = c['target'].split('/')[0]
+		const from = c['source'].split('/')[1].trim()
+		const to = c['target'].split('/')[1].trim()
 		if (nodeCount.indexOf(from) < 0) {
 			nodes.push({
 				id: from,
@@ -35,8 +35,8 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 				category: generateCategoryFromType(fromType),
 				type: generateInTypeFromOutType(fromType),
 				expanded: false
-			});
-			nodeCount.push(from);
+			})
+			nodeCount.push(from)
 		}
 		if (nodeCount.indexOf(to) < 0) {
 			nodes.push({
@@ -45,22 +45,22 @@ export const preprocessMoreConnection = (id, connections, nodes, links, newDepth
 				category: generateCategoryFromType(toType),
 				type: generateInTypeFromOutType(toType),
 				expanded: false
-			});
-			nodeCount.push(to);
+			})
+			nodeCount.push(to)
 		}
 		if (!links.find((x) => x.source === from && x.target === to)) {
 			links.push({
 				source: to,
 				target: from
-			});
+			})
 		}
-	});
-	let newNodes = configureSymbolSizeBasedOnDegree(nodes, links);
+	})
+	let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)
 	return {
 		nodes: newNodes,
 		links: links
-	};
-};
+	}
+}
 
 export const generateGraphData = (data) => {
 	const connectionsData = {
@@ -81,7 +81,7 @@ export const generateGraphData = (data) => {
 		],
 		nodes: data.nodes,
 		links: data.links
-	};
+	}
 	const options = {
 		legend: {
 			data: [ 'Root Device', 'Users', 'Related Devices', 'Related Card' ]
@@ -95,7 +95,7 @@ export const generateGraphData = (data) => {
 				// edgeSymbol: [ 'none', 'arrow' ],
 				label: {
 					normal: {
-						show: data.nodes.length < 100 ? true : false,
+						show: data.nodes.length < 50 ? true : false,
 						position: 'top',
 						formatter: '{b}',
 						fontSize: 11
@@ -131,54 +131,54 @@ export const generateGraphData = (data) => {
 				symbolSize: 14
 			}
 		]
-	};
-	return options;
-};
+	}
+	return options
+}
 
 export const generateInTypeFromOutType = (type) => {
 	switch (type) {
 		case 'devices':
-			return 'device';
+			return 'device'
 		case 'users':
-			return 'user';
+			return 'user'
 		case 'card_account':
-			return 'card_account';
+			return 'card_account'
 	}
-};
+}
 
 export const generateCategoryFromType = (type) => {
 	switch (type) {
 		case 'devices':
-			return 2;
+			return 2
 		case 'users':
-			return 1;
+			return 1
 		case 'card_account':
-			return 3;
+			return 3
 	}
-};
+}
 
 export const configureSymbolSizeBasedOnDegree = (nodes, links) => {
-	const newNodes = [];
+	const newNodes = []
 	nodes.forEach((n) => {
-		let outDegreeCount = 0;
-		let inDegreeCount = 0;
+		let outDegreeCount = 0
+		let inDegreeCount = 0
 		links.forEach((l) => {
 			if (l.source === n.id) {
-				outDegreeCount += 1;
+				outDegreeCount += 1
 			} else if (l.target === n.id) {
-				inDegreeCount += 1;
+				inDegreeCount += 1
 			}
-		});
-		const totalDegree = inDegreeCount + outDegreeCount;
-		const symbolSize = adjustSymbolSize(totalDegree);
-		newNodes.push({ ...n, symbolSize: symbolSize, value: symbolSize });
-	});
-	return newNodes;
-};
+		})
+		const totalDegree = inDegreeCount + outDegreeCount
+		const symbolSize = adjustSymbolSize(totalDegree)
+		newNodes.push({ ...n, symbolSize: symbolSize, value: symbolSize })
+	})
+	return newNodes
+}
 
 const adjustSymbolSize = (totalDegree) => {
 	if (totalDegree < 10) {
-		return 8;
+		return 8
 	}
-	return totalDegree;
-};
+	return totalDegree
+}

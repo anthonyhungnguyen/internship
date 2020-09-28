@@ -19,51 +19,53 @@ export default () => {
 		googleMapsApiKey: 'AIzaSyDmbl-UzpILeyTFM5_UbvCRiLHa5-6yhpU'
 	})
 	const [ visible, setVisible ] = useState(false)
-
-	const renderMap = React.useCallback(() => {
-		const onLoad = async (map) => {
-			const response = await fetch('http://localhost:8085/api/user_device/test', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+	console.log(map)
+	const renderMap = React.useCallback(
+		() => {
+			const onLoad = async (map) => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
 					FILTER e.latitude != '0.0' AND e.longitude != '0.0'
 					AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 					COLLECT lat = e.latitude,
 							lng = e.longitude WITH COUNT INTO location_count
 					RETURN {lat, lng, location_count}`,
-					bindVars: {
-						id: `devices/${id}`,
-						fromDate: filters.range[0],
-						toDate: filters.range[1]
-					}
+						bindVars: {
+							id: `devices/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
+						}
+					})
 				})
-			})
 
-			const data = await response.json()
+				const data = await response.json()
 
-			const bounds = new window.google.maps.LatLngBounds()
-			data.forEach((gl) => {
-				const marker = new window.google.maps.Marker({
-					position: new window.google.maps.LatLng(parseFloat(gl.lat), parseFloat(gl.lng)),
-					map: map,
-					animation: window.google.maps.Animation.DROP
+				const bounds = new window.google.maps.LatLngBounds()
+				data.forEach((gl) => {
+					const marker = new window.google.maps.Marker({
+						position: new window.google.maps.LatLng(parseFloat(gl.lat), parseFloat(gl.lng)),
+						map: map,
+						animation: window.google.maps.Animation.DROP
+					})
+					bounds.extend(marker.getPosition())
 				})
-				bounds.extend(marker.getPosition())
-			})
 
-			map.fitBounds(bounds)
-			setMap(map)
-		}
+				map.fitBounds(bounds)
+			}
 
-		const onUnmount = (map) => {
-			setMap(null)
-		}
+			const onUnmount = (map) => {
+				setMap(null)
+			}
 
-		return <GoogleMap onLoad={onLoad} onUnmount={onUnmount} mapContainerStyle={containerStyle} />
-	}, [])
+			return <GoogleMap onLoad={onLoad} onUnmount={onUnmount} mapContainerStyle={containerStyle} />
+		},
+		[ id, filters ]
+	)
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)

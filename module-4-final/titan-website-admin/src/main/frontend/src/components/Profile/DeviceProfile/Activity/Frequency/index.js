@@ -38,7 +38,7 @@ export default function() {
 			}
 			deviceOnBoardFrequency()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
 	const getOption = () => {

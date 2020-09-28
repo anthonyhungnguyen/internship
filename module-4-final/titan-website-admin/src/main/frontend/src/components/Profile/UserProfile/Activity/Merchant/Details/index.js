@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import ReactEcharts from 'echarts-for-react'
-import { Modal, Skeleton } from 'antd'
+import { Modal, Skeleton, Select } from 'antd'
 import { generalSelector } from '../../../../../../slices/general'
 
 export default () => {
 	const { id } = useSelector(generalSelector)
 	const [ visible, setVisible ] = useState(false)
 	const [ appid, setAppId ] = useState(null)
+	const ref = useRef()
 
 	useEffect(
 		() => {
@@ -155,32 +156,65 @@ export default () => {
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
+	const handleSelect = (value) => {
+		const currentShownAppID = ref.current.getEchartsInstance().getOption().xAxis[0].data
+		const indexToPush = appid.findIndex((x) => x.app_id === value)
+		currentShownAppID.splice(indexToPush, 0, value)
+		ref.current.getEchartsInstance().setOption({ xAxis: { data: currentShownAppID } })
+	}
+
+	const handleDeselect = (value) => {
+		const currentShownAppID = ref.current.getEchartsInstance().getOption().xAxis[0].data
+		ref.current.getEchartsInstance().setOption({ xAxis: { data: currentShownAppID.filter((x) => x !== value) } })
+	}
+
+	const handleClear = () => {
+		ref.current.getEchartsInstance().setOption({ xAxis: { data: [] } })
+	}
 
 	return appid ? (
 		<React.Fragment>
+			<Select
+				mode="multiple"
+				style={{ width: '51%' }}
+				placeholder="Choose AppID"
+				defaultValue={appid.map((a) => a.app_id)}
+				onSelect={handleSelect}
+				onDeselect={handleDeselect}
+				options={appid.map((a) => ({
+					value: a.app_id
+				}))}
+				maxTagCount={5}
+				bordered={false}
+				allowClear={true}
+				onClear={handleClear}
+			/>
 			<ReactEcharts
 				theme={'infographic'}
-				option={getGraphOptions(appid)}
+				option={!ref.current ? getGraphOptions(appid) : ref.current.getEchartsInstance().getOption()}
 				renderer="canvas"
 				style={{ height: '35vh' }}
+				ref={ref}
 			/>
 
-			<Modal
-				title="Merchant"
-				visible={visible}
-				onOk={handleToggleVisible}
-				onCancel={handleToggleVisible}
-				centered
-				width={1000}
-				footer={null}
-			>
-				<ReactEcharts
-					theme={'infographic'}
-					option={getGraphOptions(appid)}
-					style={{ height: '70vh', width: '100%' }}
-					renderer="canvas"
-				/>
-			</Modal>
+			{ref.current && (
+				<Modal
+					title="Merchant"
+					visible={visible}
+					onOk={handleToggleVisible}
+					onCancel={handleToggleVisible}
+					centered
+					width={1000}
+					footer={null}
+				>
+					<ReactEcharts
+						theme={'infographic'}
+						option={ref.current.getEchartsInstance().getOption()}
+						style={{ height: '70vh', width: '100%' }}
+						renderer="canvas"
+					/>
+				</Modal>
+			)}
 		</React.Fragment>
 	) : (
 		<Skeleton active />

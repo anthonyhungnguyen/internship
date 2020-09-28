@@ -1,36 +1,43 @@
-import React, { Suspense, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Input, Tabs, Skeleton, message } from 'antd';
-import { deviceSelector, storeDeviceId } from '../../../slices/device';
-import { generalSelector, storeId } from '../../../slices/general';
+import React, { Suspense, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Input, Tabs, Skeleton, message, Button, Drawer } from 'antd'
+import { deviceSelector } from '../../../slices/device'
+import { generalSelector, storeId } from '../../../slices/general'
 
-const { TabPane } = Tabs;
+const { TabPane } = Tabs
 
-const { Search } = Input;
+const { Search } = Input
 
-const Details = React.lazy(() => import('./Details'));
-const Activity = React.lazy(() => import('./Activity'));
-const Connection = React.lazy(() => import('./Connection'));
-const Tool = React.lazy(() => import('./Tool'));
+const Details = React.lazy(() => import('./Details'))
+const Activity = React.lazy(() => import('./Activity'))
+const Connection = React.lazy(() => import('./Connection'))
+const Tool = React.lazy(() => import('./Tool'))
 
 export default React.memo(() => {
-	const [ activeTab, setActiveTab ] = useState('overview');
-	const { id, hasErrors } = useSelector(generalSelector);
-	const { loading } = useSelector(deviceSelector);
-	const dispatch = useDispatch();
+	const [ activeTab, setActiveTab ] = useState('overview')
+	const { id, hasErrors } = useSelector(generalSelector)
+	const { loading } = useSelector(deviceSelector)
+	const dispatch = useDispatch()
 
 	const handleSearch = (newDeviceId) => {
 		if (newDeviceId) {
-			dispatch(storeId(newDeviceId));
+			dispatch(storeId(newDeviceId))
 		} else {
 			message.error({
 				content: 'ID Not Found',
 				style: {
 					marginTop: '5vh'
 				}
-			});
+			})
 		}
-	};
+	}
+	const [ visible, setVisible ] = useState(false)
+	const showDrawer = () => {
+		setVisible(true)
+	}
+	const onClose = () => {
+		setVisible(false)
+	}
 
 	return (
 		<Tabs
@@ -39,15 +46,17 @@ export default React.memo(() => {
 			onChange={(e) => setActiveTab(e)}
 			type="card"
 			tabBarExtraContent={
-				<Search
-					addonBefore="Device"
-					defaultValue={id}
-					placeholder="input device id"
-					onSearch={handleSearch}
-					size="large"
-					enterButton
-					loading={loading}
-				/>
+				<React.Fragment>
+					<Search
+						addonBefore="Device"
+						defaultValue={id}
+						placeholder="input device id"
+						onSearch={handleSearch}
+						size="large"
+						enterButton
+						loading={loading}
+					/>
+				</React.Fragment>
 			}
 		>
 			{!hasErrors ? (
@@ -77,5 +86,5 @@ export default React.memo(() => {
 				<Skeleton active />
 			)}
 		</Tabs>
-	);
-});
+	)
+})

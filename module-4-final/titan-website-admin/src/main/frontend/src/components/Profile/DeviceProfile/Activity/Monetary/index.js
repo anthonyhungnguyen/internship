@@ -38,7 +38,7 @@ export default () => {
 			}
 			fetchMonetaryFrequency()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
 	const getOption = () => {
@@ -178,7 +178,7 @@ export default () => {
 				hoverable={true}
 				renderer="canvas"
 			>
-				<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
+				<ReactEcharts theme={'infographic'} option={getOption()} style={{ height: '35vh' }} />
 			</Card>
 			<Modal
 				title="Monetary"

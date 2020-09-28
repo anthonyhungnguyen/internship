@@ -1,10 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit'
 import {
 	generateGraphData,
 	configureSymbolSizeBasedOnDegree,
 	generateCategoryFromType,
 	generateInTypeFromOutType
-} from './util';
+} from './util'
 
 export const initialState = {
 	loading: true,
@@ -19,52 +19,58 @@ export const initialState = {
 	},
 	filters: {
 		range: [ '2020-08-01', '2020-08-31' ]
+	},
+	ref: {
+		appid: null
 	}
-};
+}
 
 const deviceSlice = createSlice({
 	name: 'device',
 	initialState,
 	reducers: {
 		getDevice: (state) => {
-			state.loading = true;
+			state.loading = true
 		},
 		getDeviceSuccess: (state, { payload }) => {
-			state.device = payload;
-			state.loading = false;
-			state.hasErrors = false;
+			state.device = payload
+			state.loading = false
+			state.hasErrors = false
 		},
 		getDeviceFailure: (state, { payload }) => {
-			state.errorInfo = payload;
-			state.loading = false;
-			state.hasErrors = true;
+			state.errorInfo = payload
+			state.loading = false
+			state.hasErrors = true
 		},
 		storeUserList: (state, { payload }) => {
-			state.users = payload;
+			state.users = payload
 		},
 		storeLastDate: (state, { payload }) => {
-			state.date.dateLoading = false;
-			state.date.lastOnboard = payload.last_device_onboard;
-			state.date.lastTransaction = payload.last_device_transaction;
+			state.date.dateLoading = false
+			state.date.lastOnboard = payload.last_device_onboard
+			state.date.lastTransaction = payload.last_device_transaction
 		},
 		storeDateRange: (state, { payload }) => {
-			state.filters = { ...state.filters, range: payload };
+			state.filters = { ...state.filters, range: payload }
 		},
 		getConnection: (state) => {
-			state.loading = true;
+			state.loading = true
 		},
 		getConnectionSuccess: (state, { payload }) => {
-			state.loading = false;
-			state.hasErrors = false;
-			state.graphData = payload;
+			state.loading = false
+			state.hasErrors = false
+			state.graphData = payload
 		},
 		getConnectionFailure: (state, { payload }) => {
-			state.loading = false;
-			state.hasErrors = true;
-			state.errorInfo = payload;
+			state.loading = false
+			state.hasErrors = true
+			state.errorInfo = payload
+		},
+		storeAppIdRef: (state, { payload }) => {
+			state.ref.appid = payload
 		}
 	}
-});
+})
 
 // Three actions from slice
 export const {
@@ -76,37 +82,38 @@ export const {
 	getConnectionFailure,
 	storeUserList,
 	storeLastDate,
-	storeDateRange
-} = deviceSlice.actions;
+	storeDateRange,
+	storeAppIdRef
+} = deviceSlice.actions
 
 // Export state selector
-export const deviceSelector = (state) => state.device;
+export const deviceSelector = (state) => state.device
 
 // Export default reducer
-export default deviceSlice.reducer;
+export default deviceSlice.reducer
 
 // Asynchronous thunk action
 export function fetchDevice(id) {
 	return async (dispatch) => {
-		dispatch(getDevice());
+		dispatch(getDevice())
 		try {
-			const response = await fetch(`http://localhost:8085/api/device/${id}`);
+			const response = await fetch(`http://localhost:8085/api/device/${id}`)
 
-			const payload = await response.json();
+			const payload = await response.json()
 			if (payload.errorCode) {
-				dispatch(getDeviceFailure(payload));
+				dispatch(getDeviceFailure(payload))
 			} else {
-				dispatch(getDeviceSuccess(payload));
+				dispatch(getDeviceSuccess(payload))
 			}
 		} catch (err) {
-			dispatch(getDeviceFailure());
+			dispatch(getDeviceFailure())
 		}
-	};
+	}
 }
 
 export function fetchConnection(id) {
 	return async (dispatch) => {
-		dispatch(getConnection());
+		dispatch(getConnection())
 		try {
 			const graphDataResponse = await fetch(`http://localhost:8085/api/user_device/test`, {
 				method: 'POST',
@@ -121,26 +128,26 @@ export function fetchConnection(id) {
 						id: `devices/${id}`
 					}
 				})
-			});
+			})
 
-			const connections = await graphDataResponse.json();
+			const connections = await graphDataResponse.json()
 
-			const formattedConnections = preprocessConnection(`devices/${id}`, connections);
-			const graphData = generateGraphData(formattedConnections);
+			const formattedConnections = preprocessConnection(`devices/${id}`, connections)
+			const graphData = generateGraphData(formattedConnections)
 			if (connections.errorCode) {
-				dispatch(getConnectionFailure(connections));
+				dispatch(getConnectionFailure(connections))
 			} else {
-				dispatch(getConnectionSuccess(graphData));
+				dispatch(getConnectionSuccess(graphData))
 			}
 		} catch (err) {
-			dispatch(getConnectionFailure());
+			dispatch(getConnectionFailure())
 		}
-	};
+	}
 }
 
 export const preprocessConnection = (id, connections) => {
-	const sourceType = id.split('/')[0].trim();
-	const source = id.split('/')[1].trim();
+	const sourceType = id.split('/')[0].trim()
+	const source = id.split('/')[1].trim()
 	let nodes = [
 		{
 			id: source,
@@ -152,26 +159,26 @@ export const preprocessConnection = (id, connections) => {
 				fontWeight: 'bold'
 			}
 		}
-	];
-	const links = [];
+	]
+	const links = []
 
 	connections.forEach((c) => {
-		const user = c['source'].split('/')[1].trim();
+		const user = c['source'].split('/')[1].trim()
 		nodes.push({
 			id: user,
 			name: user,
 			category: 1,
 			type: 'user',
 			expanded: false
-		});
+		})
 		links.push({
 			source: source,
 			target: user
-		});
-	});
-	let newNodes = configureSymbolSizeBasedOnDegree(nodes, links);
+		})
+	})
+	let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)
 	return {
 		nodes: newNodes,
 		links: links
-	};
-};
+	}
+}

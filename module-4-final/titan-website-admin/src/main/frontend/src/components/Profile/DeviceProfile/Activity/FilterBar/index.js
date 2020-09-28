@@ -16,10 +16,10 @@ export default () => {
 	}
 
 	return (
-		<Card title="Filter Bar" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+		<Card hoverable={true}>
 			<Row align="middle">
 				<Col span={8}>
-					<p className="font-bold ">Pick a range</p>
+					<p className="font-bold ">Timeline</p>
 					<RangePicker
 						format="YYYY-MM-DD"
 						onCalendarChange={handleRangeChange}
@@ -27,7 +27,6 @@ export default () => {
 							moment(filters.range[0], 'YYYY-MM-DD'),
 							moment(filters.range[1], 'YYYY-MM-DD')
 						]}
-						disabledDate={(current) => current >= moment(filters.range[1], 'YYYY-MM-DD')}
 					/>
 				</Col>
 			</Row>

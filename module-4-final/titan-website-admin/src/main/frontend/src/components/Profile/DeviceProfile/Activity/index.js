@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BackTop, Row, Skeleton, Col } from 'antd'
 import { UpCircleFilled } from '@ant-design/icons'
 import { deviceSelector } from '../../../../slices/device'
@@ -12,16 +12,15 @@ import Geolocation from './Geolocation'
 
 export default React.memo(() => {
 	const { loading, hasErrors } = useSelector(deviceSelector)
-
 	return (
 		<div className="animated fadeIn">
-			<Row gutter={[ 24, 24 ]}>
-				<Col span={24}>
-					<FilterBar />
-				</Col>
-			</Row>
 			{!loading && !hasErrors ? (
 				<React.Fragment>
+					<Row gutter={[ 24, 24 ]}>
+						<Col span={24}>
+							<FilterBar />
+						</Col>
+					</Row>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
 							<Frequency />

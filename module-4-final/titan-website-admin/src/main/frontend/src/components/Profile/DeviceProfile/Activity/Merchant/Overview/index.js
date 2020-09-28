@@ -38,7 +38,7 @@ export default React.memo(() => {
 			}
 			fetchGeneralMerchantAcitivty()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
 	const getOption = () => {
