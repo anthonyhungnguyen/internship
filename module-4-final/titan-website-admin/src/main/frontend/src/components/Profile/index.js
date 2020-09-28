@@ -23,6 +23,6 @@ export default React.memo(() => {
 			{type === 'user' && <UserProfile />}
 		</React.Fragment>
 	) : (
-		<Skeleton />
+		<Skeleton active/>
 	)
 })

@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { Tabs, Card } from 'antd'
-import Overview from './Overview'
-import Details from './Details'
+import React, { useState } from 'react';
+import { Tabs, Card } from 'antd';
+import Overview from './Overview';
+import Details from './Details';
 
-const { TabPane } = Tabs
+const { TabPane } = Tabs;
 
 export default () => {
-	const [ activeTab, setActiveTab ] = useState('overview')
+	const [ activeTab, setActiveTab ] = useState('overview');
 
 	return (
 		<Card
@@ -24,5 +24,5 @@ export default () => {
 			{activeTab === 'overview' && <Overview />}
 			{activeTab === 'details' && <Details />}
 		</Card>
-	)
-}
+	);
+};

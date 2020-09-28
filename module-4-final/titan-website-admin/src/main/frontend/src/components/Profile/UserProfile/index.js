@@ -1,28 +1,28 @@
-import React, { useState, Suspense } from 'react'
-import { Input, Tabs, Skeleton } from 'antd'
-import { useSelector, useDispatch } from 'react-redux'
-import swal from 'sweetalert'
-import { generalSelector, storeId } from '../../../slices/general'
+import React, { useState, Suspense } from 'react';
+import { Input, Tabs, Skeleton } from 'antd';
+import { useSelector, useDispatch } from 'react-redux';
+import swal from 'sweetalert';
+import { generalSelector, storeId } from '../../../slices/general';
 
-const { TabPane } = Tabs
-const { Search } = Input
+const { TabPane } = Tabs;
+const { Search } = Input;
 
-const Activity = React.lazy(() => import('./Activity'))
-const Connection = React.lazy(() => import('./Connection'))
-const Overview = React.lazy(() => import('./Overview'))
+const Activity = React.lazy(() => import('./Activity'));
+const Connection = React.lazy(() => import('./Connection'));
+const Overview = React.lazy(() => import('./Overview'));
 
 export default () => {
-	const { id } = useSelector(generalSelector)
-	const [ activeTab, setActiveTab ] = useState('overview')
-	const dispatch = useDispatch()
+	const { id, hasErrors } = useSelector(generalSelector);
+	const [ activeTab, setActiveTab ] = useState('overview');
+	const dispatch = useDispatch();
 
 	const handleSearch = (newId) => {
 		if (newId) {
-			dispatch(storeId(newId))
+			dispatch(storeId(newId));
 		} else {
-			swal('Error', 'Please re-check device ID', 'error')
+			swal('Error', 'Please re-check device ID', 'error');
 		}
-	}
+	};
 
 	return (
 		<Tabs
@@ -41,24 +41,30 @@ export default () => {
 				/>
 			}
 		>
-			<TabPane tab="Overview" key="overview">
-				<Suspense fallback={<Skeleton active />}>
-					<Overview />
-				</Suspense>
-			</TabPane>
-			<TabPane tab="Activity" key="activity">
-				<Suspense fallback={<Skeleton active />}>
-					<Activity />
-				</Suspense>
-			</TabPane>
-			<TabPane tab="Connection" key="connection">
-				<Suspense fallback={<Skeleton active />}>
-					<Connection />
-				</Suspense>
-			</TabPane>
-			<TabPane tab="Tool" key="tool">
-				<Suspense fallback={<Skeleton active />} />
-			</TabPane>
+			{!hasErrors ? (
+				<React.Fragment>
+					<TabPane tab="Overview" key="overview">
+						<Suspense fallback={<Skeleton active />}>
+							<Overview />
+						</Suspense>
+					</TabPane>
+					<TabPane tab="Activity" key="activity">
+						<Suspense fallback={<Skeleton active />}>
+							<Activity />
+						</Suspense>
+					</TabPane>
+					<TabPane tab="Connection" key="connection">
+						<Suspense fallback={<Skeleton active />}>
+							<Connection />
+						</Suspense>
+					</TabPane>
+					<TabPane tab="Tool" key="tool">
+						<Suspense fallback={<Skeleton active />} />
+					</TabPane>
+				</React.Fragment>
+			) : (
+				<Skeleton active />
+			)}
 		</Tabs>
-	)
-}
+	);
+};

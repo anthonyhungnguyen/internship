@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { Card, Descriptions, Skeleton } from 'antd'
-import moment from 'moment'
-import copy from 'copy-to-clipboard'
-import { Select } from 'antd'
+import React, { useEffect, useState } from 'react';
+import { Card, Descriptions, Skeleton } from 'antd';
+import moment from 'moment';
+import copy from 'copy-to-clipboard';
+import { Select } from 'antd';
 
-const { Option } = Select
+const { Option } = Select;
 
 export default ({ id }) => {
-	const [ date, setDate ] = useState(null)
-	const [ users, setUsers ] = useState(null)
-	const [ device, setDevice ] = useState(null)
+	const [ date, setDate ] = useState(null);
+	const [ users, setUsers ] = useState(null);
+	const [ device, setDevice ] = useState(null);
 
 	useEffect(
 		() => {
@@ -35,14 +35,14 @@ export default ({ id }) => {
 							id: `devices/${id}`
 						}
 					})
-				})
-				const lastReqDateData = await lastReqDateResponse.json()
-				const { last_device_onboard, last_device_transaction } = lastReqDateData[0]
+				});
+				const lastReqDateData = await lastReqDateResponse.json();
+				const { last_device_onboard, last_device_transaction } = lastReqDateData[0];
 				setDate({
 					lastOnboard: last_device_onboard,
 					lastTransaction: last_device_transaction
-				})
-			}
+				});
+			};
 
 			const fetchUserList = async () => {
 				const userListResponse = await fetch('http://localhost:8085/api/user_device/test', {
@@ -58,10 +58,10 @@ export default ({ id }) => {
 							deviceId: `devices/${id}`
 						}
 					})
-				})
-				const userList = await userListResponse.json()
-				setUsers(userList)
-			}
+				});
+				const userList = await userListResponse.json();
+				setUsers(userList);
+			};
 
 			const fetchDeviceBasicInfo = async () => {
 				const deviceResponse = await fetch('http://localhost:8085/api/user_device/test', {
@@ -75,17 +75,17 @@ export default ({ id }) => {
 							id: `devices/${id}`
 						}
 					})
-				})
-				const data = await deviceResponse.json()
-				setDevice(data[0])
-			}
+				});
+				const data = await deviceResponse.json();
+				setDevice(data[0]);
+			};
 
-			fetchLastOnboardAndTransactionDate()
-			fetchUserList()
-			fetchDeviceBasicInfo()
+			fetchLastOnboardAndTransactionDate();
+			fetchUserList();
+			fetchDeviceBasicInfo();
 		},
 		[ id ]
-	)
+	);
 
 	return date && users && device ? (
 		<Card title="Device Brief Info" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
@@ -105,12 +105,12 @@ export default ({ id }) => {
 						onSelect={(e) => copy(e)}
 					>
 						{users.map((u) => {
-							const userId = u.split('/')[1].trim()
+							const userId = u.split('/')[1].trim();
 							return (
 								<Option value={userId} key={userId}>
 									{userId}
 								</Option>
-							)
+							);
 						})}
 					</Select>
 				</Descriptions.Item>
@@ -123,5 +123,5 @@ export default ({ id }) => {
 		</Card>
 	) : (
 		<Skeleton active />
-	)
-}
+	);
+};

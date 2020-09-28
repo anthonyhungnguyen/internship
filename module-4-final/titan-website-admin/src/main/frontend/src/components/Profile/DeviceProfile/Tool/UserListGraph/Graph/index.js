@@ -1,22 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Card, Skeleton, Slider } from 'antd'
-import ReactEchartsCore from 'echarts-for-react'
-import echarts from 'echarts/lib/echarts'
-import { preprocessMoreConnection } from '../../../../../../slices/deviceConnection'
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, Skeleton, Slider } from 'antd';
+import ReactEchartsCore from 'echarts-for-react';
+import echarts from 'echarts/lib/echarts';
+import { preprocessMoreConnection } from '../../../../../../slices/util';
 
 export default ({ userList }) => {
-	const [ connections, setConnections ] = useState(null)
-	const [ graphData, setGraphData ] = useState(null)
-	let ref = useRef()
+	const [ connections, setConnections ] = useState(null);
+	const [ graphData, setGraphData ] = useState(null);
+	let ref = useRef();
 
 	const edgeColor = (type) => {
 		switch (type) {
 			case 'user_use_device':
-				return '#f1c40f'
+				return '#f1c40f';
 			case 'transaction':
-				return '#3498db'
+				return '#3498db';
 		}
-	}
+	};
 
 	useEffect(
 		() => {
@@ -37,19 +37,19 @@ export default ({ userList }) => {
 							userList: userList.map((x) => 'users/' + x)
 						}
 					})
-				})
+				});
 
-				const data = await response.json()
-				const preConnections = preprocessConnection(userList, data)
-				setConnections(preConnections)
-				const graphData = getGraphData(preConnections)
-				setGraphData(graphData)
-			}
+				const data = await response.json();
+				const preConnections = preprocessConnection(userList, data);
+				setConnections(preConnections);
+				const graphData = getGraphData(preConnections);
+				setGraphData(graphData);
+			};
 
-			fetchConnections()
+			fetchConnections();
 		},
 		[ userList ]
-	)
+	);
 
 	const preprocessConnection = (idList, connections) => {
 		let nodes = idList.map((u) => ({
@@ -58,12 +58,12 @@ export default ({ userList }) => {
 			category: 0,
 			type: 'user',
 			expanded: true
-		}))
-		const links = []
-		const nodeCount = []
+		}));
+		const links = [];
+		const nodeCount = [];
 		connections.forEach((c) => {
-			const user = c['source'].split('/')[1].trim()
-			const device = c['target'].split('/')[1].trim()
+			const user = c['source'].split('/')[1].trim();
+			const device = c['target'].split('/')[1].trim();
 			if (!nodeCount.includes(device)) {
 				nodes.push({
 					id: device,
@@ -74,8 +74,8 @@ export default ({ userList }) => {
 					label: {
 						show: false
 					}
-				})
-				nodeCount.push(device)
+				});
+				nodeCount.push(device);
 			}
 			links.push({
 				source: user,
@@ -83,13 +83,13 @@ export default ({ userList }) => {
 				lineStyle: {
 					color: edgeColor(c.type)
 				}
-			})
-		})
+			});
+		});
 		return {
 			nodes,
 			links
-		}
-	}
+		};
+	};
 
 	const getGraphData = (data) => {
 		const connectionsData = {
@@ -104,7 +104,7 @@ export default ({ userList }) => {
 			],
 			nodes: data.nodes,
 			links: data.links
-		}
+		};
 		const options = {
 			legend: {
 				data: [ 'Root User', 'Devices' ]
@@ -153,14 +153,14 @@ export default ({ userList }) => {
 					symbolSize: 16
 				}
 			]
-		}
-		return options
-	}
+		};
+		return options;
+	};
 
 	const expandedOneDepth = async () => {
-		let echartsInstance = ref.current.getEchartsInstance()
-		const { data, edges } = echartsInstance.getOption()['series'][0]
-		const unexpanded = connections['nodes'].filter((x) => !x.expanded).map((x) => x.type + 's/' + x.id)
+		let echartsInstance = ref.current.getEchartsInstance();
+		const { data, edges } = echartsInstance.getOption()['series'][0];
+		const unexpanded = connections['nodes'].filter((x) => !x.expanded).map((x) => x.type + 's/' + x.id);
 		const response = await fetch('http://localhost:8085/api/user_device/test', {
 			method: 'POST',
 			headers: {
@@ -177,13 +177,13 @@ export default ({ userList }) => {
 					idList: unexpanded.map((x) => x)
 				}
 			})
-		})
-		const responseData = await response.json()
-		const moreConnection = preprocessMoreConnection(null, responseData, data, edges, true, unexpanded)
-		console.log(moreConnection)
-		const newGraphData = getGraphData(moreConnection)
-		echartsInstance.setOption(newGraphData)
-	}
+		});
+		const responseData = await response.json();
+		const moreConnection = preprocessMoreConnection(null, responseData, data, edges, true, unexpanded);
+		console.log(moreConnection);
+		const newGraphData = getGraphData(moreConnection);
+		echartsInstance.setOption(newGraphData);
+	};
 
 	return (
 		<Card className="mt-2" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
@@ -199,5 +199,5 @@ export default ({ userList }) => {
 				<Skeleton active />
 			)}
 		</Card>
-	)
-}
+	);
+};
