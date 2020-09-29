@@ -3,7 +3,8 @@ import {
 	configureSymbolSizeBasedOnDegree,
 	generateCategoryFromType,
 	generateGraphData,
-	generateInTypeFromOutType
+	generateInTypeFromOutType,
+	generateSymbolFromType
 } from './util'
 
 export const initialState = {
@@ -135,7 +136,7 @@ export function fetchConnection(id) {
 
 			const connections = await graphDataResponse.json()
 			const formattedConnections = preprocessConnection(`users/${id}`, connections)
-			const graphData = generateGraphData(formattedConnections)
+			const graphData = generateGraphData(formattedConnections, 'user')
 			if (connections.errorCode) {
 				dispatch(getConnectionFailure(connections))
 			} else {
@@ -159,7 +160,9 @@ export const preprocessConnection = (id, connections) => {
 			expanded: true,
 			label: {
 				fontWeight: 'bold'
-			}
+			},
+			symbolSize: connections.length,
+			value: connections.length
 		}
 	]
 	const links = []
@@ -174,6 +177,7 @@ export const preprocessConnection = (id, connections) => {
 			type: generateInTypeFromOutType(type),
 			expanded: false
 		})
+
 		links.push({
 			source: source,
 			target: target

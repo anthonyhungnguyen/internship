@@ -53,7 +53,7 @@ export default ({ userList }) => {
 				const data = await response.json()
 				const preConnections = preprocessConnection(userList, data)
 				setConnections(preConnections)
-				const graphData = generateGraphData(preConnections)
+				const graphData = generateGraphData(preConnections, 'user')
 				setGraphData(graphData)
 			}
 
@@ -68,8 +68,7 @@ export default ({ userList }) => {
 			name: u,
 			category: 0,
 			type: 'user',
-			expanded: true,
-			symbol: generateSymbolFromType('users')
+			expanded: true
 		}))
 		const links = []
 		const nodeCount = [ ...idList ]
@@ -84,8 +83,7 @@ export default ({ userList }) => {
 					name: from,
 					category: generateCategoryFromType(fromType),
 					type: generateInTypeFromOutType(fromType),
-					expanded: false,
-					symbol: generateSymbolFromType(fromType)
+					expanded: false
 				})
 				nodeCount.push(from)
 			}
@@ -95,8 +93,7 @@ export default ({ userList }) => {
 					name: to,
 					category: generateCategoryFromType(toType),
 					type: generateInTypeFromOutType(toType),
-					expanded: false,
-					symbol: generateSymbolFromType(toType)
+					expanded: false
 				})
 				nodeCount.push(to)
 			}
@@ -149,8 +146,8 @@ export default ({ userList }) => {
 				})
 				const connections = await response.json()
 
-				const moreConnection = preprocessMoreConnection(null, connections, data, edges, true, unExpandedId)
-				const newGraphData = generateGraphData(moreConnection)
+				const moreConnection = preprocessMoreConnection(connections, data, edges)
+				const newGraphData = generateGraphData(moreConnection, 'user')
 
 				echartsInstance.setOption(newGraphData)
 			}

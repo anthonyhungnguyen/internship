@@ -35,7 +35,7 @@ export default React.memo(({ setCurrentChosenId, setCurrentType }) => {
 		const { data, edges } = echartsInstance.getOption()['series'][0]
 		const nodeToExpand = data.find((d) => d.id === id)
 		if (!nodeToExpand.expanded) {
-			const moreConnection = preprocessMoreConnection(id, connections, data, edges, false, null)
+			const moreConnection = preprocessMoreConnection(connections, data, edges)
 			const newGraphData = generateGraphData(moreConnection)
 			echartsInstance.setOption(newGraphData)
 		}
@@ -77,8 +77,8 @@ export default React.memo(({ setCurrentChosenId, setCurrentType }) => {
 				})
 				const connections = await response.json()
 
-				const moreConnection = preprocessMoreConnection(null, connections, data, edges, true, unExpandedId)
-				const newGraphData = generateGraphData(moreConnection)
+				const moreConnection = preprocessMoreConnection(connections, data, edges)
+				const newGraphData = generateGraphData(moreConnection, 'user')
 
 				depthData[depth] = newGraphData
 				echartsInstance.setOption(newGraphData)
