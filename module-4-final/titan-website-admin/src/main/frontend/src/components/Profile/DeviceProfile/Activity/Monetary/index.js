@@ -5,11 +5,11 @@ import { Card, Modal, Skeleton } from 'antd'
 import { generalSelector } from '../../../../../slices/general'
 import { deviceSelector } from '../../../../../slices/device'
 
-export default () => {
+export default React.memo(() => {
 	const { id } = useSelector(generalSelector)
 	const { filters } = useSelector(deviceSelector)
 	const [ visible, setVisible ] = useState(false)
-	const [ spendingFrequency, setSpendingFrequency ] = useState(null)
+	const [ option, setOption ] = useState(null)
 
 	useEffect(
 		() => {
@@ -34,24 +34,32 @@ export default () => {
 				})
 
 				const data = await response.json()
-				setSpendingFrequency(data)
+				if (data && data.length > 0) {
+					setOption(getOption(data))
+				} else {
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchMonetaryFrequency()
 		},
 		[ id, filters ]
 	)
 
-	const getOption = () => {
+	const getOption = (data) => {
 		const formatMarkPoint = (params) => {
 			params.data.value = params.data.value.toLocaleString('en-EN', {
 				style: 'currency',
 				currency: 'VND'
 			})
 		}
-		if (spendingFrequency.length > 0) {
-			const dates = spendingFrequency.map((sf) => sf.date)
-			const dateFrequency = spendingFrequency.map((sf) => sf.frequency)
-			const amount = spendingFrequency.map((sf) => sf.amount)
+		if (data.length > 0) {
+			const dates = data.map((sf) => sf.date)
+			const dateFrequency = data.map((sf) => sf.frequency)
+			const amount = data.map((sf) => sf.amount)
 			const amountSum = amount.reduce((a, b) => a + b)
 
 			return {
@@ -159,18 +167,13 @@ export default () => {
 				]
 			}
 		}
-		return {
-			title: {
-				text: 'No Records'
-			}
-		}
 	}
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
 
-	return spendingFrequency ? (
+	return option ? (
 		<React.Fragment>
 			<Card
 				title="Monetary"
@@ -178,7 +181,7 @@ export default () => {
 				hoverable={true}
 				renderer="canvas"
 			>
-				<ReactEcharts theme={'infographic'} option={getOption()} style={{ height: '35vh' }} />
+				<ReactEcharts theme={'infographic'} option={option} style={{ height: '35vh' }} notMerge={true} />
 			</Card>
 			<Modal
 				title="Monetary"
@@ -189,10 +192,10 @@ export default () => {
 				width={1000}
 				footer={null}
 			>
-				<ReactEcharts option={getOption()} style={{ height: '70vh', width: '100%' }} renderer="canvas" />
+				<ReactEcharts option={option} style={{ height: '70vh', width: '100%' }} renderer="canvas" />
 			</Modal>
 		</React.Fragment>
 	) : (
 		<Skeleton active />
 	)
-}
+})

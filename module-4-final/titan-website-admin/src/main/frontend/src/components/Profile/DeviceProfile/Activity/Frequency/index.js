@@ -5,11 +5,11 @@ import { Card, Modal, Skeleton } from 'antd'
 import { generalSelector } from '../../../../../slices/general'
 import { deviceSelector } from '../../../../../slices/device'
 
-export default function() {
+export default React.memo(() => {
 	const { id } = useSelector(generalSelector)
 	const { filters } = useSelector(deviceSelector)
 	const [ visible, setVisible ] = useState(false)
-	const [ timestamps, setTimestamps ] = useState(null)
+	const [ option, setOption ] = useState(null)
 
 	useEffect(
 		() => {
@@ -22,7 +22,7 @@ export default function() {
 					body: JSON.stringify({
 						query: `FOR v, e IN 1..1 ANY @id user_device_onboard
 							FILTER TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)
-							COLLECT date = DATE_FORMAT(DATE_ADD(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), 7, 'hour'), @dateFormat) WITH COUNT INTO date_count
+							COLLECT date = DATE_FORMAT(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), @dateFormat) WITH COUNT INTO date_count
 							RETURN {date, date_count}`,
 						bindVars: {
 							id: `devices/${id}`,
@@ -34,17 +34,25 @@ export default function() {
 				})
 
 				const data = await response.json()
-				setTimestamps(data)
+				if (data && data.length > 0) {
+					setOption(getOption(data))
+				} else {
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			deviceOnBoardFrequency()
 		},
 		[ id, filters ]
 	)
 
-	const getOption = () => {
-		if (timestamps.length > 0) {
-			const dates = timestamps.map((e) => e.date)
-			const eachDateCount = timestamps.map((e) => e.date_count)
+	const getOption = (data) => {
+		if (data.length > 0) {
+			const dates = data.map((e) => e.date)
+			const eachDateCount = data.map((e) => e.date_count)
 			const totalCount = eachDateCount.reduce((a, b) => a + b)
 
 			return {
@@ -124,18 +132,13 @@ export default function() {
 				]
 			}
 		}
-		return {
-			title: {
-				text: 'No Records'
-			}
-		}
 	}
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
 
-	return timestamps ? (
+	return option ? (
 		<React.Fragment>
 			<Card
 				title="Frequency"
@@ -143,7 +146,13 @@ export default function() {
 				hoverable={true}
 				className="h-full"
 			>
-				<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} renderer="canvas" />
+				<ReactEcharts
+					theme={'infographic'}
+					style={{ height: '35vh' }}
+					option={option}
+					renderer="canvas"
+					notMerge={true}
+				/>
 			</Card>
 			<Modal
 				title="Frequency"
@@ -155,10 +164,10 @@ export default function() {
 				footer={null}
 				renderer="canvas"
 			>
-				<ReactEcharts theme={'infographic'} option={getOption()} style={{ height: '70vh', width: '100%' }} />
+				<ReactEcharts theme={'infographic'} option={option} style={{ height: '70vh', width: '100%' }} />
 			</Modal>
 		</React.Fragment>
 	) : (
 		<Skeleton active />
 	)
-}
+})

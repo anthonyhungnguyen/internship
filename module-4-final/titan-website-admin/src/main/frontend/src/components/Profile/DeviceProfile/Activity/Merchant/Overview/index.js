@@ -8,7 +8,7 @@ export default React.memo(() => {
 	const { id } = useSelector(generalSelector)
 	const { filters } = useSelector(deviceSelector)
 	const [ visible, setVisible ] = useState(false)
-	const [ merchantFrequency, setMerchantFrequency ] = useState(null)
+	const [ option, setOption ] = useState(null)
 
 	useEffect(
 		() => {
@@ -34,15 +34,23 @@ export default React.memo(() => {
 				})
 
 				const data = await response.json()
-				setMerchantFrequency(data)
+				if (data && data.length > 0) {
+					setOption(getOption(data))
+				} else {
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchGeneralMerchantAcitivty()
 		},
 		[ id, filters ]
 	)
 
-	const getOption = () => {
-		if (merchantFrequency.length > 0) {
+	const getOption = (data) => {
+		if (data.length > 0) {
 			return {
 				tooltip: {
 					trigger: 'item',
@@ -74,7 +82,7 @@ export default React.memo(() => {
 					{
 						type: 'pie',
 						selectedMode: 'multiple',
-						data: merchantFrequency.map((mf) => ({
+						data: data.map((mf) => ({
 							name: `${mf.merchant} - ${mf.merchant_count} - ${mf.merchant_total.toLocaleString('en-EN', {
 								style: 'currency',
 								currency: 'VND'
@@ -98,20 +106,15 @@ export default React.memo(() => {
 				}
 			}
 		}
-		return {
-			title: {
-				text: 'No Records'
-			}
-		}
 	}
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
 
-	return merchantFrequency ? (
+	return option ? (
 		<React.Fragment>
-			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
+			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={option} notMerge={true} />
 
 			<Modal
 				title="Merchant Frequency"
@@ -126,7 +129,7 @@ export default React.memo(() => {
 				<ReactEcharts
 					theme={'infographic'}
 					style={{ height: '35vh' }}
-					option={getOption()}
+					option={option}
 					renderer="canvas"
 					style={{ height: '70vh', width: '100%' }}
 				/>

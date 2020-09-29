@@ -3,11 +3,13 @@ import { useSelector } from 'react-redux'
 import { Modal, Skeleton } from 'antd'
 import ReactEcharts from 'echarts-for-react'
 import { generalSelector } from '../../../../../../slices/general'
+import { userSelector } from '../../../../../../slices/user'
 
-export default () => {
+export default React.memo(() => {
 	const { id } = useSelector(generalSelector)
+	const { filters } = useSelector(userSelector)
 	const [ visible, setVisible ] = useState(false)
-	const [ bank, setBank ] = useState(null)
+	const [ option, setOption ] = useState(null)
 
 	useEffect(
 		() => {
@@ -19,20 +21,31 @@ export default () => {
 					},
 					body: JSON.stringify({
 						query: `FOR v,e IN 1..1 ANY @id user_card_account
+								FILTER TO_NUMBER(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 								COLLECT bName = e.bankname, status = e.requestStatus WITH count INTO status_count 
 								RETURN {bName, status, status_count}`,
 						bindVars: {
-							id: `users/${id}`
+							id: `users/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
 						}
 					})
 				})
 
 				const data = await response.json()
-				setBank(data)
+				if (data && data.length > 0) {
+					setOption(getOption(data))
+				} else {
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchBankActivity()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
 	const processBank = (bank) => {
@@ -56,9 +69,9 @@ export default () => {
 		result.sort((a, b) => a.success + a.fail - b.success - b.fail)
 		return result
 	}
-	const getOption = () => {
-		if (bank.length > 0) {
-			const result = processBank(bank)
+	const getOption = (data) => {
+		if (data.length > 0) {
+			const result = processBank(data)
 			return {
 				tooltip: {
 					trigger: 'item',
@@ -168,20 +181,15 @@ export default () => {
 				}
 			}
 		}
-		return {
-			title: {
-				text: 'No Records'
-			}
-		}
 	}
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
 
-	return bank ? (
+	return option ? (
 		<React.Fragment>
-			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
+			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={option} notMerge={true} />
 
 			<Modal
 				title="Mapping Status"
@@ -196,7 +204,7 @@ export default () => {
 				<ReactEcharts
 					theme={'infographic'}
 					style={{ height: '35vh' }}
-					option={getOption()}
+					option={option}
 					renderer="canvas"
 					style={{ height: '70vh', width: '100%' }}
 				/>
@@ -205,4 +213,4 @@ export default () => {
 	) : (
 		<Skeleton active />
 	)
-}
+})

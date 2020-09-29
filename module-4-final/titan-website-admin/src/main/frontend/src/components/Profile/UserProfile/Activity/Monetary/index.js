@@ -3,10 +3,12 @@ import { useSelector } from 'react-redux'
 import ReactEcharts from 'echarts-for-react'
 import { Card, Modal, Skeleton } from 'antd'
 import { generalSelector } from '../../../../../slices/general'
-export default () => {
+import { userSelector } from '../../../../../slices/user'
+export default React.memo(() => {
 	const [ visible, setVisible ] = useState(false)
 	const { id } = useSelector(generalSelector)
-	const [ spendingFrequency, setSpendingFrequency ] = useState(null)
+	const { filters } = useSelector(userSelector)
+	const [ option, setOption ] = useState(null)
 
 	useEffect(
 		() => {
@@ -18,24 +20,35 @@ export default () => {
 					},
 					body: JSON.stringify({
 						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+						FILTER e.merchant != 'Money Transfer' AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 						COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')
 						AGGREGATE amount = SUM(TO_NUMBER(e.amount)), frequency = count(e.reqDate)
 						RETURN {date, amount, frequency}`,
 						bindVars: {
-							id: `users/${id}`
+							id: `users/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
 						}
 					})
 				})
 
 				const data = await response.json()
-				setSpendingFrequency(data)
+				if (data && data.length > 0) {
+					setOption(getOption(data))
+				} else {
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchMonetaryFrequency()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
-	const getOption = () => {
+	const getOption = (data) => {
 		const formatMarkPoint = (params) => {
 			params.data.value = params.data.value.toLocaleString('en-EN', {
 				style: 'currency',
@@ -43,10 +56,10 @@ export default () => {
 			})
 		}
 
-		if (spendingFrequency.length > 0) {
-			const dates = spendingFrequency.map((sf) => sf.date)
-			const dateFrequency = spendingFrequency.map((sf) => sf.frequency)
-			const amount = spendingFrequency.map((sf) => sf.amount)
+		if (data.length > 0) {
+			const dates = data.map((sf) => sf.date)
+			const dateFrequency = data.map((sf) => sf.frequency)
+			const amount = data.map((sf) => sf.amount)
 			const amountSum = amount.reduce((a, b) => a + b)
 
 			return {
@@ -157,7 +170,10 @@ export default () => {
 		return {
 			title: {
 				text: 'No Records'
-			}
+			},
+			xAxis: { data: [] },
+			yAxis: { data: [] },
+			series: [ { data: [] } ]
 		}
 	}
 
@@ -165,7 +181,7 @@ export default () => {
 		setVisible((old) => !old)
 	}
 
-	return spendingFrequency ? (
+	return option ? (
 		<React.Fragment>
 			<Card
 				title="Monetary"
@@ -173,7 +189,7 @@ export default () => {
 				hoverable={true}
 				renderer="canvas"
 			>
-				<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
+				<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={option} notMerge={true} />
 			</Card>
 			<Modal
 				title="Monetary"
@@ -184,10 +200,10 @@ export default () => {
 				width={1000}
 				footer={null}
 			>
-				<ReactEcharts option={getOption()} style={{ height: '70vh', width: '100%' }} renderer="canvas" />
+				<ReactEcharts option={option} style={{ height: '70vh', width: '100%' }} renderer="canvas" />
 			</Modal>
 		</React.Fragment>
 	) : (
 		<Skeleton active />
 	)
-}
+})

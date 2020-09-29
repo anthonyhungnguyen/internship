@@ -1,22 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Card, Skeleton, Slider } from 'antd';
-import ReactEchartsCore from 'echarts-for-react';
-import echarts from 'echarts/lib/echarts';
-import { preprocessMoreConnection } from '../../../../../../slices/util';
+import React, { useEffect, useRef, useState } from 'react'
+import { Card, Skeleton, Slider } from 'antd'
+import ReactEchartsCore from 'echarts-for-react'
+import echarts from 'echarts/lib/echarts'
+import {
+	configureSymbolSizeBasedOnDegree,
+	generateCategoryFromType,
+	generateGraphData,
+	generateInTypeFromOutType,
+	generateSymbolFromType,
+	preprocessMoreConnection
+} from '../../../../../../slices/util'
 
 export default ({ userList }) => {
-	const [ connections, setConnections ] = useState(null);
-	const [ graphData, setGraphData ] = useState(null);
-	let ref = useRef();
+	const [ connections, setConnections ] = useState(null)
+	const [ graphData, setGraphData ] = useState(null)
+
+	let depthData = {}
+	depthData[1] = graphData
+
+	let ref = useRef()
 
 	const edgeColor = (type) => {
 		switch (type) {
 			case 'user_use_device':
-				return '#f1c40f';
+				return '#f1c40f'
 			case 'transaction':
-				return '#3498db';
+				return '#3498db'
 		}
-	};
+	}
 
 	useEffect(
 		() => {
@@ -30,26 +41,26 @@ export default ({ userList }) => {
 						query: `LET userList = @userList
 
 						FOR u IN userList
-							FOR v, e IN 1..1 ANY u user_device_onboard
+							FOR v, e IN 1..1 ANY u GRAPH "test"
 								COLLECT source = e._from, target = e._to, type = e.type
 								RETURN {source, target, type}`,
 						bindVars: {
 							userList: userList.map((x) => 'users/' + x)
 						}
 					})
-				});
+				})
 
-				const data = await response.json();
-				const preConnections = preprocessConnection(userList, data);
-				setConnections(preConnections);
-				const graphData = getGraphData(preConnections);
-				setGraphData(graphData);
-			};
+				const data = await response.json()
+				const preConnections = preprocessConnection(userList, data)
+				setConnections(preConnections)
+				const graphData = generateGraphData(preConnections)
+				setGraphData(graphData)
+			}
 
-			fetchConnections();
+			fetchConnections()
 		},
 		[ userList ]
-	);
+	)
 
 	const preprocessConnection = (idList, connections) => {
 		let nodes = idList.map((u) => ({
@@ -57,137 +68,100 @@ export default ({ userList }) => {
 			name: u,
 			category: 0,
 			type: 'user',
-			expanded: true
-		}));
-		const links = [];
-		const nodeCount = [];
+			expanded: true,
+			symbol: generateSymbolFromType('users')
+		}))
+		const links = []
+		const nodeCount = [ ...idList ]
 		connections.forEach((c) => {
-			const user = c['source'].split('/')[1].trim();
-			const device = c['target'].split('/')[1].trim();
-			if (!nodeCount.includes(device)) {
+			const fromType = c['source'].split('/')[0]
+			const toType = c['target'].split('/')[0]
+			const from = c['source'].split('/')[1].trim()
+			const to = c['target'].split('/')[1].trim()
+			if (nodeCount.indexOf(from) < 0) {
 				nodes.push({
-					id: device,
-					name: device,
-					category: 1,
-					type: 'device',
+					id: from,
+					name: from,
+					category: generateCategoryFromType(fromType),
+					type: generateInTypeFromOutType(fromType),
 					expanded: false,
-					label: {
-						show: false
-					}
-				});
-				nodeCount.push(device);
+					symbol: generateSymbolFromType(fromType)
+				})
+				nodeCount.push(from)
 			}
-			links.push({
-				source: user,
-				target: device,
-				lineStyle: {
-					color: edgeColor(c.type)
-				}
-			});
-		});
+			if (nodeCount.indexOf(to) < 0) {
+				nodes.push({
+					id: to,
+					name: to,
+					category: generateCategoryFromType(toType),
+					type: generateInTypeFromOutType(toType),
+					expanded: false,
+					symbol: generateSymbolFromType(toType)
+				})
+				nodeCount.push(to)
+			}
+			if (!links.find((x) => x.source === from && x.target === to)) {
+				links.push({
+					source: to,
+					target: from
+				})
+			}
+		})
+		let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)
 		return {
-			nodes,
-			links
-		};
-	};
+			nodes: newNodes,
+			links: links
+		}
+	}
+	const generateUnexpandedId = (item) => {
+		switch (item.type) {
+			case 'device':
+				return 'devices/' + item.id
+			case 'user':
+				return 'users/' + item.id
+			case 'card_account':
+				return 'card_account/' + item.id
+		}
+	}
 
-	const getGraphData = (data) => {
-		const connectionsData = {
-			type: 'force',
-			categories: [
-				{
-					name: 'Root Users'
-				},
-				{
-					name: 'Devices'
-				}
-			],
-			nodes: data.nodes,
-			links: data.links
-		};
-		const options = {
-			legend: {
-				data: [ 'Root User', 'Devices' ]
-			},
-			animationDurationUpdate: 3000,
-			animationEasingUpdate: 'quinticInOut',
-			series: [
-				{
-					type: 'graph',
-					layout: 'force',
-					animation: true,
-					// edgeSymbol: [ 'none', 'arrow' ],
-					animationEasing: 'elasticIn',
-					label: {
-						normal: {
-							show: true,
-							position: 'top',
-							formatter: '{b}'
+	const expandOneDepth = async (depth) => {
+		let echartsInstance = ref.current.getEchartsInstance()
+		const { data, edges } = echartsInstance.getOption()['series'][0]
+		if (!depthData[depth]) {
+			const unExpandedId = data.filter((x) => !x.expanded).map((x) => generateUnexpandedId(x))
+			if (unExpandedId.length !== 0) {
+				const response = await fetch(`http://localhost:8085/api/user_device/test`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `
+						LET idList = @idList
+						FOR id in idList
+							FOR v, e IN 1..1 ANY id GRAPH "test"
+									COLLECT source = e._from, target = e._to
+									RETURN {source, target}`,
+						bindVars: {
+							idList: unExpandedId
 						}
-					},
-					itemStyle: {
-						borderColor: '#fff',
-						borderWidth: 1,
-						shadowBlur: 5,
-						shadowColor: 'rgba(0, 0, 0, 0.1)'
-					},
-					lineStyle: {
-						curveness: 0.1,
-						width: 2
-					},
-					emphasis: {
-						lineStyle: {
-							width: 5
-						}
-					},
-					draggable: true,
-					data: connectionsData.nodes,
-					categories: connectionsData.categories,
-					force: {
-						edgeLength: 90,
-						repulsion: 700,
-						friction: 0.3
-					},
-					edges: connectionsData.links,
-					roam: true,
-					symbolSize: 16
-				}
-			]
-		};
-		return options;
-	};
+					})
+				})
+				const connections = await response.json()
 
-	const expandedOneDepth = async () => {
-		let echartsInstance = ref.current.getEchartsInstance();
-		const { data, edges } = echartsInstance.getOption()['series'][0];
-		const unexpanded = connections['nodes'].filter((x) => !x.expanded).map((x) => x.type + 's/' + x.id);
-		const response = await fetch('http://localhost:8085/api/user_device/test', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				query: `LET idList = @idList
+				const moreConnection = preprocessMoreConnection(null, connections, data, edges, true, unExpandedId)
+				const newGraphData = generateGraphData(moreConnection)
 
-						FOR u IN idList
-							FOR v, e IN 1..1 ANY u users_devices
-								COLLECT source = e._from, target = e._to, type = e.type
-								RETURN {source, target, type}`,
-				bindVars: {
-					idList: unexpanded.map((x) => x)
-				}
-			})
-		});
-		const responseData = await response.json();
-		const moreConnection = preprocessMoreConnection(null, responseData, data, edges, true, unexpanded);
-		console.log(moreConnection);
-		const newGraphData = getGraphData(moreConnection);
-		echartsInstance.setOption(newGraphData);
-	};
+				echartsInstance.setOption(newGraphData)
+			}
+		} else {
+			echartsInstance.setOption(depthData[depth])
+		}
+	}
 
 	return (
 		<Card className="mt-2" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
-			<Slider min={1} max={10} onChange={expandedOneDepth} className="w-40" tooltipVisible />
+			<Slider min={1} max={10} onChange={expandOneDepth} className="w-40" tooltipVisible />
 			{graphData ? (
 				<ReactEchartsCore
 					ref={ref}
@@ -199,5 +173,5 @@ export default ({ userList }) => {
 				<Skeleton active />
 			)}
 		</Card>
-	);
-};
+	)
+}

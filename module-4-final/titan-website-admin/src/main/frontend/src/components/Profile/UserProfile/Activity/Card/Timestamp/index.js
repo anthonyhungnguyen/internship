@@ -3,11 +3,13 @@ import { useSelector } from 'react-redux'
 import { Modal, Skeleton } from 'antd'
 import ReactEcharts from 'echarts-for-react'
 import { generalSelector } from '../../../../../../slices/general'
+import { userSelector } from '../../../../../../slices/user'
 
 export default () => {
 	const [ visible, setVisible ] = useState(false)
 	const { id } = useSelector(generalSelector)
-	const [ timestamp, setTimestamp ] = useState(null)
+	const [ option, setOption ] = useState(null)
+	const { filters } = useSelector(userSelector)
 
 	useEffect(
 		() => {
@@ -19,21 +21,32 @@ export default () => {
 					},
 					body: JSON.stringify({
 						query: `FOR v, e IN 1..1 ANY @id user_card_account
+							FILTER TO_NUMBER(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 								COLLECT date = DATE_FORMAT(DATE_ISO8601(e.reqDate), "%yyyy-%mm-%dd"), status = e.requestStatus WITH COUNT INTO status_count
 								SORT DATE_TIMESTAMP(date)
 								RETURN {date, status, status_count}`,
 						bindVars: {
-							id: `users/${id}`
+							id: `users/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
 						}
 					})
 				})
 
 				const data = await response.json()
-				setTimestamp(data)
+				if (data && data.length > 0) {
+					setOption(getOption(data))
+				} else {
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchCardTimestampActivity()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
 	const processTimestamp = (timestamp) => {
@@ -56,9 +69,9 @@ export default () => {
 		})
 		return result
 	}
-	const getOption = () => {
-		if (timestamp.length > 0) {
-			const result = processTimestamp(timestamp)
+	const getOption = (data) => {
+		if (data.length > 0) {
+			const result = processTimestamp(data)
 			return {
 				tooltip: {
 					trigger: 'item',
@@ -84,7 +97,7 @@ export default () => {
 						type: 'slider',
 						xAxisIndex: [ 0 ],
 						show: true,
-						start: 95
+						start: 80
 					},
 					{
 						type: 'inside',
@@ -164,20 +177,15 @@ export default () => {
 				}
 			}
 		}
-		return {
-			title: {
-				text: 'No Records'
-			}
-		}
 	}
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
 
-	return timestamp ? (
+	return option ? (
 		<React.Fragment>
-			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
+			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={option} notMerge={true} />
 
 			<Modal
 				title="Mapping Status"
@@ -192,7 +200,7 @@ export default () => {
 				<ReactEcharts
 					theme={'infographic'}
 					style={{ height: '35vh' }}
-					option={getOption()}
+					option={option}
 					renderer="canvas"
 					style={{ height: '70vh', width: '100%' }}
 				/>

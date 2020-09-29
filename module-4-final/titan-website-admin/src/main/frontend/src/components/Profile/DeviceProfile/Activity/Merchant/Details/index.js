@@ -5,11 +5,12 @@ import { Modal, Skeleton, Select } from 'antd'
 import { generalSelector } from '../../../../../../slices/general'
 import { deviceSelector } from '../../../../../../slices/device'
 
-export default () => {
+export default React.memo(() => {
 	const { id } = useSelector(generalSelector)
 	const { filters } = useSelector(deviceSelector)
 	const [ visible, setVisible ] = useState(false)
 	const [ appid, setAppId ] = useState(null)
+	const [ option, setOption ] = useState(null)
 	const ref = useRef()
 
 	useEffect(
@@ -36,21 +37,31 @@ export default () => {
 				})
 
 				const data = await response.json()
-				setAppId(data)
+				if (data && data.length > 0) {
+					setAppId(data)
+					setOption(getOption(data))
+				} else {
+					setAppId([])
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchAppIDFrequency()
 		},
 		[ id, filters ]
 	)
 
-	const getGraphOptions = (data) => {
+	const getOption = (data) => {
 		const formatMarkPoint = (params) => {
 			params.data.value = params.data.value.toLocaleString('en-EN', {
 				style: 'currency',
 				currency: 'VND'
 			})
 		}
-		if (appid.length > 0) {
+		if (data.length > 0) {
 			return {
 				legend: {
 					data: [ 'Frequency', 'Monetary' ]
@@ -150,11 +161,6 @@ export default () => {
 				}
 			}
 		}
-		return {
-			title: {
-				text: 'No Records'
-			}
-		}
 	}
 
 	const handleToggleVisible = () => {
@@ -177,29 +183,34 @@ export default () => {
 		ref.current.getEchartsInstance().setOption({ xAxis: { data: [] } })
 	}
 
-	return appid ? (
+	return option ? (
 		<React.Fragment>
-			<Select
-				mode="multiple"
-				style={{ width: '51%' }}
-				placeholder="Choose AppID"
-				defaultValue={appid.map((a) => a.app_id)}
-				onSelect={handleSelect}
-				onDeselect={handleDeselect}
-				options={appid.map((a) => ({
-					value: a.app_id
-				}))}
-				maxTagCount={5}
-				bordered={false}
-				allowClear={true}
-				onClear={handleClear}
-			/>
+			{appid.length > 0 ? (
+				<Select
+					mode="multiple"
+					style={{ width: '51%' }}
+					placeholder="Choose AppID"
+					defaultValue={appid.map((a) => a.app_id)}
+					onSelect={handleSelect}
+					onDeselect={handleDeselect}
+					options={appid.map((a) => ({
+						value: a.app_id
+					}))}
+					maxTagCount={5}
+					bordered={false}
+					allowClear={true}
+					onClear={handleClear}
+				/>
+			) : (
+				<div />
+			)}
 			<ReactEcharts
 				theme={'infographic'}
-				option={!ref.current ? getGraphOptions(appid) : ref.current.getEchartsInstance().getOption()}
+				option={option}
 				renderer="canvas"
 				style={{ height: '35vh' }}
 				ref={ref}
+				notMerge={true}
 			/>
 
 			{ref.current && (
@@ -224,4 +235,4 @@ export default () => {
 	) : (
 		<Skeleton active />
 	)
-}
+})

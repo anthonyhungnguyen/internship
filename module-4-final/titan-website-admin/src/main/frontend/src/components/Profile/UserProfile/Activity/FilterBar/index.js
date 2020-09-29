@@ -2,12 +2,12 @@ import React from 'react'
 import { DatePicker, Card, Row, Col } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { userSelector } from '../../../../../slices/user'
+import { storeDateRange, userSelector } from '../../../../../slices/user'
 const { RangePicker } = DatePicker
 
 export default () => {
 	const dispatch = useDispatch()
-	const { filters, storeDateRange } = useSelector(userSelector)
+	const { filters } = useSelector(userSelector)
 
 	const handleRangeChange = (_, dateStrings) => {
 		if (!dateStrings.includes('')) {
@@ -16,7 +16,7 @@ export default () => {
 	}
 
 	return (
-		<Card title="Filter Bar" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+		<Card headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Row align="middle">
 				<Col span={8}>
 					<p className="font-bold ">Pick a range</p>
@@ -27,7 +27,6 @@ export default () => {
 							moment(filters.range[0], 'YYYY-MM-DD'),
 							moment(filters.range[1], 'YYYY-MM-DD')
 						]}
-						disabledDate={(current) => current >= moment(filters.range[1], 'YYYY-MM-DD')}
 					/>
 				</Col>
 			</Row>

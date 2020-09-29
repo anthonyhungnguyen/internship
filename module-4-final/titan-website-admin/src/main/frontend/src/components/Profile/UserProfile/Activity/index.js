@@ -8,17 +8,18 @@ import Monetary from './Monetary'
 import Merchant from './Merchant'
 import Geolocation from './Geolocation'
 import { userSelector } from '../../../../slices/user'
+import FilterBar from './FilterBar'
 
 export default () => {
 	const { loading, hasErrors } = useSelector(userSelector)
 
 	return (
 		<div className="animated fadeIn">
-			{/* <Row gutter={[ 24, 24 ]}>
+			<Row gutter={[ 24, 24 ]}>
 				<Col span={24}>
 					<FilterBar />
 				</Col>
-			</Row> */}
+			</Row>
 			{!loading && !hasErrors ? (
 				<React.Fragment>
 					<Row gutter={[ 24, 24 ]}>

@@ -3,11 +3,14 @@ import { useSelector } from 'react-redux'
 import ReactEcharts from 'echarts-for-react'
 import { Modal, Skeleton, Select } from 'antd'
 import { generalSelector } from '../../../../../../slices/general'
+import { userSelector } from '../../../../../../slices/user'
 
-export default () => {
+export default React.memo(() => {
 	const { id } = useSelector(generalSelector)
+	const { filters } = useSelector(userSelector)
 	const [ visible, setVisible ] = useState(false)
 	const [ appid, setAppId ] = useState(null)
+	const [ option, setOption ] = useState(null)
 	const ref = useRef()
 
 	useEffect(
@@ -20,32 +23,45 @@ export default () => {
 					},
 					body: JSON.stringify({
 						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+								FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 								COLLECT app_id = e.appid 
 								AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)
 								SORT app_id_count, app_total
 								RETURN {app_id, app_id_count, app_total}`,
 						bindVars: {
-							id: `users/${id}`
+							id: `users/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
 						}
 					})
 				})
 
 				const data = await response.json()
-				setAppId(data)
+				if (data && data.length > 0) {
+					setAppId(data)
+					setOption(getOption(data))
+				} else {
+					setAppId([])
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchAppIDFrequency()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
-	const getGraphOptions = (data) => {
+	const getOption = (data) => {
 		const formatMarkPoint = (params) => {
 			params.data.value = params.data.value.toLocaleString('en-EN', {
 				style: 'currency',
 				currency: 'VND'
 			})
 		}
-		if (appid.length > 0) {
+		if (data.length > 0) {
 			return {
 				legend: {
 					data: [ 'Frequency', 'Monetary' ]
@@ -146,11 +162,6 @@ export default () => {
 				}
 			}
 		}
-		return {
-			title: {
-				text: 'No Records'
-			}
-		}
 	}
 
 	const handleToggleVisible = () => {
@@ -172,29 +183,34 @@ export default () => {
 		ref.current.getEchartsInstance().setOption({ xAxis: { data: [] } })
 	}
 
-	return appid ? (
+	return option ? (
 		<React.Fragment>
-			<Select
-				mode="multiple"
-				style={{ width: '51%' }}
-				placeholder="Choose AppID"
-				defaultValue={appid.map((a) => a.app_id)}
-				onSelect={handleSelect}
-				onDeselect={handleDeselect}
-				options={appid.map((a) => ({
-					value: a.app_id
-				}))}
-				maxTagCount={5}
-				bordered={false}
-				allowClear={true}
-				onClear={handleClear}
-			/>
+			{appid.length > 0 ? (
+				<Select
+					mode="multiple"
+					style={{ width: '51%' }}
+					placeholder="Choose AppID"
+					defaultValue={appid.map((a) => a.app_id)}
+					onSelect={handleSelect}
+					onDeselect={handleDeselect}
+					options={appid.map((a) => ({
+						value: a.app_id
+					}))}
+					maxTagCount={5}
+					bordered={false}
+					allowClear={true}
+					onClear={handleClear}
+				/>
+			) : (
+				<div />
+			)}
 			<ReactEcharts
 				theme={'infographic'}
-				option={!ref.current ? getGraphOptions(appid) : ref.current.getEchartsInstance().getOption()}
+				option={option}
 				renderer="canvas"
 				style={{ height: '35vh' }}
 				ref={ref}
+				notMerge={true}
 			/>
 
 			{ref.current && (
@@ -219,4 +235,4 @@ export default () => {
 	) : (
 		<Skeleton active />
 	)
-}
+})

@@ -3,10 +3,12 @@ import { useSelector } from 'react-redux'
 import { Modal, Skeleton } from 'antd'
 import ReactEcharts from 'echarts-for-react'
 import { generalSelector } from '../../../../../../slices/general'
+import { userSelector } from '../../../../../../slices/user'
 export default React.memo(() => {
 	const [ visible, setVisible ] = useState(false)
 	const { id } = useSelector(generalSelector)
-	const [ merchantFrequency, setMerchantFrequency ] = useState(null)
+	const { filters } = useSelector(userSelector)
+	const [ option, setOption ] = useState(null)
 
 	useEffect(
 		() => {
@@ -18,26 +20,37 @@ export default React.memo(() => {
 					},
 					body: JSON.stringify({
 						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+						FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
 						COLLECT merchant = e.merchant
 						AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))
 						SORT merchant_count DESC
-						RETURN {merchant, merchant_count,merchant_total}`,
+						RETURN {merchant, merchant_count, merchant_total}`,
 						bindVars: {
-							id: `users/${id}`
+							id: `users/${id}`,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
 						}
 					})
 				})
 
 				const data = await response.json()
-				setMerchantFrequency(data)
+				if (data && data.length > 0) {
+					setOption(getOption(data))
+				} else {
+					setOption({
+						title: {
+							text: 'No Records'
+						}
+					})
+				}
 			}
 			fetchGeneralMerchantAcitivty()
 		},
-		[ id ]
+		[ id, filters ]
 	)
 
-	const getOption = () => {
-		if (merchantFrequency.length > 0) {
+	const getOption = (data) => {
+		if (data.length > 0) {
 			return {
 				tooltip: {
 					trigger: 'item',
@@ -69,7 +82,7 @@ export default React.memo(() => {
 					{
 						type: 'pie',
 						selectedMode: 'multiple',
-						data: merchantFrequency.map((mf) => ({
+						data: data.map((mf) => ({
 							name: `${mf.merchant} - ${mf.merchant_count} - ${mf.merchant_total.toLocaleString('en-EN', {
 								style: 'currency',
 								currency: 'VND'
@@ -96,16 +109,19 @@ export default React.memo(() => {
 		return {
 			title: {
 				text: 'No Records'
-			}
+			},
+			xAxis: { data: [] },
+			yAxis: { data: [] },
+			series: [ { data: [] } ]
 		}
 	}
 
 	const handleToggleVisible = () => {
 		setVisible((old) => !old)
 	}
-	return merchantFrequency ? (
+	return option ? (
 		<React.Fragment>
-			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={getOption()} />
+			<ReactEcharts theme={'infographic'} style={{ height: '35vh' }} option={option} />
 
 			<Modal
 				title="Merchant Frequency"
@@ -120,7 +136,7 @@ export default React.memo(() => {
 				<ReactEcharts
 					theme={'infographic'}
 					style={{ height: '35vh' }}
-					option={getOption()}
+					option={option}
 					renderer="canvas"
 					style={{ height: '70vh', width: '100%' }}
 				/>
