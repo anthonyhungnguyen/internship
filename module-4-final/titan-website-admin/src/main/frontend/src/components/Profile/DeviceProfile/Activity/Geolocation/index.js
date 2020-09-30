@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react'
-import ReactMapboxGl, { Layer, Feature, ZoomControl, ScaleControl } from 'react-mapbox-gl'
+import React, { useState, useEffect, useRef } from 'react';
+import ReactMapboxGl, { Layer, Feature, ZoomControl, ScaleControl } from 'react-mapbox-gl';
 
-import { useSelector } from 'react-redux'
-import { FullscreenOutlined, RollbackOutlined } from '@ant-design/icons'
-import { Card, Modal, Skeleton } from 'antd'
-import './index.css'
-import { generalSelector } from '../../../../../slices/general'
-import { deviceSelector } from '../../../../../slices/device'
-import mapboxgl from 'mapbox-gl'
+import { useSelector } from 'react-redux';
+import { FullscreenOutlined, RollbackOutlined } from '@ant-design/icons';
+import { Card, Modal, Skeleton } from 'antd';
+import './index.css';
+import { generalSelector } from '../../../../../slices/general';
+import { deviceSelector } from '../../../../../slices/device';
+import mapboxgl from 'mapbox-gl';
 
 const Map = ReactMapboxGl({
 	accessToken: 'pk.eyJ1Ijoid2xmZWkiLCJhIjoiY2puMTB6MXZlNHZjcTNwbnl3dnowYjhoaSJ9.s6ZkjRHGIY6xVNBRAf52MQ'
-})
+});
 
 const layerPaint = {
 	'heatmap-weight': {
@@ -47,16 +47,33 @@ const layerPaint = {
 	'heatmap-radius': {
 		stops: [ [ 0, 1 ], [ 10, 30 ] ]
 	}
-}
+};
 
 export default React.memo(() => {
-	const [ map, setMap ] = useState(null)
-	const { id } = useSelector(generalSelector)
-	const { filters } = useSelector(deviceSelector)
-	const [ geolocationActivity, setGeolocationActivity ] = useState(null)
-	const [ bounds, setBounds ] = useState(null)
-	const [ visible, setVisible ] = useState(false)
-	const [ mapStyle, setMapStyle ] = useState('mapbox://styles/mapbox/streets-v11')
+	const [ map, setMap ] = useState(null);
+	const { id } = useSelector(generalSelector);
+	const { filters } = useSelector(deviceSelector);
+	const [ geolocationActivity, setGeolocationActivity ] = useState(null);
+	const [ bounds, setBounds ] = useState(null);
+	const [ visible, setVisible ] = useState(false);
+	const [ mapStyle, setMapStyle ] = useState('mapbox://styles/mapbox/streets-v11');
+
+	if (map) {
+		window.addEventListener('resize', () => map.resize());
+	}
+
+	useEffect(
+		() => {
+			const handleResizeMap = () => {
+				if (map) {
+					map.resize();
+				}
+			};
+
+			window.addEventListener('resize', handleResizeMap);
+		},
+		[ map ]
+	);
 
 	useEffect(
 		() => {
@@ -79,43 +96,43 @@ export default React.memo(() => {
 							toDate: filters.range[1]
 						}
 					})
-				})
+				});
 
-				const data = await response.json()
+				const data = await response.json();
 				if (data.length > 0) {
 					const processedData = data.map((d) => ({
 						latlng: [ d.lat, d.lng ],
 						location_count: d.location_count
-					}))
-					const bounds = new mapboxgl.LngLatBounds()
+					}));
+					const bounds = new mapboxgl.LngLatBounds();
 					processedData.forEach((gla) => {
-						bounds.extend([ gla.latlng[1], gla.latlng[0] ])
-					})
+						bounds.extend([ gla.latlng[1], gla.latlng[0] ]);
+					});
 					setBounds([
 						[ bounds.getSouthWest().lng, bounds.getSouthWest().lat ],
 						[ bounds.getNorthEast().lng, bounds.getNorthEast().lat ]
-					])
-					setGeolocationActivity(processedData)
+					]);
+					setGeolocationActivity(processedData);
 				} else {
-					setGeolocationActivity([])
+					setGeolocationActivity([]);
 				}
-			}
-			fetchGeolocationActivity()
+			};
+			fetchGeolocationActivity();
 		},
 		[ id, filters ]
-	)
+	);
 
 	const handleToggleVisible = () => {
-		setVisible((old) => !old)
-	}
+		setVisible((old) => !old);
+	};
 
 	const handleSwitchMapStyle = () => {
 		if (mapStyle === 'mapbox://styles/mapbox/satellite-streets-v11') {
-			setMapStyle('mapbox://styles/mapbox/streets-v11')
+			setMapStyle('mapbox://styles/mapbox/streets-v11');
 		} else {
-			setMapStyle('mapbox://styles/mapbox/satellite-streets-v11')
+			setMapStyle('mapbox://styles/mapbox/satellite-streets-v11');
 		}
-	}
+	};
 
 	return geolocationActivity && geolocationActivity.length > 0 ? (
 		<React.Fragment>
@@ -140,8 +157,8 @@ export default React.memo(() => {
 					fitBounds={bounds}
 					fitBoundsOptions={{ padding: 100 }}
 					onStyleLoad={(e) => {
-						setMap(e)
-						e.resize()
+						setMap(e);
+						e.resize();
 					}}
 				>
 					<Layer type="heatmap" paint={layerPaint}>
@@ -157,10 +174,11 @@ export default React.memo(() => {
 						</button>
 						<button
 							className="p-2 ml-2 bg-white text-black font-bold rounded"
-							onClick={() =>
+							onClick={() => {
 								map.fitBounds(bounds, {
 									padding: 100
-								})}
+								});
+							}}
 						>
 							Zoom Back
 						</button>
@@ -187,8 +205,8 @@ export default React.memo(() => {
 					fitBounds={bounds}
 					fitBoundsOptions={{ padding: 100 }}
 					onStyleLoad={(e) => {
-						setMap(e)
-						e.resize()
+						setMap(e);
+						e.resize();
 					}}
 				>
 					<Layer type="heatmap" paint={layerPaint}>
@@ -230,5 +248,5 @@ export default React.memo(() => {
 		/>
 	) : (
 		<Skeleton active />
-	)
-})
+	);
+});

@@ -2,7 +2,6 @@
 	"name": "frontend",
 	"version": "0.1.0",
 	"private": true,
-	"proxy": "http://localhost:9080",
 	"dependencies": {
 		"@antv/g6": "^3.5.0",
 		"@coreui/coreui": "2.1.12",
@@ -85,16 +84,8 @@
 		"extends": "react-app"
 	},
 	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
+		"production": [ ">0.2%", "not dead", "not op_mini all" ],
+		"development": [ "last 1 chrome version", "last 1 firefox version", "last 1 safari version" ]
 	},
 	"devDependencies": {
 		"autoprefixer": "^9.8.6",

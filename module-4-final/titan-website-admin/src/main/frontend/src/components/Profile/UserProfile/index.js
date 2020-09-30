@@ -10,6 +10,7 @@ const { Search } = Input;
 const Activity = React.lazy(() => import('./Activity'));
 const Connection = React.lazy(() => import('./Connection'));
 const Overview = React.lazy(() => import('./Overview'));
+const Tool = React.lazy(() => import('../Tool'));
 
 export default () => {
 	const { id, hasErrors } = useSelector(generalSelector);
@@ -59,7 +60,9 @@ export default () => {
 						</Suspense>
 					</TabPane>
 					<TabPane tab="Tool" key="tool">
-						<Suspense fallback={<Skeleton active />} />
+						<Suspense fallback={<Skeleton active />}>
+							<Tool />
+						</Suspense>
 					</TabPane>
 				</React.Fragment>
 			) : (

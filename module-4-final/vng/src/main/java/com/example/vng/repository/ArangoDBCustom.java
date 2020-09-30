@@ -15,7 +15,6 @@ public class ArangoDBCustom {
     public ArrayList<Object> getDataByDynamicQuery(CustomQuery customQuery) {
         Map<String, Object> bindVars = customQuery.getBindVars();
         String query = customQuery.getQuery();
-        System.out.println(query);
         return new ArrayList<>(arangoDB.db("_system").query(query, bindVars, null, Object.class).asListRemaining());
     }
 }

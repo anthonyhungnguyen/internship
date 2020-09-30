@@ -1,24 +1,24 @@
-import React, { useEffect } from 'react'
-import { Row, Col, BackTop, Skeleton } from 'antd'
-import { UpCircleFilled } from '@ant-design/icons'
-import Score from './Score'
-import System from './System'
-import Identity from './Identity'
-import IP from './IP'
-import { deviceSelector, fetchDevice } from '../../../../slices/device'
-import { useDispatch, useSelector } from 'react-redux'
-import { generalSelector } from '../../../../slices/general'
+import React, { useEffect } from 'react';
+import { Row, Col, BackTop, Skeleton } from 'antd';
+import { UpCircleFilled } from '@ant-design/icons';
+import Score from './Score';
+import System from './System';
+import Identity from './Identity';
+import IP from './IP';
+import { deviceSelector, fetchDevice } from '../../../../slices/device';
+import { useDispatch, useSelector } from 'react-redux';
+import { generalSelector } from '../../../../slices/general';
 
 export default React.memo(() => {
-	const dispatch = useDispatch()
-	const { id } = useSelector(generalSelector)
-	const { loading, hasErrors, errorInfo } = useSelector(deviceSelector)
+	const dispatch = useDispatch();
+	const { id } = useSelector(generalSelector);
+	const { loading, hasErrors, errorInfo } = useSelector(deviceSelector);
 	useEffect(
 		() => {
-			dispatch(fetchDevice(id))
+			dispatch(fetchDevice(id));
 		},
 		[ dispatch, id ]
-	)
+	);
 
 	return !loading && !hasErrors ? (
 		<div className="animated fadeIn text-gray-700">
@@ -39,9 +39,7 @@ export default React.memo(() => {
 						</Col>
 					</Row>
 					<Row>
-						<Col span={24}>
-							<IP />
-						</Col>
+						<Col span={24}>{/* <IP /> */}</Col>
 					</Row>
 				</Col>
 			</Row>
@@ -52,5 +50,5 @@ export default React.memo(() => {
 		</div>
 	) : (
 		<Skeleton active />
-	)
-})
+	);
+});
