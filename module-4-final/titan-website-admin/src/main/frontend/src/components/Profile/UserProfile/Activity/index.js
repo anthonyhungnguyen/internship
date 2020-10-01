@@ -1,41 +1,42 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Row, Col, Skeleton, BackTop } from 'antd'
 import { UpCircleFilled } from '@ant-design/icons'
-import Card from './Card'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { generalSelector } from '../../../../slices/general'
-import Monetary from './Monetary'
-import Merchant from './Merchant'
-import Geolocation from './Geolocation'
-import { userSelector } from '../../../../slices/user'
-import FilterBar from './FilterBar'
+import Monetary from '../../Common/Activity/Monetary'
+import Geolocation from '../../Common/Activity/Geolocation'
+import { storeDateRange, userSelector } from '../../../../slices/user'
+import FilterBar from '../../Common/Activity/FilterBar'
+import Merchant from '../../Common/Activity/Merchant'
+import Card from '../../Common/Activity/Card'
 
 export default () => {
-	const { loading, hasErrors } = useSelector(userSelector)
+	const { loading, hasErrors, filters } = useSelector(userSelector)
+	const { id, type } = useSelector(generalSelector)
 
 	return (
 		<div className="animated fadeIn">
 			<Row gutter={[ 24, 24 ]}>
 				<Col span={24}>
-					<FilterBar />
+					<FilterBar filters={filters} storeDateRange={storeDateRange} />
 				</Col>
 			</Row>
 			{!loading && !hasErrors ? (
 				<React.Fragment>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
-							<Card />
+							<Card id={`${type}/${id}`} filters={filters} />
 						</Col>
 						<Col span={12}>
-							<Merchant />
+							<Merchant id={`${type}/${id}`} filters={filters} />
 						</Col>
 					</Row>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
-							<Monetary />
+							<Monetary id={`${type}/${id}`} filters={filters} />
 						</Col>
 						<Col span={12}>
-							<Geolocation />
+							<Geolocation id={`${type}/${id}`} filters={filters} />
 						</Col>
 					</Row>
 				</React.Fragment>

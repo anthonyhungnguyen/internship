@@ -1,37 +1,43 @@
-import React, { useEffect, useState, Suspense } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Row, Col, BackTop, Skeleton } from 'antd';
-import { UpCircleFilled } from '@ant-design/icons';
-import { generalSelector } from '../../../../slices/general';
-import { userSelector, fetchConnection } from '../../../../slices/user';
-import Graph from './Graph';
-import Device from './Brief/Device';
-import Card from './Brief/Card';
-import User from './Brief/User';
+import React, { useEffect, useState, Suspense } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Row, Col, BackTop, Skeleton } from 'antd'
+import { UpCircleFilled } from '@ant-design/icons'
+import { generalSelector } from '../../../../slices/general'
+import { userSelector, fetchConnection } from '../../../../slices/user'
+import Device from '../../Common/Connection/Brief/Device'
+import User from '../../Common/Connection/Brief/User'
+import Card from '../../Common/Connection/Brief/Card'
+import Graph from '../../Common/Connection/Graph'
 
 export default React.memo(() => {
-	const dispatch = useDispatch();
-	const { id, type } = useSelector(generalSelector);
-	const { loading, hasErrors } = useSelector(userSelector);
-	const [ currentChosenId, setCurrentChosenId ] = useState(id);
-	const [ currentType, setCurrentType ] = useState(type);
+	const dispatch = useDispatch()
+	const { id, type } = useSelector(generalSelector)
+	const { loading, hasErrors, graphData } = useSelector(userSelector)
+	const [ currentChosenId, setCurrentChosenId ] = useState(id)
+	const [ currentType, setCurrentType ] = useState(type)
 
 	useEffect(
 		() => {
-			dispatch(fetchConnection(id, 1));
+			dispatch(fetchConnection(id, 1))
 		},
 		[ dispatch, id ]
-	);
+	)
 
 	return !loading && !hasErrors ? (
 		<React.Fragment>
 			<Row gutter={[ 24, 24 ]}>
 				<Col span={16}>
-					<Graph setCurrentType={setCurrentType} setCurrentChosenId={setCurrentChosenId} id={id} />
+					<Graph
+						setCurrentType={setCurrentType}
+						setCurrentChosenId={setCurrentChosenId}
+						id={id}
+						type={type}
+						graphData={graphData}
+					/>
 				</Col>
 				<Col span={8}>
-					{currentType === 'device' && <Device id={currentChosenId} />}
-					{currentType === 'user' && <User id={currentChosenId} />}
+					{currentType === 'devices' && <Device id={currentChosenId} />}
+					{currentType === 'users' && <User id={currentChosenId} />}
 					{currentType === 'card_account' && <Card id={currentChosenId} />}
 				</Col>
 			</Row>
@@ -42,5 +48,5 @@ export default React.memo(() => {
 		</React.Fragment>
 	) : (
 		<Skeleton active />
-	);
-});
+	)
+})

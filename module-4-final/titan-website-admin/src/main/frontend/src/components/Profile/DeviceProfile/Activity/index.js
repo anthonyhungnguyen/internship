@@ -1,40 +1,43 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { BackTop, Row, Skeleton, Col } from 'antd'
 import { UpCircleFilled } from '@ant-design/icons'
-import { deviceSelector } from '../../../../slices/device'
+import { deviceSelector, storeDateRange } from '../../../../slices/device'
 import { useSelector } from 'react-redux'
 import './index.css'
-import FilterBar from './FilterBar'
-import Frequency from './Frequency'
-import Merchant from './Merchant'
-import Monetary from './Monetary'
-import Geolocation from './Geolocation'
+
+import Monetary from '../../Common/Activity/Monetary'
+import Geolocation from '../../Common/Activity/Geolocation'
+import { generalSelector } from '../../../../slices/general'
+import Frequency from '../../Common/Activity/Frequency'
+import FilterBar from '../../Common/Activity/FilterBar'
+import Merchant from '../../Common/Activity/Merchant'
 
 export default React.memo(() => {
-	const { loading, hasErrors } = useSelector(deviceSelector)
+	const { loading, hasErrors, filters } = useSelector(deviceSelector)
+	const { id, type } = useSelector(generalSelector)
 	return (
 		<div className="animated fadeIn">
 			{!loading && !hasErrors ? (
 				<React.Fragment>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={24}>
-							<FilterBar />
+							<FilterBar filters={filters} storeDateRange={storeDateRange} />
 						</Col>
 					</Row>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
-							<Frequency />
+							<Frequency id={`${type}/${id}`} filters={filters} />
 						</Col>
 						<Col span={12}>
-							<Merchant />
+							<Merchant id={`${type}/${id}`} filters={filters} />
 						</Col>
 					</Row>
 					<Row gutter={[ 24, 24 ]}>
 						<Col span={12}>
-							<Monetary />
+							<Monetary id={`${type}/${id}`} filters={filters} />
 						</Col>
 						<Col span={12}>
-							<Geolocation />
+							<Geolocation id={`${type}/${id}`} filters={filters} />
 						</Col>
 					</Row>
 				</React.Fragment>

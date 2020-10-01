@@ -1,24 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { Card, Descriptions } from 'antd'
-import { useSelector, useDispatch } from 'react-redux'
-import { Select, Skeleton } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Card, Descriptions, Skeleton } from 'antd'
 import moment from 'moment'
 import copy from 'copy-to-clipboard'
-import { generalSelector } from '../../../../../slices/general'
-import { storeLastDate, userSelector } from '../../../../../slices/user'
+import { Select } from 'antd'
 
 const { Option } = Select
 
-export default () => {
-	const { id } = useSelector(generalSelector)
-	const { date } = useSelector(userSelector)
+export default ({ id }) => {
+	const [ date, setDate ] = useState(null)
 	const [ devices, setDevices ] = useState(null)
 	const [ cards, setCards ] = useState(null)
-	const dispatch = useDispatch()
 
 	useEffect(
 		() => {
-			const fetchLastOnboardAndTransactionDate = async (id) => {
+			const fetchLastOnboardAndTransactionDate = async () => {
 				const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
 					method: 'POST',
 					headers: {
@@ -43,47 +38,59 @@ export default () => {
 				})
 				const lastReqDateData = await lastReqDateResponse.json()
 				const { last_device_onboard, last_device_transaction } = lastReqDateData[0]
-
-				dispatch(storeLastDate({ last_device_onboard, last_device_transaction }))
+				setDate({
+					lastOnboard: last_device_onboard,
+					lastTransaction: last_device_transaction
+				})
 			}
 
-			const fetchDevicesAndCards = async (id) => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
+			const fetchDeviceList = async () => {
+				const userListResponse = await fetch('http://localhost:8085/api/user_device/test', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						query: `
-					LET devices_related = (FOR v, e IN 1..1 ANY @id user_device_onboard
-						COLLECT devices = e._to
-						RETURN devices)
-					
-					LET cards_related = (FOR v, e IN 1..1 ANY @id user_card_account
-						COLLECT cards = e._to
-						RETURN cards)
-						
-					RETURN {devices: devices_related, cards: cards_related}
-					`,
+						query: `FOR v, e IN 1..1 ANY @id user_device_onboard
+							COLLECT device = e._to
+							RETURN device`,
 						bindVars: {
 							id: `users/${id}`
 						}
 					})
 				})
-				const data = await response.json()
-				const { devices, cards } = data[0]
-				setDevices(devices)
-				setCards(cards)
+				const deviceList = await userListResponse.json()
+				setDevices(deviceList)
 			}
 
-			fetchLastOnboardAndTransactionDate(id)
-			fetchDevicesAndCards(id)
+			const fetchCardList = async () => {
+				const userListResponse = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_card_account
+							COLLECT card = e._to
+							RETURN card`,
+						bindVars: {
+							id: `users/${id}`
+						}
+					})
+				})
+				const cardList = await userListResponse.json()
+				setCards(cardList)
+			}
+
+			fetchLastOnboardAndTransactionDate()
+			fetchDeviceList()
+			fetchCardList()
 		},
-		[ id, dispatch ]
+		[ id ]
 	)
 
 	return date && devices && cards ? (
-		<Card title="Identity" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+		<Card title="User Brief Info" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Descriptions column={1} bordered>
 				<Descriptions.Item label="User ID">{id}</Descriptions.Item>
 				<Descriptions.Item label="Last Device Onboard">
@@ -112,6 +119,7 @@ export default () => {
 				) : (
 					<Descriptions.Item label={`Total Devices (0)`} />
 				)}
+
 				{cards.length > 0 ? (
 					<Descriptions.Item label={`Total Cards (${cards.length})`}>
 						<Select

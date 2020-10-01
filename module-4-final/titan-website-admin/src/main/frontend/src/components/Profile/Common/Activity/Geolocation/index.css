@@ -1,0 +1,12 @@
+.ant-modal-content {
+	height: 80vh;
+}
+.mapboxgl-canvas-container {
+	height: 100%;
+	width: 100%;
+}
+
+/* .mapboxgl-canvas {
+	height: inherit !important;
+	width: inherit !important;
+} */

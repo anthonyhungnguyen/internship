@@ -136,7 +136,7 @@ export function fetchConnection(id) {
 
 			const connections = await graphDataResponse.json()
 			const formattedConnections = preprocessConnection(`users/${id}`, connections)
-			const graphData = generateGraphData(formattedConnections, 'user')
+			const graphData = generateGraphData(formattedConnections, 'users')
 			if (connections.errorCode) {
 				dispatch(getConnectionFailure(connections))
 			} else {
@@ -156,7 +156,7 @@ export const preprocessConnection = (id, connections) => {
 			id: source,
 			name: source,
 			category: 0,
-			type: generateInTypeFromOutType(sourceType),
+			type: sourceType,
 			expanded: true,
 			label: {
 				fontWeight: 'bold'
@@ -174,7 +174,7 @@ export const preprocessConnection = (id, connections) => {
 			id: target,
 			name: target,
 			category: generateCategoryFromType(type),
-			type: generateInTypeFromOutType(type),
+			type: type,
 			expanded: false
 		})
 

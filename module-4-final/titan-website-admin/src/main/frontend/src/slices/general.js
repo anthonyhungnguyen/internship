@@ -5,7 +5,7 @@ export const initialState = {
 	errorInfo: {},
 	hasErrors: false,
 	id: '0CA30A94-6251-4727-8340-9B6BE942AACB',
-	type: null
+	type: 'devices'
 }
 
 const generalSlice = createSlice({
@@ -27,11 +27,14 @@ const generalSlice = createSlice({
 		},
 		storeId: (state, { payload }) => {
 			state.id = payload.trim()
+		},
+		storeType: (state, { payload }) => {
+			state.type = payload.trim()
 		}
 	}
 })
 
-export const { getId, getIdSuccess, getIdFailure, storeId } = generalSlice.actions
+export const { getId, getIdSuccess, getIdFailure, storeId, storeType } = generalSlice.actions
 
 export const generalSelector = (state) => state.general
 

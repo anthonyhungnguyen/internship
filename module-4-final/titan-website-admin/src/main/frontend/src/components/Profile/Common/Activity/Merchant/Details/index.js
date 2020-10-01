@@ -1,0 +1,232 @@
+import React, { useState, useEffect, useRef } from 'react'
+import ReactEcharts from 'echarts-for-react'
+import { Modal, Skeleton, Select, Empty } from 'antd'
+
+export default React.memo(({ id, filters }) => {
+	const [ visible, setVisible ] = useState(false)
+	const [ appid, setAppId ] = useState(null)
+	const [ option, setOption ] = useState(null)
+	const [ noData, setNoData ] = useState(false)
+	const ref = useRef()
+
+	useEffect(
+		() => {
+			const fetchAppIDFrequency = async () => {
+				const response = await fetch('http://localhost:8085/api/user_device/test', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
+								FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
+								COLLECT app_id = e.appid 
+								AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)
+								SORT app_id_count, app_total
+								RETURN {app_id, app_id_count, app_total}`,
+						bindVars: {
+							id: id,
+							fromDate: filters.range[0],
+							toDate: filters.range[1]
+						}
+					})
+				})
+
+				const data = await response.json()
+				if (data && data.length > 0) {
+					setNoData(false)
+					setAppId(data)
+					setOption(getOption(data))
+				} else {
+					setAppId([])
+
+					setNoData(true)
+				}
+			}
+			fetchAppIDFrequency()
+		},
+		[ id, filters ]
+	)
+
+	const getOption = (data) => {
+		const formatMarkPoint = (params) => {
+			params.data.value = params.data.value.toLocaleString('en-EN', {
+				style: 'currency',
+				currency: 'VND'
+			})
+		}
+		if (data.length > 0) {
+			return {
+				legend: {
+					data: [ 'Frequency', 'Monetary' ]
+				},
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'cross',
+						crossStyle: {
+							color: '#999'
+						}
+					}
+				},
+				dataZoom: [
+					{
+						type: 'slider',
+						xAxisIndex: [ 0 ],
+						show: true,
+						start: 70
+					},
+
+					{
+						type: 'inside',
+						show: true,
+						xAxisIndex: [ 0 ]
+					}
+				],
+				toolbox: {
+					show: true,
+					feature: {
+						saveAsImage: {
+							title: 'Save',
+							name: 'device_merchant_details'
+						},
+						restore: {
+							show: true,
+							title: 'Restore'
+						},
+						myFeature: {
+							show: true,
+							title: 'Zoom In',
+							icon: `image://${process.env.PUBLIC_URL + '/assets/icon/fullscreen.png'}`,
+
+							onclick: () => {
+								handleToggleVisible()
+							}
+						}
+					}
+				},
+				xAxis: {
+					type: 'category',
+					name: 'App ID',
+					data: data.map((x) => x.app_id)
+				},
+				yAxis: [
+					{
+						name: 'Frequency',
+						type: 'value',
+						scale: true,
+						min: 0,
+						boundaryGap: [ 0.2, 0.2 ]
+					},
+					{
+						name: 'VND',
+						type: 'value',
+						scale: true,
+						min: 0,
+						boundaryGap: [ 0.2, 0.2 ]
+					}
+				],
+				series: [
+					{
+						name: 'Frequency',
+						type: 'bar',
+						data: data.map((x) => x.app_id_count)
+					},
+					{
+						name: 'Monetary',
+						type: 'line',
+						yAxisIndex: 1,
+						markPoint: {
+							label: {
+								formatter: formatMarkPoint
+							},
+							data: [ { type: 'max', name: 'max' }, { type: 'min', name: 'min' } ]
+						},
+						data: data.map((x) => x.app_total),
+						smooth: true
+					}
+				],
+				emphasis: {
+					itemStyle: {
+						shadowBlur: 10,
+						shadowOffsetX: 0,
+						shadowColor: 'rgba(0, 0, 0, 0.5)'
+					}
+				}
+			}
+		}
+	}
+
+	const handleToggleVisible = () => {
+		setVisible((old) => !old)
+	}
+
+	const handleSelect = (value) => {
+		const currentShownAppID = ref.current.getEchartsInstance().getOption().xAxis[0].data
+		const indexToPush = appid.findIndex((x) => x.app_id === value)
+		currentShownAppID.splice(indexToPush, 0, value)
+		ref.current.getEchartsInstance().setOption({ xAxis: { data: currentShownAppID } })
+	}
+
+	const handleDeselect = (value) => {
+		const currentShownAppID = ref.current.getEchartsInstance().getOption().xAxis[0].data
+		ref.current.getEchartsInstance().setOption({ xAxis: { data: currentShownAppID.filter((x) => x !== value) } })
+	}
+
+	const handleClear = () => {
+		ref.current.getEchartsInstance().setOption({ xAxis: { data: [] } })
+	}
+
+	return noData ? (
+		<Empty className="h-full" />
+	) : option ? (
+		<React.Fragment>
+			<Select
+				mode="multiple"
+				style={{ width: '51%' }}
+				placeholder="Choose AppID"
+				defaultValue={appid.map((a) => a.app_id)}
+				onSelect={handleSelect}
+				onDeselect={handleDeselect}
+				options={appid.map((a) => ({
+					value: a.app_id
+				}))}
+				maxTagCount={5}
+				// bordered={false}
+				allowClear={true}
+				onClear={handleClear}
+			/>
+			<ReactEcharts
+				theme={'infographic'}
+				lazyUpdate={true}
+				option={option}
+				renderer="canvas"
+				style={{ height: '35vh' }}
+				ref={ref}
+				notMerge={true}
+			/>
+
+			{ref.current && (
+				<Modal
+					title="Merchant"
+					visible={visible}
+					onOk={handleToggleVisible}
+					onCancel={handleToggleVisible}
+					centered
+					width={1000}
+					footer={null}
+				>
+					<ReactEcharts
+						theme={'infographic'}
+						lazyUpdate={true}
+						option={ref.current.getEchartsInstance().getOption()}
+						style={{ height: '70vh', width: '100%' }}
+						renderer="canvas"
+					/>
+				</Modal>
+			)}
+		</React.Fragment>
+	) : (
+		<Skeleton active />
+	)
+})

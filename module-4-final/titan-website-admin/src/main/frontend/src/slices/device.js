@@ -134,7 +134,8 @@ export function fetchConnection(id) {
 			const connections = await graphDataResponse.json()
 
 			const formattedConnections = preprocessConnection(`devices/${id}`, connections)
-			const graphData = generateGraphData(formattedConnections, 'device')
+			const graphData = generateGraphData(formattedConnections, 'devices')
+			console.log(graphData)
 			if (connections.errorCode) {
 				dispatch(getConnectionFailure(connections))
 			} else {
@@ -147,14 +148,14 @@ export function fetchConnection(id) {
 }
 
 export const preprocessConnection = (id, connections) => {
-	const sourceType = id.split('/')[0].trim()
-	const source = id.split('/')[1].trim()
+	const targetType = id.split('/')[0].trim()
+	const target = id.split('/')[1].trim()
 	let nodes = [
 		{
-			id: source,
-			name: source,
+			id: target,
+			name: target,
 			category: 0,
-			type: generateInTypeFromOutType(sourceType),
+			type: targetType,
 			expanded: true,
 			label: {
 				fontWeight: 'bold'
@@ -166,18 +167,19 @@ export const preprocessConnection = (id, connections) => {
 	const links = []
 
 	connections.forEach((c) => {
-		const user = c['source'].split('/')[1].trim()
+		const sourceType = c['source'].split('/')[0].trim()
+		const source = c['source'].split('/')[1].trim()
 		nodes.push({
-			id: user,
-			name: user,
-			category: 1,
-			type: 'user',
+			id: source,
+			name: source,
+			category: generateCategoryFromType(sourceType),
+			type: sourceType,
 			expanded: false
 		})
 
 		links.push({
-			source: source,
-			target: user
+			source: target,
+			target: source
 		})
 	})
 	let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)

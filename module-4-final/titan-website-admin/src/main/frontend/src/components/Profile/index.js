@@ -1,28 +1,17 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import './index.css'
 import DeviceProfile from './DeviceProfile'
 import UserProfile from './UserProfile'
-import { fetchType, generalSelector } from '../../slices/general'
-import { Skeleton } from 'antd'
+import { generalSelector } from '../../slices/general'
 
 export default React.memo(() => {
-	const { id, type, loading } = useSelector(generalSelector)
-	const dispatch = useDispatch()
+	const { type } = useSelector(generalSelector)
 
-	useEffect(
-		() => {
-			dispatch(fetchType(id))
-		},
-		[ dispatch, id ]
-	)
-
-	return !loading ? (
+	return (
 		<React.Fragment>
-			{type === 'device' && <DeviceProfile />}
-			{type === 'user' && <UserProfile />}
+			{type === 'devices' && <DeviceProfile />}
+			{type === 'users' && <UserProfile />}
 		</React.Fragment>
-	) : (
-		<Skeleton active/>
 	)
 })
