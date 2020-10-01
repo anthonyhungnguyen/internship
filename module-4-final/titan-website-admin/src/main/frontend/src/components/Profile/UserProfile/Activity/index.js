@@ -23,7 +23,7 @@ export default () => {
 			</Row>
 			{!loading && !hasErrors ? (
 				<React.Fragment>
-					<Row gutter={[ 24, 24 ]}>
+					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
 							<Card id={`${type}/${id}`} filters={filters} />
 						</Col>
@@ -31,7 +31,7 @@ export default () => {
 							<Merchant id={`${type}/${id}`} filters={filters} />
 						</Col>
 					</Row>
-					<Row gutter={[ 24, 24 ]}>
+					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
 							<Monetary id={`${type}/${id}`} filters={filters} />
 						</Col>

@@ -126,6 +126,7 @@ export default React.memo(({ id, filters }) => {
 			headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 			hoverable={true}
 			className="w-full h-full"
+			bodyStyle={{ height: '45vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
 		>
 			<Empty />
 		</Card>
@@ -135,8 +136,8 @@ export default React.memo(({ id, filters }) => {
 				title={'Geolocation'}
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				className="w-full h-full"
-				bodyStyle={{ height: '85%' }}
+				className="w-full"
+				bodyStyle={{ height: '45vh' }}
 				extra={
 					<button onClick={handleToggleVisible}>
 						<FullscreenOutlined className="text-xl" />
@@ -146,6 +147,7 @@ export default React.memo(({ id, filters }) => {
 				<Map
 					style={mapStyle}
 					containerStyle={{
+						textAlign: 'justify',
 						height: '100%',
 						width: '100%'
 					}}
@@ -188,7 +190,7 @@ export default React.memo(({ id, filters }) => {
 				centered
 				width={1000}
 				height={800}
-				bodyStyle={{ height: '90%' }}
+				bodyStyle={{ height: '70vh' }}
 				footer={null}
 			>
 				<Map

@@ -19,12 +19,12 @@ export default React.memo(() => {
 		<div className="animated fadeIn">
 			{!loading && !hasErrors ? (
 				<React.Fragment>
-					<Row gutter={[ 24, 24 ]}>
+					<Row gutter={[ 12, 12 ]}>
 						<Col span={24}>
 							<FilterBar filters={filters} storeDateRange={storeDateRange} />
 						</Col>
 					</Row>
-					<Row gutter={[ 24, 24 ]}>
+					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
 							<Frequency id={`${type}/${id}`} filters={filters} />
 						</Col>
@@ -32,7 +32,7 @@ export default React.memo(() => {
 							<Merchant id={`${type}/${id}`} filters={filters} />
 						</Col>
 					</Row>
-					<Row gutter={[ 24, 24 ]}>
+					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
 							<Monetary id={`${type}/${id}`} filters={filters} />
 						</Col>

@@ -60,6 +60,7 @@ export default () => {
 					onSearch={handleSearch}
 					size="large"
 					enterButton
+					allowClear={true}
 				/>
 			}
 		>

@@ -131,7 +131,12 @@ export default React.memo(({ id, filters }) => {
 	}
 
 	return noData ? (
-		<Card title="Frequency" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+		<Card
+			title="Frequency"
+			headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
+			hoverable={true}
+			bodyStyle={{ height: '48.4vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+		>
 			<Empty />
 		</Card>
 	) : option ? (
@@ -140,13 +145,13 @@ export default React.memo(({ id, filters }) => {
 				title="Frequency"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				className="h-full"
+				bodyStyle={{ height: '46.6vh' }}
 			>
 				<ReactEcharts
 					theme={'infographic'}
 					lazyUpdate={true}
-					style={{ height: '35vh' }}
 					option={option}
+					style={{ height: '100%' }}
 					renderer="canvas"
 					notMerge={true}
 				/>

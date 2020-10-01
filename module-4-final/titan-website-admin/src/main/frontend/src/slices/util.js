@@ -50,13 +50,12 @@ export const generateGraphData = (data, type) => {
 			{
 				type: 'graph',
 				layout: 'force',
-				animation: true,
+				animation: false,
 				// edgeSymbol: [ 'none', 'arrow' ],
 				label: {
 					normal: {
 						show: data.nodes.length < 50 ? true : false,
 						position: 'top',
-						formatter: '{b}',
 						fontSize: 11
 					}
 				},
@@ -178,15 +177,8 @@ export const configureSymbolSizeBasedOnDegree = (nodes, links) => {
 			}
 		})
 		const totalDegree = inDegreeCount + outDegreeCount
-		const symbolSize = adjustSymbolSize(totalDegree)
-		newNodes.push({ ...n, symbolSize: symbolSize, value: symbolSize })
+		const symbolSize = totalDegree
+		newNodes.push({ ...n, symbolSize: symbolSize + 10, value: symbolSize })
 	})
 	return newNodes
-}
-
-const adjustSymbolSize = (totalDegree) => {
-	if (totalDegree < 10) {
-		return 8
-	}
-	return totalDegree
 }

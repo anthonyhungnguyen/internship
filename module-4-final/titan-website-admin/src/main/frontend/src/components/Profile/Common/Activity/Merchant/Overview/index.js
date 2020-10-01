@@ -106,13 +106,15 @@ export default React.memo(({ id, filters }) => {
 	}
 
 	return noData ? (
-		<Empty />
+		<div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+			<Empty />
+		</div>
 	) : option ? (
 		<React.Fragment>
 			<ReactEcharts
 				theme={'infographic'}
 				lazyUpdate={true}
-				style={{ height: '35vh' }}
+				style={{ height: '100%' }}
 				option={option}
 				notMerge={true}
 				renderer="canvas"
@@ -131,10 +133,9 @@ export default React.memo(({ id, filters }) => {
 				<ReactEcharts
 					theme={'infographic'}
 					lazyUpdate={true}
-					style={{ height: '35vh' }}
+					style={{ height: '70vh' }}
 					option={option}
 					renderer="canvas"
-					style={{ height: '70vh', width: '100%' }}
 				/>
 			</Modal>
 		</React.Fragment>

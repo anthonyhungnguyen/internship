@@ -178,7 +178,9 @@ export default React.memo(({ id, filters }) => {
 	}
 
 	return noData ? (
-		<Empty className="h-full" />
+		<div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+			<Empty />
+		</div>
 	) : option ? (
 		<React.Fragment>
 			<Select
@@ -201,7 +203,7 @@ export default React.memo(({ id, filters }) => {
 				lazyUpdate={true}
 				option={option}
 				renderer="canvas"
-				style={{ height: '35vh' }}
+				style={{ height: '90%' }}
 				ref={ref}
 				notMerge={true}
 			/>

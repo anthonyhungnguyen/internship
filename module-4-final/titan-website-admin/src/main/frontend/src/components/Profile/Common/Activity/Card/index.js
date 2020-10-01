@@ -15,6 +15,7 @@ export default ({ id, filters }) => {
 			headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 			hoverable={true}
 			className="h-full"
+			bodyStyle={{ height: '40vh' }}
 			extra={
 				<Tabs defaultActiveKey={activeTab} animated={true} onChange={(e) => setActiveTab(e)} type="line">
 					<TabPane tab="Overview" key="overview" />

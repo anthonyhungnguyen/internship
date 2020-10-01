@@ -39,36 +39,3 @@ export const { getId, getIdSuccess, getIdFailure, storeId, storeType } = general
 export const generalSelector = (state) => state.general
 
 export default generalSlice.reducer
-
-export function fetchType(id) {
-	return async (dispatch) => {
-		dispatch(getId())
-		try {
-			const response = await fetch('http://localhost:8085/api/user_device/test', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					query: `LET checkList = ["devices/", "users/"]
-
-								FOR cl IN checkList
-									RETURN {type: cl, isnull: IS_NULL(DOCUMENT(CONCAT(cl, @id)))}`,
-					bindVars: {
-						id: id
-					}
-				})
-			})
-			const data = await response.json()
-			const idType = data.filter((x) => !x.isnull)
-			if (idType.length > 0) {
-				const type = idType[0].type.replace('s/', '')
-				dispatch(getIdSuccess(type))
-			} else {
-				dispatch(getIdFailure('Type Not Found'))
-			}
-		} catch (err) {
-			dispatch(getIdFailure())
-		}
-	}
-}

@@ -26,7 +26,7 @@ export default React.memo(() => {
 
 	return !loading && !hasErrors ? (
 		<React.Fragment>
-			<Row gutter={[ 24, 24 ]}>
+			<Row gutter={[ 12, 12 ]}>
 				<Col span={16}>
 					<Graph
 						setCurrentType={setCurrentType}

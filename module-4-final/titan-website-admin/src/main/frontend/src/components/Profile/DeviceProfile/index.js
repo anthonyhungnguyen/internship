@@ -67,6 +67,7 @@ export default React.memo(() => {
 					size="large"
 					enterButton
 					loading={loading}
+					allowClear={true}
 				/>
 			}
 		>

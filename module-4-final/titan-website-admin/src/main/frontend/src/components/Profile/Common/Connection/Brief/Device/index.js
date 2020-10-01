@@ -70,7 +70,7 @@ export default ({ id }) => {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						query: `RETURN KEEP(DOCUMENT(@id), ['user_agent', 'os_version', 'os_name', 'device_model', 'hw_device_model'])`,
+						query: `RETURN KEEP(DOCUMENT(@id), ['os_version', 'os_name', 'device_model', 'hw_device_model'])`,
 						bindVars: {
 							id: `devices/${id}`
 						}
@@ -90,8 +90,7 @@ export default ({ id }) => {
 	return date && users && device ? (
 		<Card title="Device Brief Info" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Descriptions column={1} bordered>
-				<Descriptions.Item label="User ID">{id}</Descriptions.Item>
-				<Descriptions.Item label="User Agent">{device.user_agent}</Descriptions.Item>
+				<Descriptions.Item label="Device ID">{id}</Descriptions.Item>
 				<Descriptions.Item label="Last Device Onboard">
 					{date.lastOnboard ? moment(date.lastOnboard).format('L LTS') : 'Unknown'}
 				</Descriptions.Item>

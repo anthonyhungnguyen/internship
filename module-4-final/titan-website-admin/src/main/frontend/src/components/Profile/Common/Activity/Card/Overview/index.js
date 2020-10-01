@@ -106,7 +106,9 @@ export default React.memo(({ id, filters }) => {
 	}
 
 	return noData ? (
-		<Empty />
+		<div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+			<Empty />
+		</div>
 	) : option ? (
 		<React.Fragment>
 			<ReactEcharts
