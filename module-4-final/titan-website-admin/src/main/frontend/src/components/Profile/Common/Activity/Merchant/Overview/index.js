@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Empty, Modal, Skeleton } from 'antd'
 import ReactEcharts from 'echarts-for-react'
-export default React.memo(({ id, filters }) => {
+import axios from 'axios'
+
+export default React.memo(({ id, type, filters }) => {
 	const [ visible, setVisible ] = useState(false)
 	const [ option, setOption ] = useState(null)
 	const [ noData, setNoData ] = useState(false)
@@ -9,33 +11,25 @@ export default React.memo(({ id, filters }) => {
 	useEffect(
 		() => {
 			const fetchGeneralMerchantAcitivty = async () => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
-							FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-							COLLECT merchant = e.merchant
-							AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))
-							SORT merchant_count DESC
-							RETURN {merchant, merchant_count, merchant_total}`,
-						bindVars: {
-							id: id,
-							fromDate: filters.range[0],
-							toDate: filters.range[1]
+				await axios
+					.post(`http://localhost:8085/api/profile/merchant/overview`, {
+						id: id,
+						type: type,
+						fromDate: filters.range[0],
+						toDate: filters.range[1]
+					})
+					.then((response) => {
+						const data = response.data
+						if (data && data.length > 0) {
+							setNoData(false)
+							setOption(getOption(data))
+						} else {
+							setNoData(true)
 						}
 					})
-				})
-
-				const data = await response.json()
-				if (data && data.length > 0) {
-					setNoData(false)
-					setOption(getOption(data))
-				} else {
-					setNoData(true)
-				}
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 			fetchGeneralMerchantAcitivty()
 		},

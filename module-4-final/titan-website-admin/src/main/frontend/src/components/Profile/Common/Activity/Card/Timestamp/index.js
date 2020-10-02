@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Skeleton, Empty } from 'antd'
+import axios from 'axios'
 import ReactEcharts from 'echarts-for-react'
 
-export default React.memo(({ id, filters }) => {
+export default React.memo(({ id, type, filters }) => {
 	const [ visible, setVisible ] = useState(false)
 	const [ option, setOption ] = useState(null)
 	const [ noData, setNoData ] = useState(false)
@@ -10,32 +11,25 @@ export default React.memo(({ id, filters }) => {
 	useEffect(
 		() => {
 			const fetchCardTimestampActivity = async () => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @id user_card_account
-							FILTER TO_NUMBER(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-								COLLECT date = DATE_FORMAT(DATE_ISO8601(e.reqDate), "%yyyy-%mm-%dd"), status = e.requestStatus WITH COUNT INTO status_count
-								SORT DATE_TIMESTAMP(date)
-								RETURN {date, status, status_count}`,
-						bindVars: {
-							id: `users/${id}`,
-							fromDate: filters.range[0],
-							toDate: filters.range[1]
+				await axios
+					.post(`http://localhost:8085/api/profile/mapping/timestamp`, {
+						type: type,
+						id: id,
+						fromDate: filters.range[0],
+						toDate: filters.range[1]
+					})
+					.then((response) => {
+						const data = response.data
+						if (data && data.length > 0) {
+							setNoData(false)
+							setOption(getOption(data))
+						} else {
+							setNoData(true)
 						}
 					})
-				})
-
-				const data = await response.json()
-				if (data && data.length > 0) {
-					setNoData(false)
-					setOption(getOption(data))
-				} else {
-					setNoData(true)
-				}
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 			fetchCardTimestampActivity()
 		},

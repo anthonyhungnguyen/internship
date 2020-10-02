@@ -21,7 +21,7 @@ export default ({ userList }) => {
 	useEffect(
 		() => {
 			const fetchConnections = async () => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
+				const response = await fetch('http://localhost:8085/api/profile/test', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -106,7 +106,7 @@ export default ({ userList }) => {
 		if (!depthData[depth]) {
 			const unExpandedId = data.filter((x) => !x.expanded).map((x) => `${x.type}/${x.id}`)
 			if (unExpandedId.length !== 0) {
-				const response = await fetch(`http://localhost:8085/api/user_device/test`, {
+				const response = await fetch(`http://localhost:8085/api/profile/test`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

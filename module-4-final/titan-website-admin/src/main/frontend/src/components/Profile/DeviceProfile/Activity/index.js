@@ -26,18 +26,18 @@ export default React.memo(() => {
 					</Row>
 					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
-							<Frequency id={`${type}/${id}`} filters={filters} />
+							<Frequency id={id} type={type} filters={filters} />
 						</Col>
 						<Col span={12}>
-							<Merchant id={`${type}/${id}`} filters={filters} />
+							<Merchant id={id} type={type} filters={filters} />
 						</Col>
 					</Row>
 					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
-							<Monetary id={`${type}/${id}`} filters={filters} />
+							<Monetary id={id} type={type} filters={filters} />
 						</Col>
 						<Col span={12}>
-							<Geolocation id={`${type}/${id}`} filters={filters} />
+							<Geolocation id={id} type={type} filters={filters} />
 						</Col>
 					</Row>
 				</React.Fragment>

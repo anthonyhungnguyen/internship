@@ -6,6 +6,7 @@ import {
 	generateInTypeFromOutType,
 	generateSymbolFromType
 } from './util'
+import axios from 'axios'
 
 export const initialState = {
 	loading: true,
@@ -97,18 +98,17 @@ export default deviceSlice.reducer
 export function fetchDevice(id) {
 	return async (dispatch) => {
 		dispatch(getDevice())
-		try {
-			const response = await fetch(`http://localhost:8085/api/device/${id}`)
-
-			const payload = await response.json()
-			if (payload.errorCode) {
-				dispatch(getDeviceFailure(payload))
-			} else {
-				dispatch(getDeviceSuccess(payload))
-			}
-		} catch (err) {
-			dispatch(getDeviceFailure())
-		}
+		await axios
+			.post('http://localhost:8085/api/profile/device', {
+				id: id,
+				type: 'devices'
+			})
+			.then((response) => {
+				dispatch(getDeviceSuccess(response.data[0]))
+			})
+			.catch((err) => {
+				dispatch(getDeviceFailure(err))
+			})
 	}
 }
 
@@ -116,7 +116,7 @@ export function fetchConnection(id) {
 	return async (dispatch) => {
 		dispatch(getConnection())
 		try {
-			const graphDataResponse = await fetch(`http://localhost:8085/api/user_device/test`, {
+			const graphDataResponse = await fetch(`http://localhost:8085/api/profile/test`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactMapboxGl, { Layer, Feature, ZoomControl, ScaleControl } from 'react-mapbox-gl'
-
+import axios from 'axios'
 import { FullscreenOutlined } from '@ant-design/icons'
 import { Card, Empty, Modal, Skeleton } from 'antd'
 import './index.css'
@@ -46,7 +46,7 @@ const layerPaint = {
 	// }
 }
 
-export default React.memo(({ id, filters }) => {
+export default React.memo(({ id, type, filters }) => {
 	const [ map, setMap ] = useState(null)
 	const [ geolocationActivity, setGeolocationActivity ] = useState(null)
 	const [ bounds, setBounds ] = useState(null)
@@ -63,45 +63,37 @@ export default React.memo(({ id, filters }) => {
 	useEffect(
 		() => {
 			const fetchGeolocationActivity = async () => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
-					FILTER e.latitude != '0.0' AND e.longitude != '0.0'
-					AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-					COLLECT lat = TO_NUMBER(e.latitude),
-							lng = TO_NUMBER(e.longitude) WITH COUNT INTO location_count
-					RETURN {lat, lng, location_count}`,
-						bindVars: {
-							id: id,
-							fromDate: filters.range[0],
-							toDate: filters.range[1]
+				await axios
+					.post(`http://localhost:8085/api/profile/geolocation`, {
+						id: id,
+						type: type,
+						fromDate: filters.range[0],
+						toDate: filters.range[1]
+					})
+					.then((response) => {
+						const data = response.data
+						if (data.length > 0) {
+							const processedData = data.map((d) => ({
+								latlng: [ d.lat, d.lng ],
+								location_count: d.location_count
+							}))
+							const bounds = new mapboxgl.LngLatBounds()
+							processedData.forEach((gla) => {
+								bounds.extend([ gla.latlng[1], gla.latlng[0] ])
+							})
+							setBounds([
+								[ bounds.getSouthWest().lng, bounds.getSouthWest().lat ],
+								[ bounds.getNorthEast().lng, bounds.getNorthEast().lat ]
+							])
+							setNoData(false)
+							setGeolocationActivity(processedData)
+						} else {
+							setNoData(true)
 						}
 					})
-				})
-
-				const data = await response.json()
-				if (data.length > 0) {
-					const processedData = data.map((d) => ({
-						latlng: [ d.lat, d.lng ],
-						location_count: d.location_count
-					}))
-					const bounds = new mapboxgl.LngLatBounds()
-					processedData.forEach((gla) => {
-						bounds.extend([ gla.latlng[1], gla.latlng[0] ])
+					.catch((err) => {
+						console.log(err)
 					})
-					setBounds([
-						[ bounds.getSouthWest().lng, bounds.getSouthWest().lat ],
-						[ bounds.getNorthEast().lng, bounds.getNorthEast().lat ]
-					])
-					setNoData(false)
-					setGeolocationActivity(processedData)
-				} else {
-					setNoData(true)
-				}
 			}
 			fetchGeolocationActivity()
 		},

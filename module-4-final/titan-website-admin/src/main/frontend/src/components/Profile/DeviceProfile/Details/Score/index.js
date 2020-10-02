@@ -54,7 +54,7 @@ export default () => {
 				})
 				return { score, scoreData }
 			}
-			const scoreResponse = await fetch('http://localhost:8085/api/user_device/test', {
+			const scoreResponse = await fetch('http://localhost:8085/api/profile/test', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

@@ -36,9 +36,9 @@ export default React.memo(() => {
 					/>
 				</Col>
 				<Col span={8}>
-					{currentType === 'devices' && <Device id={currentChosenId} />}
-					{currentType === 'users' && <User id={currentChosenId} />}
-					{currentType === 'card_account' && <Card id={currentChosenId} />}
+					{currentType === 'devices' && <Device id={currentChosenId} type={type} />}
+					{currentType === 'users' && <User id={currentChosenId} type={type} />}
+					{currentType === 'card_account' && <Card id={currentChosenId} type={type} />}
 				</Col>
 			</Row>
 

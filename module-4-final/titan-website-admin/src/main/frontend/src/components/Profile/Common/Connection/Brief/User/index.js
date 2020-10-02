@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Descriptions, Skeleton } from 'antd'
 import moment from 'moment'
+import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { Select } from 'antd'
 
@@ -14,72 +15,50 @@ export default ({ id }) => {
 	useEffect(
 		() => {
 			const fetchLastOnboardAndTransactionDate = async () => {
-				const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `LET last_device_onboard = FIRST((FOR v, e IN 1..1 ANY @id user_device_onboard
-								SORT e.timestamp DESC
-								LET date = DATE_ISO8601(TO_NUMBER(e.timestamp * 1000))
-								RETURN date))
-							
-							LET last_device_transaction = FIRST((FOR v, e IN 1..1 ANY @id user_device_transaction
-								SORT DATE_ISO8601(e.reqDate) DESC
-								LET date = DATE_ISO8601(e.reqDate)
-								RETURN date))
-								
-							RETURN {last_device_onboard, last_device_transaction}`,
-						bindVars: {
-							id: `users/${id}`
-						}
+				await axios
+					.post(`http://localhost:8085/api/profile/lastOnboardAndLastTransaction`, {
+						type: 'users',
+						id: id
 					})
-				})
-				const lastReqDateData = await lastReqDateResponse.json()
-				const { last_device_onboard, last_device_transaction } = lastReqDateData[0]
-				setDate({
-					lastOnboard: last_device_onboard,
-					lastTransaction: last_device_transaction
-				})
+					.then((response) => {
+						const data = response.data
+						const { last_device_onboard, last_device_transaction } = data[0]
+						setDate({
+							lastOnboard: last_device_onboard,
+							lastTransaction: last_device_transaction
+						})
+					})
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 
 			const fetchDeviceList = async () => {
-				const userListResponse = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @id user_device_onboard
-							COLLECT device = e._to
-							RETURN device`,
-						bindVars: {
-							id: `users/${id}`
-						}
+				await axios
+					.post(`http://localhost:8085/api/profile/user/deviceList`, {
+						type: 'users',
+						id: id
 					})
-				})
-				const deviceList = await userListResponse.json()
-				setDevices(deviceList)
+					.then((response) => {
+						setDevices(response.data)
+					})
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 
 			const fetchCardList = async () => {
-				const userListResponse = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @id user_card_account
-							COLLECT card = e._to
-							RETURN card`,
-						bindVars: {
-							id: `users/${id}`
-						}
+				await axios
+					.post(`http://localhost:8085/api/profile/user/cardList`, {
+						type: 'users',
+						id: id
 					})
-				})
-				const cardList = await userListResponse.json()
-				setCards(cardList)
+					.then((response) => {
+						setCards(response.data)
+					})
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 
 			fetchLastOnboardAndTransactionDate()
@@ -93,10 +72,10 @@ export default ({ id }) => {
 		<Card title="User Brief Info" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Descriptions column={1} bordered>
 				<Descriptions.Item label="User ID">{id}</Descriptions.Item>
-				<Descriptions.Item label="Last Device Onboard">
+				<Descriptions.Item label="Last Onboard">
 					{date.lastOnboard ? moment(date.lastOnboard).format('L LTS') : 'Unknown'}
 				</Descriptions.Item>
-				<Descriptions.Item label="Last Device Transaction">
+				<Descriptions.Item label="Last Transaction">
 					{date.lastTransaction ? moment(date.lastTransaction).format('L LTS') : 'Unknown'}
 				</Descriptions.Item>
 				{devices.length > 0 ? (

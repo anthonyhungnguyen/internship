@@ -19,7 +19,7 @@ export default () => {
 	useEffect(
 		() => {
 			const fetchLastOnboardAndTransactionDate = async (id) => {
-				const lastReqDateResponse = await fetch('http://localhost:8085/api/user_device/test', {
+				const lastReqDateResponse = await fetch('http://localhost:8085/api/profile/test', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ export default () => {
 			}
 
 			const fetchDevicesAndCards = async (id) => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
+				const response = await fetch('http://localhost:8085/api/profile/test', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

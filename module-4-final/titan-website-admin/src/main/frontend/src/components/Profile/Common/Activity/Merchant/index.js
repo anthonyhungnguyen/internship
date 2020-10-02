@@ -5,7 +5,7 @@ import Details from './Details'
 
 const { TabPane } = Tabs
 
-export default ({ id, filters }) => {
+export default ({ id, type, filters }) => {
 	const [ activeTab, setActiveTab ] = useState('overview')
 	return (
 		<Card
@@ -21,8 +21,8 @@ export default ({ id, filters }) => {
 				</Tabs>
 			}
 		>
-			{activeTab === 'overview' && <Overview id={id} filters={filters} />}
-			{activeTab === 'details' && <Details id={id} filters={filters} />}
+			{activeTab === 'overview' && <Overview id={id} type={type} filters={filters} />}
+			{activeTab === 'details' && <Details id={id} type={type} filters={filters} />}
 		</Card>
 	)
 }

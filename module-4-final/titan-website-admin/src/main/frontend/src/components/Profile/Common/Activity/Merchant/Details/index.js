@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ReactEcharts from 'echarts-for-react'
 import { Modal, Skeleton, Select, Empty } from 'antd'
+import axios from 'axios'
 
-export default React.memo(({ id, filters }) => {
+export default React.memo(({ id, type, filters }) => {
 	const [ visible, setVisible ] = useState(false)
 	const [ appid, setAppId ] = useState(null)
 	const [ option, setOption ] = useState(null)
@@ -12,36 +13,28 @@ export default React.memo(({ id, filters }) => {
 	useEffect(
 		() => {
 			const fetchAppIDFrequency = async () => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @id user_device_transaction
-								FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)
-								COLLECT app_id = e.appid 
-								AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)
-								SORT app_id_count, app_total
-								RETURN {app_id, app_id_count, app_total}`,
-						bindVars: {
-							id: id,
-							fromDate: filters.range[0],
-							toDate: filters.range[1]
+				await axios
+					.post(`http://localhost:8085/api/profile/merchant/details`, {
+						id: id,
+						type: type,
+						fromDate: filters.range[0],
+						toDate: filters.range[1]
+					})
+					.then((response) => {
+						const data = response.data
+						if (data && data.length > 0) {
+							setNoData(false)
+							setAppId(data)
+							setOption(getOption(data))
+						} else {
+							setAppId([])
+
+							setNoData(true)
 						}
 					})
-				})
-
-				const data = await response.json()
-				if (data && data.length > 0) {
-					setNoData(false)
-					setAppId(data)
-					setOption(getOption(data))
-				} else {
-					setAppId([])
-
-					setNoData(true)
-				}
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 			fetchAppIDFrequency()
 		},

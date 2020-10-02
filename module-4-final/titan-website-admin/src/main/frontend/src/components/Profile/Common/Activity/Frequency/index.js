@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import ReactEcharts from 'echarts-for-react'
 import { Card, Modal, Skeleton, Empty } from 'antd'
+import axios from 'axios'
 
-export default React.memo(({ id, filters }) => {
+export default React.memo(({ id, type, filters }) => {
 	const [ visible, setVisible ] = useState(false)
 	const [ option, setOption ] = useState(null)
 	const [ noData, setNoData ] = useState(false)
@@ -10,32 +11,26 @@ export default React.memo(({ id, filters }) => {
 	useEffect(
 		() => {
 			const deviceOnBoardFrequency = async () => {
-				const response = await fetch('http://localhost:8085/api/user_device/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @id user_device_onboard
-							FILTER TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)
-							COLLECT date = DATE_FORMAT(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), @dateFormat) WITH COUNT INTO date_count
-							RETURN {date, date_count}`,
-						bindVars: {
-							id: id,
-							dateFormat: '%dd-%mm-%yyyy',
-							fromDate: filters.range[0],
-							toDate: filters.range[1]
+				await axios
+					.post(`http://localhost:8085/api/profile/frequency`, {
+						type: type,
+						id: id,
+						dateFormat: '%dd-%mm-%yyyy',
+						fromDate: filters.range[0],
+						toDate: filters.range[1]
+					})
+					.then((response) => {
+						const data = response.data
+						if (data && data.length > 0) {
+							setNoData(false)
+							setOption(getOption(data))
+						} else {
+							setNoData(true)
 						}
 					})
-				})
-
-				const data = await response.json()
-				if (data && data.length > 0) {
-					setNoData(false)
-					setOption(getOption(data))
-				} else {
-					setNoData(true)
-				}
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 			deviceOnBoardFrequency()
 		},

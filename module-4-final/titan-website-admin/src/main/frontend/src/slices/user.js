@@ -90,7 +90,7 @@ export function fetchUser(id) {
 	return async (dispatch) => {
 		dispatch(getUser())
 		try {
-			const response = await fetch('http://localhost:8085/api/user_device/test', {
+			const response = await fetch('http://localhost:8085/api/profile/test', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ export function fetchConnection(id) {
 	return async (dispatch) => {
 		dispatch(getConnection())
 		try {
-			const graphDataResponse = await fetch(`http://localhost:8085/api/user_device/test`, {
+			const graphDataResponse = await fetch(`http://localhost:8085/api/profile/test`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

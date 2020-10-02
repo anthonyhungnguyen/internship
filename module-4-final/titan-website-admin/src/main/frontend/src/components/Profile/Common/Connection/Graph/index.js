@@ -32,7 +32,7 @@ export default React.memo(({ setCurrentChosenId, setCurrentType, type, graphData
 		if (!depthData[depth]) {
 			const unExpandedId = data.filter((x) => !x.expanded).map((x) => `${x.type}/${x.id}`)
 			if (unExpandedId.length !== 0) {
-				const response = await fetch(`http://localhost:8085/api/user_device/test`, {
+				const response = await fetch(`http://localhost:8085/api/profile/test`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ export default React.memo(({ setCurrentChosenId, setCurrentType, type, graphData
 		const { data, edges } = echartsInstance.getOption()['series'][0]
 		const checkExpanded = data.find((x) => x.id !== id && !x.expanded)
 		if (checkExpanded) {
-			const response = await fetch(`http://localhost:8085/api/user_device/test`, {
+			const response = await fetch(`http://localhost:8085/api/profile/test`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

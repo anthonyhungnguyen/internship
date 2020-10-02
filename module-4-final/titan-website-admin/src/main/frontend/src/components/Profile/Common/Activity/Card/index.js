@@ -6,7 +6,7 @@ import Timestamp from './Timestamp'
 
 const { TabPane } = Tabs
 
-export default ({ id, filters }) => {
+export default ({ id, type, filters }) => {
 	const [ activeTab, setActiveTab ] = useState('overview')
 
 	return (
@@ -24,9 +24,9 @@ export default ({ id, filters }) => {
 				</Tabs>
 			}
 		>
-			{activeTab === 'overview' && <Overview id={id} filters={filters} />}
-			{activeTab === 'timestamp' && <Timestamp id={id} filters={filters} />}
-			{activeTab === 'bank' && <Bank id={id} filters={filters} />}
+			{activeTab === 'overview' && <Overview id={id} type={type} filters={filters} />}
+			{activeTab === 'timestamp' && <Timestamp id={id} type={type} filters={filters} />}
+			{activeTab === 'bank' && <Bank id={id} type={type} filters={filters} />}
 		</Card>
 	)
 }
