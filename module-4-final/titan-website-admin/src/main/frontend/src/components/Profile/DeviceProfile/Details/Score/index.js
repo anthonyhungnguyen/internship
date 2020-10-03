@@ -3,6 +3,7 @@ import { Progress, Skeleton, Tabs } from 'antd'
 import { Card, Row, Col, Tooltip } from 'antd'
 import { useSelector } from 'react-redux'
 import { generalSelector } from '../../../../../slices/general'
+import axios from 'axios'
 
 const { TabPane } = Tabs
 
@@ -12,100 +13,20 @@ export default () => {
 
 	useEffect(() => {
 		const fetchHardwareScore = async () => {
-			const calculateScore = (scoreList) => {
-				let score = 0
-				const scoreData = []
-
-				const list_weight_1 = [
-					'hw_cpu_name',
-					'hw_screen_aspect_ratio',
-					'hw_screen_class',
-					'battery_type',
-					'hw_cpu_speed',
-					'hw_cpu_core_count',
-					'hw_cpu_supported_64_bit_abis',
-					'hw_cpu_supported_32_bit_abis',
-					'hw_cpu_processor',
-					'hw_cpu_supported_abis'
-				]
-				const list_weight_2 = [ 'hw_board', 'hw_screen_size', 'hw_cpu_min_speed', 'os_version' ]
-				const list_weight_3 = [
-					'hw_screen_pixel_density',
-					'hw_ram_total',
-					'hw_storage_total',
-					'hw_screen_refresh_rate'
-				]
-				scoreList.forEach((s) => {
-					if (![ 'nan', '', '0.0', '0' ].includes(s['value'])) {
-						if (list_weight_1.includes(s['field'])) {
-							const fieldScore = 3 * (1 - s['percent'])
-							score += fieldScore
-							scoreData.push({ field: s['field'], score: fieldScore })
-						} else if (list_weight_2.includes(s['field'])) {
-							const fieldScore = 2 * (1 - s['percent'])
-							score += fieldScore
-							scoreData.push({ field: s['field'], score: fieldScore })
-						} else if (list_weight_3.includes(s['field'])) {
-							const fieldScore = 1 - s['percent']
-							score += fieldScore
-							scoreData.push({ field: s['field'], score: fieldScore })
-						}
-					}
+			axios
+				.post('http://localhost:8085/api/profile/device/score/hardware', {
+					type: 'devices',
+					id: id
 				})
-				return { score, scoreData }
-			}
-			const scoreResponse = await fetch('http://localhost:8085/api/profile/test', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					query: `LET fields = @fields
+				.then((response) => {
+					const { score, scoreData } = response.data
 
-					LET model = (FOR v, e IN 1..1 ANY @id device_devicemodel RETURN e._to)[0]
-					
-					LET devices_included = (FOR v, e IN 1..1 INBOUND model device_devicemodel RETURN DOCUMENT(e._from))
-					
-					LET total_devices = COUNT(devices_included)
-					
-					LET id_doc = DOCUMENT(@id)
-					
-					FOR lf in fields
-						LET field_count = COUNT(FOR v IN devices_included FILTER v[lf] == id_doc[lf] RETURN v)
-						RETURN {field: lf, value: id_doc[lf], percent: field_count/total_devices}
-					
-					`,
-					bindVars: {
-						fields: [
-							'hw_board',
-							'hw_cpu_name',
-							'hw_screen_aspect_ratio',
-							'hw_screen_class',
-							'battery_type',
-							'hw_screen_pixel_density',
-							'hw_cpu_speed',
-							'hw_screen_refresh_rate',
-							'hw_cpu_supported_64_bit_abis',
-							'hw_cpu_core_count',
-							'hw_cpu_supported_32_bit_abis',
-							'hw_cpu_processor',
-							'hw_screen_size',
-							'hw_cpu_supported_abis',
-							'hw_ram_total',
-							'hw_cpu_min_speed',
-							'hw_storage_total',
-							'os_version'
-						],
-						id: `devices/${id}`
-					}
+					setHardware({
+						score: score.toPrecision(2),
+						scoreData
+					})
 				})
-			})
-			const scorePercent = await scoreResponse.json()
-			const { score, scoreData } = calculateScore(scorePercent)
-			setHardware({
-				score: score.toPrecision(2),
-				scoreData
-			})
+				.catch(console.error)
 		}
 		fetchHardwareScore()
 	}, [])

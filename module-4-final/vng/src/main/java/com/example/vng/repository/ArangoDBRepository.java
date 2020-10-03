@@ -83,4 +83,11 @@ public interface ArangoDBRepository extends ArangoRepository<String, String> {
             "\n" +
             "RETURN {last_device_onboard, last_device_transaction}")
     List<Map<String, Object>> getLastDeviceOnboardAndLastTransaction(@BindVars Map<String, Object> bindVars);
+
+    @Query("LET idList = @idList\n" +
+            "FOR id in idList\n" +
+            "FOR v, e IN 1..1 ANY id GRAPH \"test\"\n" +
+            "COLLECT source = e._from, target = e._to\n" +
+            "RETURN {source, target}")
+    List<Map<String, Object>> getOneMoreDepth(@BindVars Map<String, Object> bindVars);
 }

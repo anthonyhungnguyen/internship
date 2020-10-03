@@ -28,22 +28,15 @@ export default ({ id }) => {
 			}
 
 			const fetchCardBasicInfo = async () => {
-				const cardResponse = await fetch('http://localhost:8085/api/profile/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `RETURN FIRST(FOR v, e IN 1..1 ANY @id user_card_account
-								SORT e.reqDate DESC
-								RETURN KEEP(e, ['bankname', 'bankCode', 'reqDate']))`,
-						bindVars: {
-							id: `card_account/${id}`
-						}
+				await axios
+					.post(`http://localhost:8085/api/profile/mapping/basicInfo`, {
+						type: 'card_account',
+						id: id
 					})
-				})
-				const data = await cardResponse.json()
-				setCard(data[0])
+					.then((response) => {
+						setCard(response.data[0])
+					})
+					.catch(console.err)
 			}
 
 			fetchUserList()

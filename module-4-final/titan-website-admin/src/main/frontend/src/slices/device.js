@@ -1,11 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {
-	generateGraphData,
-	configureSymbolSizeBasedOnDegree,
-	generateCategoryFromType,
-	generateInTypeFromOutType,
-	generateSymbolFromType
-} from './util'
+import { generateGraphData, configureSymbolSizeBasedOnDegree, generateCategoryFromType } from './util'
 import axios from 'axios'
 
 export const initialState = {
@@ -99,7 +93,7 @@ export function fetchDevice(id) {
 	return async (dispatch) => {
 		dispatch(getDevice())
 		await axios
-			.post('http://localhost:8085/api/profile/device', {
+			.post('http://localhost:8085/api/profile/info', {
 				id: id,
 				type: 'devices'
 			})
@@ -115,35 +109,19 @@ export function fetchDevice(id) {
 export function fetchConnection(id) {
 	return async (dispatch) => {
 		dispatch(getConnection())
-		try {
-			const graphDataResponse = await fetch(`http://localhost:8085/api/profile/test`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					query: `FOR v, e IN 1..1 ANY @id GRAPH "test"
-							COLLECT source = e._from, target = e._to
-							RETURN {source, target}`,
-					bindVars: {
-						id: `devices/${id}`
-					}
-				})
+
+		axios
+			.post('http://localhost:8085/api/profile/depth', {
+				idList: [ `devices/${id}` ]
 			})
-
-			const connections = await graphDataResponse.json()
-
-			const formattedConnections = preprocessConnection(`devices/${id}`, connections)
-			const graphData = generateGraphData(formattedConnections, 'devices')
-			console.log(graphData)
-			if (connections.errorCode) {
-				dispatch(getConnectionFailure(connections))
-			} else {
+			.then((response) => {
+				const formattedConnections = preprocessConnection(`devices/${id}`, response.data)
+				const graphData = generateGraphData(formattedConnections, 'devices')
 				dispatch(getConnectionSuccess(graphData))
-			}
-		} catch (err) {
-			dispatch(getConnectionFailure())
-		}
+			})
+			.catch((err) => {
+				dispatch(getConnectionFailure(err))
+			})
 	}
 }
 

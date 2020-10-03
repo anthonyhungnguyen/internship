@@ -16,9 +16,19 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
-    @PostMapping("/profile/device")
+    @PostMapping("/profile/info")
     public List<Map<String, Object>> getDeviceInfo(@RequestBody Map<String, Object> body) {
-        return profileService.getDeviceInfo(body);
+        return profileService.getInfo(body);
+    }
+
+    @PostMapping("/profile/device/score/hardware")
+    public Map<String, Object> getDeviceHardwareScore(@RequestBody Map<String, Object> body) {
+        return profileService.getDeviceHardwareScore(body);
+    }
+
+    @PostMapping("/profile/mapping/basicInfo")
+    public List<Map<String, Object>> getMappingBasicInfo(@RequestBody Map<String, Object> body) {
+        return profileService.getMappingBasicInfo(body);
     }
 
     @PostMapping("/profile/device/userList")
@@ -89,6 +99,11 @@ public class ProfileController {
     @PostMapping("/profile/lastOnboardAndLastTransaction")
     public List<Map<String, Object>> getLastDeviceOnboardAndLastTransaction(@RequestBody Map<String, Object> body) {
         return profileService.getLastDeviceOnboardAndLastTransaction(body);
+    }
+
+    @PostMapping("profile/depth")
+    public List<Map<String, Object>> getOneMoreDepth(@RequestBody Map<String, Object> body) {
+        return profileService.getOneMoreDepth(body);
     }
 
     @PostMapping("/profile/test")

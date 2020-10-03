@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Card, Skeleton, Slider } from 'antd'
 import ReactEchartsCore from 'echarts-for-react'
 import echarts from 'echarts/lib/echarts'
+import axios from 'axios'
 import {
 	configureSymbolSizeBasedOnDegree,
 	generateCategoryFromType,
@@ -21,32 +22,24 @@ export default ({ userList }) => {
 	useEffect(
 		() => {
 			const fetchConnections = async () => {
-				const response = await fetch('http://localhost:8085/api/profile/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `LET userList = @userList
-
-						FOR u IN userList
-							FOR v, e IN 1..1 ANY u GRAPH "test"
-								COLLECT source = e._from, target = e._to, type = e.type
-								RETURN {source, target, type}`,
-						bindVars: {
-							userList: userList.map((x) => 'users/' + x)
-						}
+				axios
+					.post('http://localhost:8085/api/profile/depth', {
+						idList: userList.map((x) => 'users/' + x)
 					})
-				})
-
-				const data = await response.json()
-				const preConnections = preprocessConnection(userList, data)
-				setConnections(preConnections)
-				const graphData = generateGraphData(preConnections, 'users')
-				setGraphData(graphData)
+					.then((response) => {
+						const preConnections = preprocessConnection(userList, response.data)
+						setConnections(preConnections)
+						const graphData = generateGraphData(preConnections, 'users')
+						setGraphData(graphData)
+					})
+					.catch(console.error)
 			}
 
 			fetchConnections()
+			return () => {
+				console.log('hell')
+				ref.current.getEchartsInstance().dispose()
+			}
 		},
 		[ userList ]
 	)
@@ -106,29 +99,17 @@ export default ({ userList }) => {
 		if (!depthData[depth]) {
 			const unExpandedId = data.filter((x) => !x.expanded).map((x) => `${x.type}/${x.id}`)
 			if (unExpandedId.length !== 0) {
-				const response = await fetch(`http://localhost:8085/api/profile/test`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `
-						LET idList = @idList
-						FOR id in idList
-							FOR v, e IN 1..1 ANY id GRAPH "test"
-									COLLECT source = e._from, target = e._to
-									RETURN {source, target}`,
-						bindVars: {
-							idList: unExpandedId
-						}
+				axios
+					.post('http://localhost:8085/api/profile/depth', {
+						idList: unExpandedId
 					})
-				})
-				const connections = await response.json()
-
-				const moreConnection = preprocessMoreConnection(connections, data, edges)
-				const newGraphData = generateGraphData(moreConnection, 'users')
-
-				echartsInstance.setOption(newGraphData)
+					.then((response) => {
+						const moreConnection = preprocessMoreConnection(response.data, data, edges)
+						const newGraphData = generateGraphData(moreConnection, 'users')
+						depthData[depth] = newGraphData
+						echartsInstance.setOption(newGraphData)
+					})
+					.catch(console.error)
 			}
 		} else {
 			echartsInstance.setOption(depthData[depth])

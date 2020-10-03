@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Select } from 'antd'
 import { deviceSelector, storeLastDate } from '../../../../../slices/device'
 import copy from 'copy-to-clipboard'
+import axios from 'axios'
 import { generalSelector } from '../../../../../slices/general'
 
 const { Option } = Select
@@ -17,56 +18,38 @@ export default () => {
 
 	useEffect(
 		() => {
-			const fetchLastOnboardAndTransactionDate = async (id) => {
-				const lastReqDateResponse = await fetch('http://localhost:8085/api/profile/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `LET last_device_onboard = FIRST((FOR v, e IN 1..1 ANY @id user_device_onboard
-								SORT e.timestamp DESC
-								LET date = DATE_ISO8601(TO_NUMBER(e.timestamp * 1000))
-								RETURN date))
-							
-							LET last_device_transaction = FIRST((FOR v, e IN 1..1 ANY @id user_device_transaction
-								SORT DATE_ISO8601(e.reqDate) DESC
-								LET date = DATE_ISO8601(e.reqDate)
-								RETURN date))
-								
-							RETURN {last_device_onboard, last_device_transaction}`,
-						bindVars: {
-							id: `devices/${id}`
-						}
+			const fetchLastOnboardAndTransactionDate = async () => {
+				await axios
+					.post(`http://localhost:8085/api/profile/lastOnboardAndLastTransaction`, {
+						id: id,
+						type: 'devices'
 					})
-				})
-				const lastReqDateData = await lastReqDateResponse.json()
-				const { last_device_onboard, last_device_transaction } = lastReqDateData[0]
-
-				dispatch(storeLastDate({ last_device_onboard, last_device_transaction }))
+					.then((response) => {
+						const data = response.data
+						const { last_device_onboard, last_device_transaction } = data[0]
+						dispatch(storeLastDate({ last_device_onboard, last_device_transaction }))
+					})
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 
-			const fetchUserList = async (id) => {
-				const userListResponse = await fetch('http://localhost:8085/api/profile/test', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						query: `FOR v, e IN 1..1 ANY @deviceId user_device_onboard
-							COLLECT user = e._from
-							RETURN user`,
-						bindVars: {
-							deviceId: `devices/${id}`
-						}
+			const fetchUserList = async () => {
+				await axios
+					.post(`http://localhost:8085/api/profile/device/userList`, {
+						type: 'devices',
+						id: id
 					})
-				})
-				const userList = await userListResponse.json()
-				setUsers(userList)
+					.then((response) => {
+						setUsers(response.data)
+					})
+					.catch((err) => {
+						console.log(err)
+					})
 			}
 
-			fetchLastOnboardAndTransactionDate(id)
-			fetchUserList(id)
+			fetchLastOnboardAndTransactionDate()
+			fetchUserList()
 		},
 		[ id, dispatch ]
 	)

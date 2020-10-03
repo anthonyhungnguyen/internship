@@ -5,6 +5,7 @@ import { FullscreenOutlined } from '@ant-design/icons'
 import { Card, Empty, Modal, Skeleton } from 'antd'
 import './index.css'
 import mapboxgl from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 const Map = ReactMapboxGl({
 	accessToken: 'pk.eyJ1Ijoid2xmZWkiLCJhIjoiY2puMTB6MXZlNHZjcTNwbnl3dnowYjhoaSJ9.s6ZkjRHGIY6xVNBRAf52MQ'

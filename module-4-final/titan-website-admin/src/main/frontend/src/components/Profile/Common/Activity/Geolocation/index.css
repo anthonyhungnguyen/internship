@@ -1,7 +1,10 @@
 .ant-modal-content {
 	height: 80vh;
 }
-.mapboxgl-canvas-container {
-	height: 100%;
+.mapboxgl-canvas {
+	position: absolute;
+	top: 0;
+	bottom: 0;
 	width: 100%;
+	height: 100%;
 }

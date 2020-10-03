@@ -1,11 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {
-	configureSymbolSizeBasedOnDegree,
-	generateCategoryFromType,
-	generateGraphData,
-	generateInTypeFromOutType,
-	generateSymbolFromType
-} from './util'
+import axios from 'axios'
+import { configureSymbolSizeBasedOnDegree, generateCategoryFromType, generateGraphData } from './util'
 
 export const initialState = {
 	loading: true,
@@ -89,62 +84,35 @@ export default userSlice.reducer
 export function fetchUser(id) {
 	return async (dispatch) => {
 		dispatch(getUser())
-		try {
-			const response = await fetch('http://localhost:8085/api/profile/test', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					query: `RETURN DOCUMENT(@id)`,
-					bindVars: {
-						id: `users/${id}`
-					}
-				})
+		await axios
+			.post('http://localhost:8085/api/profile/info', {
+				id: id,
+				type: 'users'
 			})
-			const data = await response.json()
-			if (data.errorCode) {
-				dispatch(getUserFailure(data))
-			} else {
-				const { devices, cards } = data[0]
-				dispatch(getUserSuccess({ devices, cards }))
-			}
-		} catch (err) {
-			dispatch(getUserFailure())
-		}
+			.then((response) => {
+				dispatch(getUserSuccess(response.data[0]))
+			})
+			.catch((err) => {
+				dispatch(getUserFailure(err))
+			})
 	}
 }
 
 export function fetchConnection(id) {
 	return async (dispatch) => {
 		dispatch(getConnection())
-		try {
-			const graphDataResponse = await fetch(`http://localhost:8085/api/profile/test`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					query: `FOR v, e IN 1..1 ANY @id GRAPH "test"
-							COLLECT source = e._from, target = e._to
-							RETURN {source, target}`,
-					bindVars: {
-						id: `users/${id}`
-					}
-				})
+		axios
+			.post('http://localhost:8085/api/profile/depth', {
+				idList: [ `users/${id}` ]
 			})
-
-			const connections = await graphDataResponse.json()
-			const formattedConnections = preprocessConnection(`users/${id}`, connections)
-			const graphData = generateGraphData(formattedConnections, 'users')
-			if (connections.errorCode) {
-				dispatch(getConnectionFailure(connections))
-			} else {
+			.then((response) => {
+				const formattedConnections = preprocessConnection(`users/${id}`, response.data)
+				const graphData = generateGraphData(formattedConnections, 'users')
 				dispatch(getConnectionSuccess(graphData))
-			}
-		} catch (err) {
-			dispatch(getConnectionFailure())
-		}
+			})
+			.catch((err) => {
+				dispatch(getConnectionFailure(err))
+			})
 	}
 }
 
