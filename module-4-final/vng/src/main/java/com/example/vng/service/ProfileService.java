@@ -98,7 +98,7 @@ public class ProfileService {
         return scores;
     }
 
-    public List<String> getDeviceUserList(Map<String, Object> body) {
+    public List<Map<String, Object>> getDeviceUserList(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();
         bindVars.put("id", body.get("type") + "/" + body.get("id"));
         return deviceRepository.getUserList(bindVars);
@@ -117,19 +117,19 @@ public class ProfileService {
         return mappingRepository.getBasicInfo(bindVars);
     }
 
-    public List<String> getUserDeviceList(Map<String, Object> body) {
+    public List<Map<String, Object>> getUserDeviceList(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();
         bindVars.put("id", body.get("type") + "/" + body.get("id"));
         return userRepository.getDeviceList(bindVars);
     }
 
-    public List<String> getUserCardList(Map<String, Object> body) {
+    public List<Map<String, Object>> getUserCardList(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();
         bindVars.put("id", body.get("type") + "/" + body.get("id"));
         return userRepository.getCardList(bindVars);
     }
 
-    public List<String> getMappingUserList(Map<String, Object> body) {
+    public List<Map<String, Object>> getMappingUserList(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();
         bindVars.put("id", body.get("type") + "/" + body.get("id"));
         return mappingRepository.getUserList(bindVars);
@@ -214,5 +214,18 @@ public class ProfileService {
 
     public ArrayList<Object> getTest(CustomQuery customQuery) {
         return arangoDBCustom.getDataByDynamicQuery(customQuery);
+    }
+
+    public List<Map<String, Object>> getGraph0(Map<String, Object> body) {
+        Map<String, Object> bindVars = new HashMap<>();
+        bindVars.put("id", body.get("type") + "/" + body.get("id"));
+        bindVars.put("depth", body.get("depth"));
+        return arangoDBRepository.getGraph0(bindVars);
+    }
+
+    public List<Map<String, Object>> getGraph0MoreDepth(Map<String, Object> body) {
+        Map<String, Object> bindVars = new HashMap<>();
+        bindVars.put("idList", body.get("idList"));
+        return arangoDBRepository.getGraph0MoreDepth(bindVars);
     }
 }

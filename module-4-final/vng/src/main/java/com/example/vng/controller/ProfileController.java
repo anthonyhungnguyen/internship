@@ -32,22 +32,22 @@ public class ProfileController {
     }
 
     @PostMapping("/profile/device/userList")
-    public List<String> getDeviceUserList(@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getDeviceUserList(@RequestBody Map<String, Object> body) {
         return profileService.getDeviceUserList(body);
     }
 
     @PostMapping("/profile/user/deviceList")
-    public List<String> getUserDeviceList(@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getUserDeviceList(@RequestBody Map<String, Object> body) {
         return profileService.getUserDeviceList(body);
     }
 
     @PostMapping("/profile/user/cardList")
-    public List<String> getUserCardList(@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getUserCardList(@RequestBody Map<String, Object> body) {
         return profileService.getUserCardList(body);
     }
 
     @PostMapping("/profile/card/userList")
-    public List<String> getMappingUserList(@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getMappingUserList(@RequestBody Map<String, Object> body) {
         return profileService.getMappingUserList(body);
     }
 
@@ -109,5 +109,15 @@ public class ProfileController {
     @PostMapping("/profile/test")
     public List<Object> getTest(@RequestBody CustomQuery customQuery) {
         return profileService.getTest(customQuery);
+    }
+
+    @PostMapping("profile/graph0")
+    public List<Map<String, Object>> getGraph0(@RequestBody Map<String, Object> body) {
+        return profileService.getGraph0(body);
+    }
+
+    @PostMapping("profile/graph0/moreDepth")
+    public List<Map<String, Object>> getGraph0MoreDepth(@RequestBody Map<String, Object> body) {
+        return profileService.getGraph0MoreDepth(body);
     }
 }

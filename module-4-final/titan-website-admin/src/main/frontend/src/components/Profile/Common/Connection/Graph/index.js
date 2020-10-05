@@ -1,24 +1,37 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactEcharts from 'echarts-for-react'
 import { Card, Slider } from 'antd'
 import copy from 'copy-to-clipboard'
 import { generateGraphData, preprocessMoreConnection } from '../../../../../slices/util'
 import axios from 'axios'
+import { preprocessConnection } from '../../../../../slices/device'
 
-export default React.memo(({ setCurrentChosenId, setCurrentType, type, graphData }) => {
+export default React.memo(({ setCurrentChosenId, setCurrentType, id, type }) => {
 	// Used for restoring old depth
-	let depthData = {}
-	depthData[1] = graphData
+	const [ graphData, setGraphData ] = useState(null)
 	let ref = useRef()
 
-	useEffect(
-		() => {
-			return () => {
-				ref.current.dispose(ref.current.getEchartsInstance())
-			}
-		},
-		[ ref.current ]
-	)
+	useEffect(() => {
+		axios
+			.post('http://localhost:8085/api/profile/depth', {
+				idList: [ `devices/${id}` ]
+			})
+			.then((response) => {
+				const formattedConnections = preprocessConnection(`devices/${id}`, response.data)
+				const graphData = generateGraphData(formattedConnections, 'devices')
+				setGraphData(graphData)
+			})
+			.catch(console.err)
+	}, [])
+
+	// useEffect(
+	// 	() => {
+	// 		return () => {
+	// 			ref.current.dispose(ref.current.getEchartsInstance())
+	// 		}
+	// 	},
+	// 	[ ref.current ]
+	// )
 
 	const handleOnClick = async (e) => {
 		if (e.data.type === 'devices') {
@@ -39,23 +52,18 @@ export default React.memo(({ setCurrentChosenId, setCurrentType, type, graphData
 	const expandOneDepth = async (depth) => {
 		let echartsInstance = ref.current.getEchartsInstance()
 		const { data, edges } = echartsInstance.getOption()['series'][0]
-		if (!depthData[depth]) {
-			const unExpandedId = data.filter((x) => !x.expanded).map((x) => `${x.type}/${x.id}`)
-			if (unExpandedId.length !== 0) {
-				axios
-					.post('http://localhost:8085/api/profile/depth', {
-						idList: unExpandedId
-					})
-					.then((response) => {
-						const moreConnection = preprocessMoreConnection(response.data, data, edges)
-						const newGraphData = generateGraphData(moreConnection, type)
-						depthData[depth] = newGraphData
-						echartsInstance.setOption(newGraphData)
-					})
-					.catch(console.error)
-			}
-		} else {
-			echartsInstance.setOption(depthData[depth])
+		const unExpandedId = data.filter((x) => !x.expanded).map((x) => `${x.type}/${x.id}`)
+		if (unExpandedId.length !== 0) {
+			axios
+				.post('http://localhost:8085/api/profile/depth', {
+					idList: unExpandedId
+				})
+				.then((response) => {
+					const moreConnection = preprocessMoreConnection(response.data, data, edges)
+					const newGraphData = generateGraphData(moreConnection, type)
+					setGraphData(newGraphData)
+				})
+				.catch(console.error)
 		}
 	}
 
@@ -82,30 +90,32 @@ export default React.memo(({ setCurrentChosenId, setCurrentType, type, graphData
 	}
 
 	return (
-		<div className="animated fadeIn">
-			<Card
-				className="w-full"
-				title="Dive Depth"
-				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
-				hoverable={true}
-				extra={
-					<React.Fragment>
-						<Slider min={1} max={10} onChange={expandOneDepth} className="w-40" tooltipVisible />
-					</React.Fragment>
-				}
-			>
-				<ReactEcharts
-					ref={ref}
-					option={graphData}
-					lazyUpdate={true}
-					style={{ height: '65vh', width: '100%' }}
-					renderer="canvas"
-					onEvents={{
-						click: handleOnClick,
-						dblclick: handleDoubleClick
-					}}
-				/>
-			</Card>
-		</div>
+		graphData && (
+			<div className="animated fadeIn">
+				<Card
+					className="w-full"
+					title="Dive Depth"
+					headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
+					hoverable={true}
+					extra={
+						<React.Fragment>
+							<Slider min={1} max={10} onChange={expandOneDepth} className="w-40" tooltipVisible />
+						</React.Fragment>
+					}
+				>
+					<ReactEcharts
+						ref={ref}
+						option={graphData}
+						lazyUpdate={true}
+						style={{ height: '65vh', width: '100%' }}
+						renderer="canvas"
+						onEvents={{
+							click: handleOnClick,
+							dblclick: handleDoubleClick
+						}}
+					/>
+				</Card>
+			</div>
+		)
 	)
 })

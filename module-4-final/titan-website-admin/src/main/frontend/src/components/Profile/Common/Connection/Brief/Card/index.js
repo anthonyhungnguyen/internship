@@ -4,6 +4,8 @@ import moment from 'moment'
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { Select } from 'antd'
+import CardTable from '../../../Overview/Identity/CardTable'
+import UserTable from '../../../Overview/Identity/UserTable'
 
 const { Option } = Select
 
@@ -20,11 +22,15 @@ export default ({ id }) => {
 						id: id
 					})
 					.then((response) => {
-						setUsers(response.data)
+						const data = response.data.map((d, k) => ({
+							key: k,
+							userid: d.userid.split('/')[1].trim(),
+							firstseen: moment(d.firstseen).format('L LT'),
+							lastseen: moment(d.lastseen).format('L LT')
+						}))
+						setUsers(data)
 					})
-					.catch((err) => {
-						console.log(err)
-					})
+					.catch(console.error)
 			}
 
 			const fetchCardBasicInfo = async () => {
@@ -44,7 +50,6 @@ export default ({ id }) => {
 		},
 		[ id ]
 	)
-	console.log(users)
 	return users && card ? (
 		<Card title="Card Brief Info" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Descriptions column={1} bordered>
@@ -53,20 +58,7 @@ export default ({ id }) => {
 				<Descriptions.Item label="Bank Code">{card.bankCode}</Descriptions.Item>
 				<Descriptions.Item label="Last Request Date">{moment(card.reqDate).format('L LTS')}</Descriptions.Item>
 				<Descriptions.Item label={`Total Users (${users.length})`}>
-					<Select
-						defaultValue={users[0].split('/')[1].trim()}
-						style={{ width: 180 }}
-						onSelect={(e) => copy(e)}
-					>
-						{users.map((u) => {
-							const userId = u.split('/')[1].trim()
-							return (
-								<Option value={userId} key={userId}>
-									{userId}
-								</Option>
-							)
-						})}
-					</Select>
+					<UserTable data={users} />
 				</Descriptions.Item>
 			</Descriptions>
 		</Card>

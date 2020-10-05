@@ -9,10 +9,14 @@ import java.util.Map;
 
 public interface DeviceRepository extends ArangoRepository<String, String> {
 
-    @Query("FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
-            "COLLECT user = e._from\n" +
-            "RETURN user")
-    List<String> getUserList(@BindVars Map<String, Object> bindVars);
+    @Query("LET user_list = (FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
+            "    COLLECT userid = e._from\n" +
+            "    return userid)\n" +
+            "\n" +
+            "FOR e IN user_list  \n" +
+            "    LET timestamp = (FOR in_v, in_e IN 1..1 ANY @id user_device_onboard FILTER in_e._from == e SORT in_e.timestamp RETURN DATE_ISO8601(in_e.timestamp * 1000))\n" +
+            "    RETURN {userid: e, firstseen: timestamp[0], lastseen: timestamp[-1]}")
+    List<Map<String, Object>> getUserList(@BindVars Map<String, Object> bindVars);
 
     @Query("RETURN KEEP(DOCUMENT(@id), @keepList)")
     List<Map<String, Object>> getBasicInfo(@BindVars Map<String, Object> bindVars);

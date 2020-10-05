@@ -7,8 +7,8 @@ import copy from 'copy-to-clipboard'
 import { generalSelector } from '../../../../../slices/general'
 import axios from 'axios'
 import { storeLastDate, userSelector } from '../../../../../slices/user'
-
-const { Option } = Select
+import DeviceTable from '../../../Common/Overview/Identity/DeviceTable'
+import CardTable from '../../../Common/Overview/Identity/CardTable'
 
 export default () => {
 	const { id } = useSelector(generalSelector)
@@ -36,31 +36,39 @@ export default () => {
 			}
 
 			const fetchDeviceList = async () => {
-				await axios
+				axios
 					.post(`http://localhost:8085/api/profile/user/deviceList`, {
 						type: 'users',
 						id: id
 					})
 					.then((response) => {
-						setDevices(response.data)
+						const data = response.data.map((d, k) => ({
+							key: k,
+							deviceid: d.deviceid.split('/')[1].trim(),
+							firstseen: moment(d.firstseen).format('L LT'),
+							lastseen: moment(d.lastseen).format('L LT')
+						}))
+						setDevices(data)
 					})
-					.catch((err) => {
-						console.log(err)
-					})
+					.catch(console.error)
 			}
 
 			const fetchCardList = async () => {
-				await axios
+				axios
 					.post(`http://localhost:8085/api/profile/user/cardList`, {
 						type: 'users',
 						id: id
 					})
 					.then((response) => {
-						setCards(response.data)
+						const data = response.data.map((d, k) => ({
+							key: k,
+							cardid: d.cardid.split('/')[1].trim(),
+							firstseen: moment(d.firstseen).format('L LT'),
+							lastseen: moment(d.lastseen).format('L LT')
+						}))
+						setCards(data)
 					})
-					.catch((err) => {
-						console.log(err)
-					})
+					.catch(console.error)
 			}
 
 			fetchLastOnboardAndTransactionDate()
@@ -82,40 +90,15 @@ export default () => {
 				</Descriptions.Item>
 				{devices.length > 0 ? (
 					<Descriptions.Item label={`Total Devices (${devices.length})`}>
-						<Select
-							defaultValue={devices[0].split('/')[1].trim()}
-							style={{ width: 180 }}
-							onSelect={(e) => copy(e)}
-						>
-							{devices.map((u) => {
-								const deviceId = u.split('/')[1].trim()
-								return (
-									<Option value={deviceId} key={deviceId}>
-										{deviceId}
-									</Option>
-								)
-							})}
-						</Select>
+						<DeviceTable data={devices} />
 					</Descriptions.Item>
 				) : (
 					<Descriptions.Item label={`Total Devices (0)`} />
 				)}
+
 				{cards.length > 0 ? (
 					<Descriptions.Item label={`Total Cards (${cards.length})`}>
-						<Select
-							defaultValue={cards[0].split('/')[1].trim()}
-							style={{ width: 180 }}
-							onSelect={(e) => copy(e)}
-						>
-							{cards.map((u) => {
-								const cardId = u.split('/')[1].trim()
-								return (
-									<Option value={cardId} key={cardId}>
-										{cardId}
-									</Option>
-								)
-							})}
-						</Select>
+						<CardTable data={cards} />
 					</Descriptions.Item>
 				) : (
 					<Descriptions.Item label={`Total Cards (0)`} />

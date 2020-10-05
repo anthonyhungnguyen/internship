@@ -33,7 +33,6 @@ export default React.memo(() => {
 						setCurrentChosenId={setCurrentChosenId}
 						id={id}
 						type={type}
-						graphData={graphData}
 					/>
 				</Col>
 				<Col span={8}>

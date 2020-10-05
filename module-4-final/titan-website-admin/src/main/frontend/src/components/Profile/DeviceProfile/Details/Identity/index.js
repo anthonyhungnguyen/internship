@@ -7,6 +7,7 @@ import { deviceSelector, storeLastDate } from '../../../../../slices/device'
 import copy from 'copy-to-clipboard'
 import axios from 'axios'
 import { generalSelector } from '../../../../../slices/general'
+import UserTable from '../../../Common/Overview/Identity/UserTable'
 
 const { Option } = Select
 
@@ -35,17 +36,21 @@ export default () => {
 			}
 
 			const fetchUserList = async () => {
-				await axios
+				axios
 					.post(`http://localhost:8085/api/profile/device/userList`, {
 						type: 'devices',
 						id: id
 					})
 					.then((response) => {
-						setUsers(response.data)
+						const data = response.data.map((d, k) => ({
+							key: k,
+							userid: d.userid.split('/')[1].trim(),
+							firstseen: moment(d.firstseen).format('L LT'),
+							lastseen: moment(d.lastseen).format('L LT')
+						}))
+						setUsers(data)
 					})
-					.catch((err) => {
-						console.log(err)
-					})
+					.catch(console.error)
 			}
 
 			fetchLastOnboardAndTransactionDate()
@@ -66,20 +71,7 @@ export default () => {
 				</Descriptions.Item>
 				{users.length > 0 ? (
 					<Descriptions.Item label={`Total Users (${users.length})`}>
-						<Select
-							defaultValue={users[0].split('/')[1].trim()}
-							style={{ width: 180 }}
-							onSelect={(e) => copy(e)}
-						>
-							{users.map((u) => {
-								const userId = u.split('/')[1].trim()
-								return (
-									<Option value={userId} key={userId}>
-										{userId}
-									</Option>
-								)
-							})}
-						</Select>
+						<UserTable id={id} data={users} />
 					</Descriptions.Item>
 				) : (
 					<Descriptions.Item label={`Total Users (0)`} />

@@ -4,6 +4,7 @@ import moment from 'moment'
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { Select } from 'antd'
+import UserTable from '../../../Overview/Identity/UserTable'
 
 const { Option } = Select
 
@@ -40,11 +41,15 @@ export default ({ id, type }) => {
 						id: id
 					})
 					.then((response) => {
-						setUsers(response.data)
+						const data = response.data.map((d, k) => ({
+							key: k,
+							userid: d.userid.split('/')[1].trim(),
+							firstseen: moment(d.firstseen).format('L LT'),
+							lastseen: moment(d.lastseen).format('L LT')
+						}))
+						setUsers(data)
 					})
-					.catch((err) => {
-						console.log(err)
-					})
+					.catch(console.error)
 			}
 
 			const fetchDeviceBasicInfo = async () => {
@@ -81,20 +86,7 @@ export default ({ id, type }) => {
 				</Descriptions.Item>
 				{users.length > 0 ? (
 					<Descriptions.Item label={`Total Users (${users.length})`}>
-						<Select
-							defaultValue={users[0].split('/')[1].trim()}
-							style={{ width: 180 }}
-							onSelect={(e) => copy(e)}
-						>
-							{users.map((u) => {
-								const userId = u.split('/')[1].trim()
-								return (
-									<Option value={userId} key={userId}>
-										{userId}
-									</Option>
-								)
-							})}
-						</Select>
+						<UserTable id={id} data={users} />
 					</Descriptions.Item>
 				) : (
 					<Descriptions.Item label={`Total Users (0)`} />

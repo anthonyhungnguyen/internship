@@ -22,7 +22,7 @@ export default () => {
 					const { score, scoreData } = response.data
 
 					setHardware({
-						score: score.toPrecision(2),
+						score: (score / 30 * 100).toPrecision(2),
 						scoreData
 					})
 				})
@@ -57,14 +57,14 @@ export default () => {
 							<Tooltip placement="topLeft" title={renderHardwareScoreDetails(hardware.scoreData)}>
 								<Col span={12} className="gutter-row">
 									<p className="text-4xl">{hardware.score}</p>
-									<p className="text-xs text-gray-500 font-bold">HARDWARE SCORE (0-30)</p>
+									<p className="text-xs text-gray-500 font-bold">HARDWARE SCORE</p>
 									<Progress
-										percent={hardware.score / 30 * 100}
+										percent={hardware.score}
 										showInfo={false}
 										status="active"
 										size="small"
 										strokeColor={
-											hardware.score > 10 ? hardware.score > 19 ? (
+											hardware.score > 50 ? hardware.score > 80 ? (
 												'#e74c3c'
 											) : (
 												'#f1c40f'

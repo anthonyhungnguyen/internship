@@ -90,4 +90,15 @@ public interface ArangoDBRepository extends ArangoRepository<String, String> {
             "COLLECT source = e._from, target = e._to\n" +
             "RETURN {source, target}")
     List<Map<String, Object>> getOneMoreDepth(@BindVars Map<String, Object> bindVars);
+
+    @Query("LET idList = @idList\n" +
+            "FOR id in idList\n" +
+            "FOR v, e IN 1..1 ANY id GRAPH \"graph0\"\n" +
+            "COLLECT source = e._from, target = e._to\n" +
+            "RETURN {source, target}")
+    List<Map<String, Object>> getGraph0MoreDepth(@BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v, e IN 1..@depth ANY @id GRAPH \"graph0\"\n" +
+            "    RETURN e")
+    List<Map<String, Object>> getGraph0(@BindVars Map<String, Object> bindVars);
 }
