@@ -3,6 +3,7 @@ package com.example.vng.repository;
 import com.arangodb.springframework.annotation.BindVars;
 import com.arangodb.springframework.annotation.Query;
 import com.arangodb.springframework.repository.ArangoRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,6 +11,10 @@ import java.util.Map;
 
 @Repository
 public interface ArangoDBRepository extends ArangoRepository<String, String> {
+
+    @Query("RETURN NOT(IS_NULL(DOCUMENT(@id)))")
+    List<Boolean> checkTypeAndIDExists(@BindVars Map<String, Object> bindVars);
+
     @Query("RETURN DOCUMENT(@id)")
     List<Map<String, Object>> getInfo(@BindVars Map<String, Object> bindVars);
 

@@ -2,7 +2,6 @@ import React from 'react'
 import { Descriptions } from 'antd'
 export default ({ device }) => {
 	const {
-		timestamp,
 		userId,
 		network_wifi_mac_address,
 		os_version,

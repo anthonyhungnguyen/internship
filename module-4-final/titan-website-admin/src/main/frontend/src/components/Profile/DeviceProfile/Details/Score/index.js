@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Progress, Skeleton, Tabs } from 'antd'
+import { Empty, Progress, Skeleton, Tabs } from 'antd'
 import { Card, Row, Col, Tooltip } from 'antd'
 import { useSelector } from 'react-redux'
 import { generalSelector } from '../../../../../slices/general'
 import axios from 'axios'
-
-const { TabPane } = Tabs
 
 export default () => {
 	const { id } = useSelector(generalSelector)

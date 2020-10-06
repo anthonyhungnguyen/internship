@@ -16,6 +16,12 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
+
+    @PostMapping("profile/exists")
+    public boolean checkTypeAndIDExists(@RequestBody Map<String, Object> body) {
+        return profileService.checkTypeAndIDExists(body);
+    }
+
     @PostMapping("/profile/info")
     public List<Map<String, Object>> getDeviceInfo(@RequestBody Map<String, Object> body) {
         return profileService.getInfo(body);
@@ -120,4 +126,5 @@ public class ProfileController {
     public List<Map<String, Object>> getGraph0MoreDepth(@RequestBody Map<String, Object> body) {
         return profileService.getGraph0MoreDepth(body);
     }
+
 }

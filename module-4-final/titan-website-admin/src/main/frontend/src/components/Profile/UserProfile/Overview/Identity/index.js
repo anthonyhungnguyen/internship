@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Descriptions } from 'antd'
+import { Card, Descriptions, Empty } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
-import { Select, Skeleton } from 'antd'
+import { Skeleton } from 'antd'
 import moment from 'moment'
 import copy from 'copy-to-clipboard'
 import { generalSelector } from '../../../../../slices/general'
@@ -11,7 +11,7 @@ import DeviceTable from '../../../Common/Overview/Identity/DeviceTable'
 import CardTable from '../../../Common/Overview/Identity/CardTable'
 
 export default () => {
-	const { id } = useSelector(generalSelector)
+	const { id, exist } = useSelector(generalSelector)
 	const { date } = useSelector(userSelector)
 	const [ devices, setDevices ] = useState(null)
 	const [ cards, setCards ] = useState(null)

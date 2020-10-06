@@ -31,6 +31,13 @@ export default ({ data }) => {
 			loading={data ? false : true}
 			scroll={{ y: 240 }}
 			pagination={false}
+			onRow={(record, rowIndex) => {
+				return {
+					onClick: () => {
+						window.open(`http://localhost:3000/#/profile?id=${record.deviceid}&type=devices`, '_blank')
+					}
+				}
+			}}
 		/>
 	)
 }

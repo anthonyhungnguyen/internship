@@ -6,32 +6,20 @@ import { generateGraphData, preprocessMoreConnection } from '../../../../../slic
 import axios from 'axios'
 import { preprocessConnection } from '../../../../../slices/device'
 
-export default React.memo(({ setCurrentChosenId, setCurrentType, id, type }) => {
+export default React.memo(({ setCurrentChosenId, setCurrentType, id, type, graphData }) => {
 	// Used for restoring old depth
-	const [ graphData, setGraphData ] = useState(null)
+	let depthData = {}
+	depthData[1] = graphData
 	let ref = useRef()
 
-	useEffect(() => {
-		axios
-			.post('http://localhost:8085/api/profile/depth', {
-				idList: [ `devices/${id}` ]
-			})
-			.then((response) => {
-				const formattedConnections = preprocessConnection(`devices/${id}`, response.data)
-				const graphData = generateGraphData(formattedConnections, 'devices')
-				setGraphData(graphData)
-			})
-			.catch(console.err)
-	}, [])
-
-	// useEffect(
-	// 	() => {
-	// 		return () => {
-	// 			ref.current.dispose(ref.current.getEchartsInstance())
-	// 		}
-	// 	},
-	// 	[ ref.current ]
-	// )
+	useEffect(
+		() => {
+			return () => {
+				ref.current.dispose(ref.current.getEchartsInstance())
+			}
+		},
+		[ ref.current ]
+	)
 
 	const handleOnClick = async (e) => {
 		if (e.data.type === 'devices') {
@@ -61,7 +49,7 @@ export default React.memo(({ setCurrentChosenId, setCurrentType, id, type }) => 
 				.then((response) => {
 					const moreConnection = preprocessMoreConnection(response.data, data, edges)
 					const newGraphData = generateGraphData(moreConnection, type)
-					setGraphData(newGraphData)
+					echartsInstance.setOption(newGraphData)
 				})
 				.catch(console.error)
 		}

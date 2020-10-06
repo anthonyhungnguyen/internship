@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Descriptions, Skeleton } from 'antd'
+import { Card, Descriptions, Empty, Skeleton } from 'antd'
 import moment from 'moment'
 import { useSelector, useDispatch } from 'react-redux'
-import { Select } from 'antd'
 import { deviceSelector, storeLastDate } from '../../../../../slices/device'
-import copy from 'copy-to-clipboard'
 import axios from 'axios'
 import { generalSelector } from '../../../../../slices/general'
 import UserTable from '../../../Common/Overview/Identity/UserTable'
 
-const { Option } = Select
-
 export default () => {
-	const { id } = useSelector(generalSelector)
+	const { id, exist } = useSelector(generalSelector)
 	const { date } = useSelector(deviceSelector)
 	const [ users, setUsers ] = useState(null)
 	const dispatch = useDispatch()
@@ -77,6 +73,7 @@ export default () => {
 					<Descriptions.Item label={`Total Users (0)`} />
 				)}
 			</Descriptions>
+			)
 		</Card>
 	) : (
 		<Skeleton active />

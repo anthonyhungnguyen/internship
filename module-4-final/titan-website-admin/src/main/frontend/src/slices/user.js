@@ -3,7 +3,7 @@ import axios from 'axios'
 import { configureSymbolSizeBasedOnDegree, generateCategoryFromType, generateGraphData } from './util'
 
 export const initialState = {
-	loading: true,
+	loading: false,
 	errorInfo: {},
 	hasErrors: false,
 	user: null,
