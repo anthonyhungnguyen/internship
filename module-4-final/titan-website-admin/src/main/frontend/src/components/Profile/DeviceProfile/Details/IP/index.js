@@ -1,27 +1,62 @@
-import React from 'react'
-import { Descriptions, Card } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Descriptions, Card, Skeleton, Empty } from 'antd'
+import axios from 'axios'
+import IPTable from './IPTable'
+import { generalSelector } from '../../../../../slices/general'
+import { useSelector } from 'react-redux'
+import { Select } from 'antd'
+
+const { Option } = Select
 
 export default () => {
-	const IP = {
-		'IP Address': '1.53.255.136 (IPv4)',
-		Location: 'Unknown',
-		Country: 'Vietnam (VN)',
-		'Latitude & Longitude': '10.81420, 106.64680',
-		'Tor Relay IP Address': 'No',
-		'VPN IP Address': 'Not Detected',
-		'Proxy IP Address': 'Not Detected',
-		Hostname: 'Unknown. Could not resolve hostname.'
-	}
+	const [ ipList, setIPList ] = useState(null)
+	const [ selectedIP, setSelectedIP ] = useState(null)
+	const { id, type } = useSelector(generalSelector)
+	useEffect(
+		() => {
+			axios
+				.post('http://localhost:8085/api/profile/ip', {
+					type: type,
+					id: id
+				})
+				.then((response) => {
+					console.log(response.data)
+					if (response.data.length > 0) {
+						setIPList(response.data)
+						setSelectedIP(response.data[0])
+					} else {
+						setIPList([])
+					}
+				})
+				.catch(console.error)
+		},
+		[ id, type ]
+	)
 
-	return (
-		<Card title="IP Details" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
-			<Descriptions column={1} bordered>
-				{Object.keys(IP).map((k, i) => (
-					<Descriptions.Item label={k} key={i}>
-						{IP[k]}
-					</Descriptions.Item>
-				))}
-			</Descriptions>
+	const handleIPSelect = (value) => {
+		console.log(value)
+		setSelectedIP(value)
+	}
+	return ipList ? selectedIP ? (
+		<Card
+			title="IP Details"
+			headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
+			hoverable={true}
+			extra={
+				<Select defaultValue={selectedIP} style={{ width: 120 }} onChange={handleIPSelect}>
+					{ipList.map((ip, i) => (
+						<Option value={ip} key={i}>
+							{ip}
+						</Option>
+					))}
+				</Select>
+			}
+		>
+			<IPTable ip={selectedIP} />
 		</Card>
+	) : (
+		<Empty />
+	) : (
+		<Skeleton active />
 	)
 }

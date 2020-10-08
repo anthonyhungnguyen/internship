@@ -41,7 +41,9 @@ export default React.memo(() => {
 								</Col>
 							</Row>
 							<Row>
-								<Col span={24}>{/* <IP /> */}</Col>
+								<Col span={24}>
+									<IP />
+								</Col>
 							</Row>
 						</Col>
 					</Row>

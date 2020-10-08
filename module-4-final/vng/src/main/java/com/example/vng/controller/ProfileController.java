@@ -27,6 +27,11 @@ public class ProfileController {
         return profileService.getInfo(body);
     }
 
+    @PostMapping("/profile/ip")
+    public List<String> getIPList(@RequestBody Map<String, Object> body) {
+        return profileService.getIPList(body);
+    }
+
     @PostMapping("/profile/device/score/hardware")
     public Map<String, Object> getDeviceHardwareScore(@RequestBody Map<String, Object> body) {
         return profileService.getDeviceHardwareScore(body);

@@ -73,7 +73,6 @@ export default () => {
 					<Descriptions.Item label={`Total Users (0)`} />
 				)}
 			</Descriptions>
-			)
 		</Card>
 	) : (
 		<Skeleton active />

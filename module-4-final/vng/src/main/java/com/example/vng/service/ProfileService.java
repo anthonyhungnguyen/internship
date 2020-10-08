@@ -35,6 +35,12 @@ public class ProfileService {
         return arangoDBRepository.checkTypeAndIDExists(bindVars).get(0);
     }
 
+    public List<String> getIPList(Map<String, Object> body) {
+        Map<String, Object> bindVars = new HashMap<>();
+        bindVars.put("id", body.get("type") + "/" + body.get("id"));
+        return arangoDBRepository.getIPList(bindVars);
+    }
+
     public Map<String, Object> getDeviceHardwareScore(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();
         List<String> calcFields = Arrays.asList(

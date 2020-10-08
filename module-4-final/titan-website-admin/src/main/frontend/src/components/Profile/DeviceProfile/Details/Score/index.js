@@ -32,8 +32,8 @@ export default () => {
 	const renderHardwareScoreDetails = (scoreData) => {
 		return (
 			<div>
-				{scoreData.map((x) => (
-					<p>
+				{scoreData.map((x, i) => (
+					<p key={i}>
 						<span className="font-bold">{x.field}</span>: {x.score.toPrecision(2)}
 					</p>
 				))}
