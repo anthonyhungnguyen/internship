@@ -14,15 +14,13 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final MappingRepository mappingRepository;
     private final ArangoDBRepository arangoDBRepository;
-    private final ArangoDBCustom arangoDBCustom;
 
     @Autowired
-    public ProfileService(DeviceRepository deviceRepository, UserRepository userRepository, MappingRepository mappingRepository, ArangoDBRepository arangoDBRepository, ArangoDBCustom arangoDBCustom) {
+    public ProfileService(DeviceRepository deviceRepository, UserRepository userRepository, MappingRepository mappingRepository, ArangoDBRepository arangoDBRepository) {
         this.deviceRepository = deviceRepository;
         this.userRepository = userRepository;
         this.mappingRepository = mappingRepository;
         this.arangoDBRepository = arangoDBRepository;
-        this.arangoDBCustom = arangoDBCustom;
     }
 
     public List<Map<String, Object>> getInfo(Map<String, Object> body) {
@@ -190,30 +188,6 @@ public class ProfileService {
         return arangoDBRepository.getGeolocation(bindVars);
     }
 
-    public List<Map<String, Object>> getMappingBank(Map<String, Object> body) {
-        Map<String, Object> bindVars = new HashMap<>();
-        bindVars.put("id", body.get("type") + "/" + body.get("id"));
-        bindVars.put("fromDate", body.get("fromDate"));
-        bindVars.put("toDate", body.get("toDate"));
-        return arangoDBRepository.getMappingBank(bindVars);
-    }
-
-    public List<Map<String, Object>> getMappingTimeline(Map<String, Object> body) {
-        Map<String, Object> bindVars = new HashMap<>();
-        bindVars.put("id", body.get("type") + "/" + body.get("id"));
-        bindVars.put("fromDate", body.get("fromDate"));
-        bindVars.put("toDate", body.get("toDate"));
-        return arangoDBRepository.getMappingTimeline(bindVars);
-    }
-
-    public List<Map<String, Object>> getMappingOverview(Map<String, Object> body) {
-        Map<String, Object> bindVars = new HashMap<>();
-        bindVars.put("id", body.get("type") + "/" + body.get("id"));
-        bindVars.put("fromDate", body.get("fromDate"));
-        bindVars.put("toDate", body.get("toDate"));
-        return arangoDBRepository.getMappingOverview(bindVars);
-    }
-
     public List<Map<String, Object>> getLastDeviceOnboardAndLastTransaction(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();
         bindVars.put("id", body.get("type") + "/" + body.get("id"));
@@ -226,9 +200,6 @@ public class ProfileService {
         return arangoDBRepository.getOneMoreDepth(bindVars);
     }
 
-    public ArrayList<Object> getTest(CustomQuery customQuery) {
-        return arangoDBCustom.getDataByDynamicQuery(customQuery);
-    }
 
     public List<Map<String, Object>> getGraph0(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();

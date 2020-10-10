@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Card, Descriptions } from 'antd'
 export default () => {
 	return (
-		<Card title="Information" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+		<Card title="Basic Info" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Descriptions column={1} bordered>
 				<Descriptions.Item label="Birthday">07/01/2000</Descriptions.Item>
 				<Descriptions.Item label="Display Name">Vương Diệu Huyền</Descriptions.Item>

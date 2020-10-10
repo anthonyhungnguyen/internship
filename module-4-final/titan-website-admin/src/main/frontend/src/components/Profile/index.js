@@ -14,6 +14,7 @@ message.config({
 
 export default React.memo(() => {
 	const { id, type, exist } = useSelector(generalSelector)
+
 	const dispatch = useDispatch()
 
 	const checkParams = () => {

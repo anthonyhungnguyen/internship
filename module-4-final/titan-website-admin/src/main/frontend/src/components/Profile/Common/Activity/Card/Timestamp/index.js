@@ -129,9 +129,9 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 						name: 'Success',
 						type: 'line',
 						data: result.map((r) => r.success),
-						label: {
-							show: true
-						},
+						// label: {
+						// 	show: true
+						// },
 						markLine: {
 							data: [ { type: 'average', name: 'average' } ]
 						},
@@ -141,9 +141,9 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 						name: 'Fail',
 						type: 'line',
 						data: result.map((r) => r.fail),
-						label: {
-							show: true
-						},
+						// label: {
+						// 	show: true
+						// },
 						markLine: {
 							data: [ { type: 'average', name: 'average' } ]
 						},

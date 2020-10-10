@@ -61,26 +61,6 @@ public interface ArangoDBRepository extends ArangoRepository<String, String> {
             "RETURN {lat, lng, location_count}")
     List<Map<String, Object>> getGeolocation(@BindVars Map<String, Object> bindVars);
 
-    @Query("FOR v,e IN 1..1 ANY @id user_card_account\n" +
-            "FILTER TO_NUMBER(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
-            "COLLECT bName = e.bankname, status = e.requestStatus WITH count INTO status_count \n" +
-            "RETURN {bName, status, status_count}")
-    List<Map<String, Object>> getMappingBank(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR v, e IN 1..1 ANY @id user_card_account\n" +
-            "FILTER TO_NUMBER(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
-            "COLLECT date = DATE_FORMAT(DATE_ISO8601(e.reqDate), \"%yyyy-%mm-%dd\"), status = e.requestStatus WITH COUNT INTO status_count\n" +
-            "SORT DATE_TIMESTAMP(date)\n" +
-            "RETURN {date, status, status_count}")
-    List<Map<String, Object>> getMappingTimeline(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR v, e IN 1..1 ANY @id user_card_account\n" +
-            "FILTER TO_NUMBER(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
-            "COLLECT status = e.requestStatus WITH COUNT INTO status_count\n" +
-            "SORT status_count DESC\n" +
-            "RETURN {status, status_count}")
-    List<Map<String, Object>> getMappingOverview(@BindVars Map<String, Object> bindVars);
-
     @Query("LET last_device_onboard = FIRST((FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
             "SORT e.timestamp DESC\n" +
             "LET date = DATE_ISO8601(TO_NUMBER(e.timestamp * 1000))\n" +

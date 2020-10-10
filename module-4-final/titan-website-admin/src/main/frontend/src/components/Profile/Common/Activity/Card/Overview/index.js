@@ -40,8 +40,14 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 				},
 				legend: {
 					orient: 'vertical',
-					left: 10,
-					data: data.map((s) => s.status)
+					right: '10',
+					top: '50',
+					data: data.map((s) => s.status),
+					emphasis: {
+						selectorLabel: {
+							show: true
+						}
+					}
 				},
 				toolbox: {
 					show: true,

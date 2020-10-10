@@ -9,6 +9,7 @@ import { storeDateRange, userSelector } from '../../../../slices/user'
 import FilterBar from '../../Common/Activity/FilterBar'
 import Merchant from '../../Common/Activity/Merchant'
 import Card from '../../Common/Activity/Card'
+import Statistics from '../../Common/Activity/Statistics'
 
 export default () => {
 	const { loading, hasErrors, filters } = useSelector(userSelector)
@@ -16,37 +17,48 @@ export default () => {
 
 	return (
 		<div className="animated fadeIn">
-			<Row gutter={[ 24, 24 ]}>
-				<Col span={24}>
-					<FilterBar filters={filters} storeDateRange={storeDateRange} />
-				</Col>
-			</Row>
 			{!loading && !hasErrors ? (
 				<React.Fragment>
 					<Row gutter={[ 12, 12 ]}>
-						<Col span={12}>
-							<Card
-								id={id}
-								type={type}
-								filters={filters}
-								queryUrl="http://localhost:8085/api/profile/user/"
-								queryParams={{
-									id: `userid/${id}`,
-									fromDate: filters.range[0],
-									toDate: filters.range[1]
-								}}
-							/>
+						<Col span={24}>
+							<Statistics />
 						</Col>
 						<Col span={12}>
-							<Merchant id={id} type={type} filters={filters} />
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Card
+										id={id}
+										type={type}
+										filters={filters}
+										queryUrl="http://localhost:8085/api/profile/user/"
+										queryParams={{
+											id: `userid/${id}`,
+											fromDate: filters.range[0],
+											toDate: filters.range[1]
+										}}
+									/>
+								</Col>
+							</Row>
+
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Monetary id={id} type={type} filters={filters} />
+								</Col>
+							</Row>
+							<Row />
 						</Col>
-					</Row>
-					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
-							<Monetary id={id} type={type} filters={filters} />
-						</Col>
-						<Col span={12}>
-							<Geolocation id={id} type={type} filters={filters} />
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Merchant id={id} type={type} filters={filters} />
+								</Col>
+							</Row>
+
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Geolocation id={id} type={type} filters={filters} />
+								</Col>
+							</Row>
 						</Col>
 					</Row>
 				</React.Fragment>

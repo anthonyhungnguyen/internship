@@ -94,21 +94,6 @@ public class ProfileController {
         return profileService.getGeolocation(body);
     }
 
-    @PostMapping("/profile/mapping/bank")
-    public List<Map<String, Object>> getMappingBank(@RequestBody Map<String, Object> body) {
-        return profileService.getMappingBank(body);
-    }
-
-    @PostMapping("/profile/mapping/timestamp")
-    public List<Map<String, Object>> getMappingTimeline(@RequestBody Map<String, Object> body) {
-        return profileService.getMappingTimeline(body);
-    }
-
-    @PostMapping("/profile/mapping/overview")
-    public List<Map<String, Object>> getMappingOverview(@RequestBody Map<String, Object> body) {
-        return profileService.getMappingOverview(body);
-    }
-
     @PostMapping("/profile/lastOnboardAndLastTransaction")
     public List<Map<String, Object>> getLastDeviceOnboardAndLastTransaction(@RequestBody Map<String, Object> body) {
         return profileService.getLastDeviceOnboardAndLastTransaction(body);
@@ -119,10 +104,6 @@ public class ProfileController {
         return profileService.getOneMoreDepth(body);
     }
 
-    @PostMapping("/profile/test")
-    public List<Object> getTest(@RequestBody CustomQuery customQuery) {
-        return profileService.getTest(customQuery);
-    }
 
     @PostMapping("profile/graph0")
     public List<Map<String, Object>> getGraph0(@RequestBody Map<String, Object> body) {
