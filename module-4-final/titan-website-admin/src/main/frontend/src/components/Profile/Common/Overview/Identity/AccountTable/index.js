@@ -3,7 +3,7 @@ import { Table } from 'antd'
 
 const columns = [
 	{
-		title: 'Card ID',
+		title: 'Account ID',
 		dataIndex: 'cardId',
 		key: 'cardId'
 	},
@@ -13,14 +13,14 @@ const columns = [
 		key: 'bankName'
 	},
 	{
-		title: 'First 6 Card No',
-		dataIndex: 'first6CardNo',
-		key: 'first6CardNo'
+		title: 'First Account No',
+		dataIndex: 'firstAccountNo',
+		key: 'firstAccountNo'
 	},
 	{
-		title: 'Last 4 Card No',
-		dataIndex: 'last4CardNo',
-		key: 'last4CardNo'
+		title: 'Last Account No',
+		dataIndex: 'lastAccountNo',
+		key: 'lastAccountNo'
 	}
 ]
 

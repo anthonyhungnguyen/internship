@@ -35,4 +35,17 @@ public interface DeviceRepository extends ArangoRepository<String, String> {
             "LET field_count = COUNT(FOR v IN devices_included FILTER v[lf] == id_doc[lf] RETURN v)\n" +
             "RETURN {field: lf, value: id_doc[lf], percent: field_count/total_devices}")
     List<Map<String, Object>> getHardwareScore(@BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v IN device_map_card\n" +
+            "    FILTER v._to == @id\n" +
+            "    COLLECT cardId = v.cardId, bankName = v.bankName, first6CardNo = v.first6CardNo, last4CardNo = v.last4CardNo\n" +
+            "    RETURN {cardId, bankName, first6CardNo, last4CardNo}")
+    List<Map<String, Object>> getCardOverview(@BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v IN device_map_account\n" +
+            "    FILTER v._to == @id\n" +
+            "    COLLECT cardId = v.accountId, bankName = v.bankName, firstAccountNo = v.firstAccountNo, lastAccountNo = v.lastAccountNo\n" +
+            "    RETURN {cardId, bankName, firstAccountNo, lastAccountNo}")
+
+    List<Map<String, Object>> getAccountOverview(@BindVars Map<String, Object> bindVars);
 }

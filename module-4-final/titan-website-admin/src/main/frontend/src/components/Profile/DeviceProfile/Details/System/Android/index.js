@@ -2,8 +2,6 @@ import React from 'react'
 import { Descriptions } from 'antd'
 export default ({ device }) => {
 	const {
-		timestamp,
-		userId,
 		hw_cpu_name,
 		hw_screen_aspect_ratio,
 		hw_screen_pixel_density,
@@ -23,15 +21,9 @@ export default ({ device }) => {
 		hw_screen_size,
 		hw_ram_total,
 		hw_cpu_min_speed,
-		hw_storage_total,
-		hw_camera_front_max_photo_resolution,
-		hw_camera_back_max_video_resolution,
-		hw_camera_number_camera,
-		hw_camera_back_max_photo_resolution,
-		hw_camera_front_max_video_resolution
+		hw_storage_total
 	} = device
 	const androidField = {
-		'Last Used By': userId,
 		'User Agent': user_agent,
 		'OS Name': os_name,
 		'OS Version': os_version,
@@ -51,12 +43,7 @@ export default ({ device }) => {
 		'Screen Refresh Rate': hw_screen_refresh_rate,
 		'Wifi Mac Address': network_wifi_mac_address,
 		'Storage Total': hw_storage_total,
-		'RAM Total': hw_ram_total,
-		'Number Of Cameras': hw_camera_number_camera,
-		'Camera Front Photo Resolution': hw_camera_front_max_photo_resolution,
-		'Camera Front Video Resolution': hw_camera_front_max_video_resolution,
-		'Camera Back Photo Resolution': hw_camera_back_max_photo_resolution,
-		'Camera Back Video Resolution': hw_camera_back_max_video_resolution
+		'RAM Total': hw_ram_total
 	}
 	return (
 		<Descriptions column={1} bordered>

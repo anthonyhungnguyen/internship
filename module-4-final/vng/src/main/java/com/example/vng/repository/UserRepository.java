@@ -22,4 +22,17 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    LET timestamp = (FOR in_v, in_e IN 1..1 ANY @id user_card_account FILTER in_e._to == e SORT in_e.reqDate RETURN DATE_ISO8601(in_e.reqDate))\n" +
             "    RETURN {cardid: e, firstseen: timestamp[0], lastseen: timestamp[-1]}")
     List<Map<String, Object>> getCardList(@BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v IN map_card\n" +
+            "    FILTER v._from == @id\n" +
+            "    COLLECT cardId = v.cardId, bankName = v.bankName, first6CardNo = v.first6CardNo, last4CardNo = v.last4CardNo\n" +
+            "    RETURN {cardId, bankName, first6CardNo, last4CardNo}")
+    List<Map<String, Object>> getCardOverview(@BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v IN map_account\n" +
+            "    FILTER v._from == @id\n" +
+            "    COLLECT cardId = v.accountId, bankName = v.bankName, firstAccountNo = v.firstAccountNo, lastAccountNo = v.lastAccountNo\n" +
+            "    RETURN {cardId, bankName, firstAccountNo, lastAccountNo}")
+
+    List<Map<String, Object>> getAccountOverview(@BindVars Map<String, Object> bindVars);
 }

@@ -30,11 +30,11 @@ export default React.memo(() => {
 						</Col>
 					</Row>
 					<Row gutter={[ 12, 12 ]}>
-						<Col span={12}>
+						<Col span={8}>
 							<System />
 						</Col>
 
-						<Col span={12}>
+						<Col span={16}>
 							<Row gutter={[ 12, 12 ]}>
 								<Col span={24}>
 									<Identity />

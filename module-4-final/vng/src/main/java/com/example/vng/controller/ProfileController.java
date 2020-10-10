@@ -2,6 +2,7 @@ package com.example.vng.controller;
 
 import com.example.vng.model.CustomQuery;
 import com.example.vng.service.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 public class ProfileController {
     private final ProfileService profileService;
 
+    @Autowired
     public ProfileController(ProfileService profileService) {
         this.profileService = profileService;
     }

@@ -41,17 +41,22 @@ export default React.memo(({ setCurrentChosenId, setCurrentType, id, type, graph
 		let echartsInstance = ref.current.getEchartsInstance()
 		const { data, edges } = echartsInstance.getOption()['series'][0]
 		const unExpandedId = data.filter((x) => !x.expanded).map((x) => `${x.type}/${x.id}`)
-		if (unExpandedId.length !== 0) {
-			axios
-				.post('http://localhost:8085/api/profile/depth', {
-					idList: unExpandedId
-				})
-				.then((response) => {
-					const moreConnection = preprocessMoreConnection(response.data, data, edges)
-					const newGraphData = generateGraphData(moreConnection, type)
-					echartsInstance.setOption(newGraphData)
-				})
-				.catch(console.error)
+		if (!depthData[depth]) {
+			if (unExpandedId.length !== 0) {
+				axios
+					.post('http://localhost:8085/api/profile/depth', {
+						idList: unExpandedId
+					})
+					.then((response) => {
+						const moreConnection = preprocessMoreConnection(response.data, data, edges)
+						const newGraphData = generateGraphData(moreConnection, type)
+						depthData[depth] = newGraphData
+						echartsInstance.setOption(newGraphData)
+					})
+					.catch(console.error)
+			}
+		} else {
+			echartsInstance.setOption(depthData[depth])
 		}
 	}
 

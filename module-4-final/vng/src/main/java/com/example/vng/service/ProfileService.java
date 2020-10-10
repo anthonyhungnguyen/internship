@@ -2,6 +2,7 @@ package com.example.vng.service;
 
 import com.example.vng.model.CustomQuery;
 import com.example.vng.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,6 +16,7 @@ public class ProfileService {
     private final ArangoDBRepository arangoDBRepository;
     private final ArangoDBCustom arangoDBCustom;
 
+    @Autowired
     public ProfileService(DeviceRepository deviceRepository, UserRepository userRepository, MappingRepository mappingRepository, ArangoDBRepository arangoDBRepository, ArangoDBCustom arangoDBCustom) {
         this.deviceRepository = deviceRepository;
         this.userRepository = userRepository;
