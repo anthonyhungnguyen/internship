@@ -11,40 +11,91 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
 
 	return (
 		<Card
-			title="Card"
-			headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
+			style={{
+				height: '50vh'
+			}}
 			hoverable={true}
 			className="h-full"
-			bodyStyle={{ height: '40vh' }}
-			extra={
-				<Tabs defaultActiveKey={activeTab} animated={true} onChange={(e) => setActiveTab(e)} type="line">
-					<TabPane tab="Overview" key="overview" />
-					<TabPane tab="Timestamp" key="timestamp" />
-					<TabPane tab="Bank" key="bank" />
-				</Tabs>
-			}
+			bodyStyle={{ height: '100%' }}
 		>
-			{activeTab === 'overview' && (
-				<Overview
-					id={id}
-					type={type}
-					filters={filters}
-					queryUrl={queryUrl + 'overview'}
-					queryParams={queryParams}
-				/>
-			)}
-			{activeTab === 'timestamp' && (
-				<Timestamp
-					id={id}
-					type={type}
-					filters={filters}
-					queryUrl={queryUrl + 'timeline'}
-					queryParams={queryParams}
-				/>
-			)}
-			{activeTab === 'bank' && (
-				<Bank id={id} type={type} filters={filters} queryUrl={queryUrl + 'bank'} queryParams={queryParams} />
-			)}
+			<Tabs
+				defaultActiveKey="card"
+				type="card"
+				tabBarStyle={{ margin: 0, fontWeight: 'bold' }}
+				className="h-full"
+				tabBarExtraContent={
+					<Tabs
+						defaultActiveKey={activeTab}
+						animated={true}
+						onChange={(e) => setActiveTab(e)}
+						type="line"
+						tabBarStyle={{ margin: 0, fontWeight: 'normal' }}
+					>
+						<TabPane tab="Overview" key="overview" />
+						<TabPane tab="Timestamp" key="timestamp" />
+						<TabPane tab="Bank" key="bank" />
+					</Tabs>
+				}
+			>
+				<TabPane tab="Card" key="card">
+					{activeTab === 'overview' && (
+						<Overview
+							id={id}
+							type={type}
+							filters={filters}
+							queryUrl={queryUrl + 'card/mapping/overview'}
+							queryParams={queryParams}
+						/>
+					)}
+					{activeTab === 'timestamp' && (
+						<Timestamp
+							id={id}
+							type={type}
+							filters={filters}
+							queryUrl={queryUrl + 'card/mapping/timeline'}
+							queryParams={queryParams}
+						/>
+					)}
+					{activeTab === 'bank' && (
+						<Bank
+							id={id}
+							type={type}
+							filters={filters}
+							queryUrl={queryUrl + 'card/mapping/bank'}
+							queryParams={queryParams}
+						/>
+					)}
+				</TabPane>
+				<TabPane tab="Account" key="account">
+					{activeTab === 'overview' && (
+						<Overview
+							id={id}
+							type={type}
+							filters={filters}
+							queryUrl={queryUrl + 'account/mapping/overview'}
+							queryParams={queryParams}
+						/>
+					)}
+					{activeTab === 'timestamp' && (
+						<Timestamp
+							id={id}
+							type={type}
+							filters={filters}
+							queryUrl={queryUrl + 'account/mapping/timeline'}
+							queryParams={queryParams}
+						/>
+					)}
+					{activeTab === 'bank' && (
+						<Bank
+							id={id}
+							type={type}
+							filters={filters}
+							queryUrl={queryUrl + 'account/mapping/bank'}
+							queryParams={queryParams}
+						/>
+					)}
+				</TabPane>
+			</Tabs>
 		</Card>
 	)
 }

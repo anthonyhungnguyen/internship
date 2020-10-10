@@ -48,25 +48,25 @@ public interface DeviceRepository extends ArangoRepository<String, String> {
             "    RETURN {cardId, bankName, firstAccountNo, lastAccountNo}")
     List<Map<String, Object>> getAccountOverview(@BindVars Map<String, Object> bindVars);
 
-    @Query("FOR e IN device_map_card\n" +
+    @Query("FOR e IN @@col\n" +
             "    FILTER e._to == @id" +
             "    AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
             "    COLLECT status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    SORT status_count DESC\n" +
             "    RETURN {status, status_count}")
-    List<Map<String, Object>> getCardMappingOverview(@BindVars Map<String, Object> bindVars);
+    List<Map<String, Object>> getMappingOverview(@BindVars Map<String, Object> bindVars);
 
-    @Query("FOR e IN device_map_card\n" +
+    @Query("FOR e IN @@col\n" +
             "    FILTER e._to == @id\n" +
             "    AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
             "    COLLECT date = DATE_FORMAT(DATE_ISO8601(e.reqDate), \"%yyyy-%mm-%dd\"), status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    SORT DATE_TIMESTAMP(date)\n" +
             "    RETURN {date, status, status_count}")
-    List<Map<String, Object>> getCardMappingTimeline(@BindVars Map<String, Object> bindVars);
+    List<Map<String, Object>> getMappingTimeline(@BindVars Map<String, Object> bindVars);
 
-    @Query("FOR e IN device_map_card\n" +
+    @Query("FOR e IN @@col\n" +
             "    FILTER e._to == @id AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
             "    COLLECT bName = e.bankName, status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    RETURN {bName, status, status_count}")
-    List<Map<String, Object>> getCardMappingBank(@BindVars Map<String, Object> bindVars);
+    List<Map<String, Object>> getMappingBank(@BindVars Map<String, Object> bindVars);
 }

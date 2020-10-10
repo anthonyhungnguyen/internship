@@ -66,8 +66,8 @@ export default React.memo(({ id, type, filters }) => {
 					{
 						type: 'slider',
 						xAxisIndex: [ 0 ],
-						show: true,
-						start: 70
+						show: true
+						// start: 70
 					},
 
 					{
@@ -196,11 +196,10 @@ export default React.memo(({ id, type, filters }) => {
 				lazyUpdate={true}
 				option={option}
 				renderer="canvas"
-				style={{ height: '90%' }}
+				style={{ height: '80%', width: '100%' }}
 				ref={ref}
 				notMerge={true}
 			/>
-
 			{ref.current && (
 				<Modal
 					title="Merchant"

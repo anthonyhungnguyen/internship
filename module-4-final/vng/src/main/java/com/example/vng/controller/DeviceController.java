@@ -44,4 +44,19 @@ public class DeviceController {
     public List<Map<String, Object>> getCardMappingBank(@RequestBody Map<String, Object> body) {
         return deviceService.getCardMappingBank(body);
     }
+
+    @PostMapping("account/mapping/overview")
+    public List<Map<String, Object>> getAccountMappingOverview(@RequestBody Map<String, Object> body) {
+        return deviceService.getAccountMappingOverview(body);
+    }
+
+    @PostMapping("account/mapping/timeline")
+    public List<Map<String, Object>> getAccountMappingTimeline(@RequestBody Map<String, Object> body) {
+        return deviceService.getAccountMappingTimeline(body);
+    }
+
+    @PostMapping("account/mapping/bank")
+    public List<Map<String, Object>> getAccountMappingBank(@RequestBody Map<String, Object> body) {
+        return deviceService.getAccountMappingBank(body);
+    }
 }

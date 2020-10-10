@@ -130,7 +130,8 @@ export default React.memo(({ id, type, filters }) => {
 			title="Frequency"
 			headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 			hoverable={true}
-			bodyStyle={{ height: '48.4vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+			style={{ height: '50vh' }}
+			bodyStyle={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
 		>
 			<Empty />
 		</Card>
@@ -140,13 +141,14 @@ export default React.memo(({ id, type, filters }) => {
 				title="Frequency"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				bodyStyle={{ height: '46.6vh' }}
+				style={{ height: '50vh' }}
+				bodyStyle={{ height: '100%' }}
 			>
 				<ReactEcharts
 					theme={'infographic'}
 					lazyUpdate={true}
 					option={option}
-					style={{ height: '100%' }}
+					style={{ height: '90%', width: '100%' }}
 					renderer="canvas"
 					notMerge={true}
 				/>

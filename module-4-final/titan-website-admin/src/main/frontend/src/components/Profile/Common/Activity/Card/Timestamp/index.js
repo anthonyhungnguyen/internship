@@ -15,6 +15,7 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 					.post(queryUrl, queryParams)
 					.then((response) => {
 						const data = response.data
+						console.log(data)
 						if (data && data.length > 0) {
 							setNoData(false)
 							setOption(getOption(data))
@@ -78,8 +79,8 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 					{
 						type: 'slider',
 						xAxisIndex: [ 0 ],
-						show: true,
-						start: 80
+						show: true
+						// start: 80
 					},
 					{
 						type: 'inside',
@@ -172,7 +173,7 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 		<React.Fragment>
 			<ReactEcharts
 				theme={'infographic'}
-				style={{ height: '35vh' }}
+				style={{ height: '100%', width: '100%' }}
 				option={option}
 				notMerge={true}
 				lazyUpdate={true}

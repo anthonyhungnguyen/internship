@@ -40,7 +40,7 @@ export default React.memo(() => {
 							<Card
 								id={id}
 								filters={filters}
-								queryUrl="http://localhost:8085/api/profile/device/card/mapping/"
+								queryUrl="http://localhost:8085/api/profile/device/"
 								queryParams={{
 									id: `deviceid/${id}`,
 									fromDate: filters.range[0],

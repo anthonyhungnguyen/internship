@@ -173,8 +173,11 @@ export default React.memo(({ id, type, filters }) => {
 		<Card
 			title="Monetary"
 			headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
+			style={{
+				height: '50vh'
+			}}
 			hoverable={true}
-			bodyStyle={{ height: '45vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+			bodyStyle={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
 		>
 			<Empty />
 		</Card>
@@ -184,13 +187,16 @@ export default React.memo(({ id, type, filters }) => {
 				title="Monetary"
 				headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }}
 				hoverable={true}
-				bodyStyle={{ height: '45vh' }}
+				style={{
+					height: '50vh'
+				}}
+				bodyStyle={{ height: '100%' }}
 				renderer="canvas"
 			>
 				<ReactEcharts
 					theme={'infographic'}
 					lazyUpdate={true}
-					style={{ height: '100%' }}
+					style={{ height: '90%', width: '100%' }}
 					option={option}
 					notMerge={true}
 					renderer="canvas"

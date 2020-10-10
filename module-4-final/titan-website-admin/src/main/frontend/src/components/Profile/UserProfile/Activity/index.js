@@ -29,7 +29,7 @@ export default () => {
 								id={id}
 								type={type}
 								filters={filters}
-								queryUrl="http://localhost:8085/api/profile/user/card/mapping/"
+								queryUrl="http://localhost:8085/api/profile/user/"
 								queryParams={{
 									id: `userid/${id}`,
 									fromDate: filters.range[0],

@@ -30,14 +30,32 @@ public class UserService {
     }
 
     public List<Map<String, Object>> getCardMappingOverview(Map<String, Object> body) {
-        return userRepository.getCardMappingOverview(body);
+        body.put("@col", "map_card");
+        return userRepository.getMappingOverview(body);
     }
 
     public List<Map<String, Object>> getCardMappingTimeline(Map<String, Object> body) {
-        return userRepository.getCardMappingTimeline(body);
+        body.put("@col", "map_card");
+        return userRepository.getMappingTimeline(body);
     }
 
     public List<Map<String, Object>> getCardMappingBank(Map<String, Object> body) {
-        return userRepository.getCardMappingBank(body);
+        body.put("@col", "map_card");
+        return userRepository.getMappingBank(body);
+    }
+
+    public List<Map<String, Object>> getAccountMappingOverview(Map<String, Object> body) {
+        body.put("@col", "map_account");
+        return userRepository.getMappingOverview(body);
+    }
+
+    public List<Map<String, Object>> getAccountMappingTimeline(Map<String, Object> body) {
+        body.put("@col", "map_account");
+        return userRepository.getMappingTimeline(body);
+    }
+
+    public List<Map<String, Object>> getAccountMappingBank(Map<String, Object> body) {
+        body.put("@col", "map_account");
+        return userRepository.getMappingBank(body);
     }
 }

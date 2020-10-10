@@ -38,6 +38,11 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 					trigger: 'item',
 					formatter: '{b} : {c} ({d}%)'
 				},
+				legend: {
+					orient: 'vertical',
+					left: 10,
+					data: data.map((s) => s.status)
+				},
 				toolbox: {
 					show: true,
 					feature: {
@@ -63,6 +68,11 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 					{
 						type: 'pie',
 						selectedMode: 'multiple',
+						avoidLabelOverlap: true,
+						label: {
+							show: false,
+							position: 'center'
+						},
 						// data: Object.keys(preprocessedStatus).map((mf) => ({
 						// 	name: `${mf} - ${preprocessedStatus[mf]}`,
 						// 	value: preprocessedStatus[mf]
@@ -71,12 +81,12 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 							name: s.status,
 							value: s.status_count
 						})),
-						animation: true,
-						label: {
-							position: 'outside',
-							alignTo: 'none',
-							bleedMargin: 5
-						}
+						animation: true
+						// label: {
+						// 	position: 'outside',
+						// 	alignTo: 'labelLine',
+						// 	formatter: '{d}'
+						// }
 					}
 				],
 				emphasis: {
@@ -102,7 +112,7 @@ export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 		<React.Fragment>
 			<ReactEcharts
 				theme={'infographic'}
-				style={{ height: '35vh' }}
+				style={{ height: '100%', width: '100%' }}
 				option={option}
 				notMerge={true}
 				lazyUpdate={true}
