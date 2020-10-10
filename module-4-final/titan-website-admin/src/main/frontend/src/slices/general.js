@@ -4,8 +4,8 @@ export const initialState = {
 	loading: true,
 	errorInfo: {},
 	hasErrors: false,
-	id: '0CA30A94-6251-4727-8340-9B6BE942AACB',
-	type: 'devices',
+	id: '160516000000002',
+	type: 'users',
 	exist: true
 }
 

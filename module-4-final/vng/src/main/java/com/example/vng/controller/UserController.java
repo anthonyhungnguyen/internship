@@ -30,4 +30,19 @@ public class UserController {
     public List<Map<String, Object>> getAccountOverview(@RequestBody Map<String, Object> body) {
         return userService.getAccountOverview(body);
     }
+
+    @PostMapping("card/mapping/overview")
+    public List<Map<String, Object>> getCardMappingOverview(@RequestBody Map<String, Object> body) {
+        return userService.getCardMappingOverview(body);
+    }
+
+    @PostMapping("card/mapping/timeline")
+    public List<Map<String, Object>> getCardMappingTimeline(@RequestBody Map<String, Object> body) {
+        return userService.getCardMappingTimeline(body);
+    }
+
+    @PostMapping("card/mapping/bank")
+    public List<Map<String, Object>> getCardMappingBank(@RequestBody Map<String, Object> body) {
+        return userService.getCardMappingBank(body);
+    }
 }

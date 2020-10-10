@@ -11,7 +11,7 @@ import { generalSelector } from '../../../../slices/general'
 import Frequency from '../../Common/Activity/Frequency'
 import FilterBar from '../../Common/Activity/FilterBar'
 import Merchant from '../../Common/Activity/Merchant'
-
+import Card from '../../Common/Activity/Card'
 export default React.memo(() => {
 	const { loading, hasErrors, filters } = useSelector(deviceSelector)
 	const { id, type } = useSelector(generalSelector)
@@ -36,6 +36,20 @@ export default React.memo(() => {
 						<Col span={12}>
 							<Monetary id={id} type={type} filters={filters} />
 						</Col>
+						<Col span={12}>
+							<Card
+								id={id}
+								filters={filters}
+								queryUrl="http://localhost:8085/api/profile/device/card/mapping/"
+								queryParams={{
+									id: `deviceid/${id}`,
+									fromDate: filters.range[0],
+									toDate: filters.range[1]
+								}}
+							/>
+						</Col>
+					</Row>
+					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
 							<Geolocation id={id} type={type} filters={filters} />
 						</Col>

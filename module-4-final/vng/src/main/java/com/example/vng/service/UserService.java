@@ -28,4 +28,16 @@ public class UserService {
         bindVars.put("id", "userid/" + body.get("id"));
         return userRepository.getAccountOverview(bindVars);
     }
+
+    public List<Map<String, Object>> getCardMappingOverview(Map<String, Object> body) {
+        return userRepository.getCardMappingOverview(body);
+    }
+
+    public List<Map<String, Object>> getCardMappingTimeline(Map<String, Object> body) {
+        return userRepository.getCardMappingTimeline(body);
+    }
+
+    public List<Map<String, Object>> getCardMappingBank(Map<String, Object> body) {
+        return userRepository.getCardMappingBank(body);
+    }
 }

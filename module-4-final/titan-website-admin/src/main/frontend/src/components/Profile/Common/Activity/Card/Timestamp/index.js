@@ -3,7 +3,7 @@ import { Modal, Skeleton, Empty } from 'antd'
 import axios from 'axios'
 import ReactEcharts from 'echarts-for-react'
 
-export default React.memo(({ id, type, filters }) => {
+export default React.memo(({ id, filters, queryUrl, queryParams }) => {
 	const [ visible, setVisible ] = useState(false)
 	const [ option, setOption ] = useState(null)
 	const [ noData, setNoData ] = useState(false)
@@ -12,12 +12,7 @@ export default React.memo(({ id, type, filters }) => {
 		() => {
 			const fetchCardTimestampActivity = async () => {
 				await axios
-					.post(`http://localhost:8085/api/profile/mapping/timestamp`, {
-						type: type,
-						id: id,
-						fromDate: filters.range[0],
-						toDate: filters.range[1]
-					})
+					.post(queryUrl, queryParams)
 					.then((response) => {
 						const data = response.data
 						if (data && data.length > 0) {

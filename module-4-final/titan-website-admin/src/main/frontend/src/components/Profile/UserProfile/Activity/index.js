@@ -25,7 +25,17 @@ export default () => {
 				<React.Fragment>
 					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
-							<Card id={id} type={type} filters={filters} />
+							<Card
+								id={id}
+								type={type}
+								filters={filters}
+								queryUrl="http://localhost:8085/api/profile/user/card/mapping/"
+								queryParams={{
+									id: `userid/${id}`,
+									fromDate: filters.range[0],
+									toDate: filters.range[1]
+								}}
+							/>
 						</Col>
 						<Col span={12}>
 							<Merchant id={id} type={type} filters={filters} />

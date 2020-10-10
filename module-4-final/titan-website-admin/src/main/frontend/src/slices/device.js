@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { generateGraphData, configureSymbolSizeBasedOnDegree, generateCategoryFromType } from './util'
 import axios from 'axios'
+import moment from 'moment'
 
 export const initialState = {
 	loading: true,
@@ -14,7 +15,7 @@ export const initialState = {
 		lastTransaction: null
 	},
 	filters: {
-		range: [ '2020-08-01', '2020-08-31' ]
+		range: [ moment().subtract(1, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD') ]
 	},
 	ref: {
 		appid: null

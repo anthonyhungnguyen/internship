@@ -4,14 +4,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import { generalSelector } from '../../../../../slices/general'
 import axios from 'axios'
-import { storeLastDate, userSelector } from '../../../../../slices/user'
+import { storeLastDate } from '../../../../../slices/user'
 import DeviceTable from '../../../Common/Overview/Identity/DeviceTable'
 import CardTable from '../../../Common/Overview/Identity/CardTable'
 import AccountTable from '../../../Common/Overview/Identity/AccountTable'
 
 export default () => {
 	const { id, exist } = useSelector(generalSelector)
-	// const { date } = useSelector(userSelector)
 	const [ devices, setDevices ] = useState(null)
 	const [ cardOverview, setCardOverview ] = useState(null)
 	const [ accountOverview, setAccountOverview ] = useState(null)
