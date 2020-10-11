@@ -1,17 +1,52 @@
-import { Statistic, Card, Divider, Row, Col } from 'antd'
-import React from 'react'
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons'
+import { Statistic, Card, Divider, Row, Col, Skeleton } from 'antd'
+import React, { useEffect, useState } from 'react'
 import ReactEcharts from 'echarts-for-react'
-import 'echarts'
+import axios from 'axios'
 
-export default () => {
-	return (
+export default ({ id, filters, queryUrl, queryParams }) => {
+	const [ monetaryStatistics, setMonetaryStatistics ] = useState(null)
+	useEffect(
+		() => {
+			axios
+				.post(queryUrl, {...queryParams, id: `users/${id}`})
+				.then((response) => setMonetaryStatistics(response.data))
+				.catch(console.error)
+		},
+		[ id, filters ]
+	)
+	console.log(monetaryStatistics)
+	return monetaryStatistics ? (
 		<Card>
 			<Row>
 				<Col span={12}>
-					<Statistic title="Monetary" value={'41,400'} suffix="VND" />
+					<Statistic title="Monetary" value={monetaryStatistics['totalAmount'] ?? 0} suffix="VND" />
 				</Col>
-				<Col span={12} />
+				<Col span={12}>
+					<ReactEcharts
+						theme="walden"
+						style={{ height: '100%', width: '100%' }}
+						option={{
+							tooltip: {},
+							xAxis: {
+								type: 'category',
+								data: monetaryStatistics['graphData'].map((x) => x['date']),
+								show: false
+							},
+							yAxis: {
+								type: 'value',
+								show: false
+							},
+							series: [
+								{
+									data: monetaryStatistics['graphData'].map((x) => x['amount']),
+									type: 'line',
+									smooth: true,
+									areaStyle: {}
+								}
+							]
+						}}
+					/>
+				</Col>
 			</Row>
 			<Divider />
 			<Row>
@@ -25,9 +60,11 @@ export default () => {
 					/>
 				</Col>
 				<Col>
-					<Statistic title="Popular type" value={'Supermarket'} valueStyle={{ color: '#cf1322' }} />
+					<Statistic title="Popular type" value={monetaryStatistics['popularMerchant'] ?? 'Unknown'} valueStyle={{ color: '#cf1322' }} />
 				</Col>
 			</Row>
 		</Card>
+	) : (
+		<Skeleton active />
 	)
 }

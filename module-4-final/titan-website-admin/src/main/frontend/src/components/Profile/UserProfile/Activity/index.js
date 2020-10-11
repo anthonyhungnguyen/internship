@@ -21,14 +21,22 @@ export default () => {
 				<React.Fragment>
 					<Row gutter={[ 12, 12 ]}>
 						<Col span={24}>
-							<Statistics />
+							<Statistics
+								id={id}
+								filters={filters}
+								queryUrl="http://localhost:8085/api/profile/user/"
+								queryParams={{
+									id: `userid/${id}`,
+									fromDate: filters.range[0],
+									toDate: filters.range[1]
+								}}
+							/>
 						</Col>
 						<Col span={12}>
 							<Row gutter={[ 12, 12 ]}>
 								<Col span={24}>
 									<Card
 										id={id}
-										type={type}
 										filters={filters}
 										queryUrl="http://localhost:8085/api/profile/user/"
 										queryParams={{

@@ -58,4 +58,16 @@ public class UserService {
         body.put("@col", "map_account");
         return userRepository.getMappingBank(body);
     }
+
+    public Map<String, Object> getMappingStatisticsOverview(Map<String, Object> body) {
+        return userRepository.getMappingStatisticsOverview(body);
+    }
+
+    public Map<String, Object> getSpendingStatisticsOverview(Map<String, Object> body) {
+        return userRepository.getSpendingStatisticsOverview(body);
+    }
+
+    public Map<String, Object> getSpendingFrequencyOverview(Map<String, Object> body) {
+        return userRepository.getSpendingFrequencyOverview(body);
+    }
 }
