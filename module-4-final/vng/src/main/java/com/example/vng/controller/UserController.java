@@ -21,6 +21,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping("info")
+    public Map<String, Object> getUserInfo(@RequestBody Map<String, Object> body) {
+        return userService.getUserInfo(body);
+    }
+
     @PostMapping("card/overview")
     public List<Map<String, Object>> getCardOverview(@RequestBody Map<String, Object> body) {
         return userService.getCardOverview(body);

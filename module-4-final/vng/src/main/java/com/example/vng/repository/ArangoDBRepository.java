@@ -61,19 +61,6 @@ public interface ArangoDBRepository extends ArangoRepository<String, String> {
             "RETURN {lat, lng, location_count}")
     List<Map<String, Object>> getGeolocation(@BindVars Map<String, Object> bindVars);
 
-    @Query("LET last_device_onboard = FIRST((FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
-            "SORT e.timestamp DESC\n" +
-            "LET date = DATE_ISO8601(TO_NUMBER(e.timestamp * 1000))\n" +
-            "RETURN date))\n" +
-            "\n" +
-            "LET last_device_transaction = FIRST((FOR v, e IN 1..1 ANY @id user_device_transaction\n" +
-            "SORT DATE_ISO8601(e.reqDate) DESC\n" +
-            "LET date = DATE_ISO8601(e.reqDate)\n" +
-            "RETURN date))\n" +
-            "\n" +
-            "RETURN {last_device_onboard, last_device_transaction}")
-    List<Map<String, Object>> getLastDeviceOnboardAndLastTransaction(@BindVars Map<String, Object> bindVars);
-
     @Query("LET idList = @idList\n" +
             "FOR id in idList\n" +
             "FOR v, e IN 1..1 ANY id GRAPH \"test\"\n" +

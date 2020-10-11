@@ -10,17 +10,8 @@ import { generalSelector } from '../../../../slices/general'
 import { fetchUser, userSelector } from '../../../../slices/user'
 
 export default React.memo(() => {
-	const dispatch = useDispatch()
-	const { id, exist } = useSelector(generalSelector)
-	const { loading, hasErrors, errorInfo } = useSelector(userSelector)
-	useEffect(
-		() => {
-			if (exist) {
-				dispatch(fetchUser(id))
-			}
-		},
-		[ dispatch, id ]
-	)
+	const { exist } = useSelector(generalSelector)
+	const { loading, hasErrors } = useSelector(userSelector)
 
 	return exist ? !loading && !hasErrors ? (
 		<div className="animated fadeIn text-gray-700">
@@ -32,11 +23,11 @@ export default React.memo(() => {
 						</Col>
 					</Row>
 					<Row gutter={[ 12, 12 ]}>
-						<Col span={8}>
+						<Col span={10}>
 							<Basic />
 						</Col>
 
-						<Col span={16}>
+						<Col span={14}>
 							<Row gutter={[ 12, 12 ]}>
 								<Col span={24}>
 									<Identity />

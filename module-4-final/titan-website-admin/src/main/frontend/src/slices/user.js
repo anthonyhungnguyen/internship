@@ -7,14 +7,9 @@ export const initialState = {
 	loading: false,
 	errorInfo: {},
 	hasErrors: false,
-	user: null,
 	graphData: {},
 	devices: [],
 	cards: [],
-	date: {
-		lastOnboard: null,
-		lastTransaction: null
-	},
 	filters: {
 		range: [ moment().subtract(1, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD') ]
 	}
@@ -24,21 +19,6 @@ const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		getUser: (state) => {
-			state.loading = true
-		},
-		getUserSuccess: (state, { payload }) => {
-			state.user = null
-			state.loading = false
-			state.hasErrors = false
-			state.devices = payload.devices
-			state.cards = payload.cards
-		},
-		getUserFailure: (state, { payload }) => {
-			state.errorInfo = payload
-			state.loading = false
-			state.hasErrors = true
-		},
 		getConnection: (state) => {
 			state.loading = true
 		},
@@ -80,24 +60,6 @@ export const userSelector = (state) => state.user
 
 // Export default reducer
 export default userSlice.reducer
-
-// Asynchronous thunk action
-export function fetchUser(id) {
-	return async (dispatch) => {
-		dispatch(getUser())
-		await axios
-			.post('http://localhost:8085/api/profile/info', {
-				id: id,
-				type: 'users'
-			})
-			.then((response) => {
-				dispatch(getUserSuccess(response.data[0]))
-			})
-			.catch((err) => {
-				dispatch(getUserFailure(err))
-			})
-	}
-}
 
 export function fetchConnection(id) {
 	return async (dispatch) => {

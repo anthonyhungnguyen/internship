@@ -188,11 +188,6 @@ public class ProfileService {
         return arangoDBRepository.getGeolocation(bindVars);
     }
 
-    public List<Map<String, Object>> getLastDeviceOnboardAndLastTransaction(Map<String, Object> body) {
-        Map<String, Object> bindVars = new HashMap<>();
-        bindVars.put("id", body.get("type") + "/" + body.get("id"));
-        return arangoDBRepository.getLastDeviceOnboardAndLastTransaction(bindVars);
-    }
 
     public List<Map<String, Object>> getOneMoreDepth(Map<String, Object> body) {
         Map<String, Object> bindVars = new HashMap<>();

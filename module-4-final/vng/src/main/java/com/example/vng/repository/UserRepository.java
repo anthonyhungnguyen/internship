@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserRepository extends ArangoRepository<String, String> {
+    @Query("RETURN KEEP(DOCUMENT(@id), @keepList)")
+    Map<String, Object> getUserInfo(@BindVars Map<String, Object> bindVars);
+
     @Query("LET device_list = (FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
             "    COLLECT deviceid = e._to\n" +
             "    return deviceid)\n" +

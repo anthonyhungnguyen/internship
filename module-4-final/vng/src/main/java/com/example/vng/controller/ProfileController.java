@@ -94,11 +94,6 @@ public class ProfileController {
         return profileService.getGeolocation(body);
     }
 
-    @PostMapping("/profile/lastOnboardAndLastTransaction")
-    public List<Map<String, Object>> getLastDeviceOnboardAndLastTransaction(@RequestBody Map<String, Object> body) {
-        return profileService.getLastDeviceOnboardAndLastTransaction(body);
-    }
-
     @PostMapping("profile/depth")
     public List<Map<String, Object>> getOneMoreDepth(@RequestBody Map<String, Object> body) {
         return profileService.getOneMoreDepth(body);

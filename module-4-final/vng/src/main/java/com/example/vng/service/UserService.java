@@ -4,9 +4,12 @@ import com.example.vng.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -15,6 +18,25 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public Map<String, Object> getUserInfo(Map<String, Object> body) {
+        List<String> list = Stream.of( "profilelevel",
+                "acquital_result",
+                "postmortem_add_date",
+                "postmortem_result",
+                "avatar",
+                "birthdate",
+                "displayname",
+                "isLocked",
+                "kycdob",
+                "kycfullname",
+                "kycgender",
+                "phonenumber",
+                "usergender",
+                "zaloid").collect(Collectors.toList());
+        body.put("keepList", list);
+        return userRepository.getUserInfo(body);
     }
 
     public List<Map<String, Object>> getCardOverview(Map<String, Object> body) {

@@ -13,7 +13,7 @@ message.config({
 })
 
 export default React.memo(() => {
-	const { id, type, exist } = useSelector(generalSelector)
+	const { id, type } = useSelector(generalSelector)
 
 	const dispatch = useDispatch()
 
@@ -50,10 +50,6 @@ export default React.memo(() => {
 		},
 		[ id, type ]
 	)
-
-	if (!exist) {
-		message.error(`${type} with ID: ${id} not found`)
-	}
 
 	return (
 		<React.Fragment>
