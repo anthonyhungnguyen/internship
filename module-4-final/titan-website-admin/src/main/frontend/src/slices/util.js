@@ -178,7 +178,7 @@ export const configureSymbolSizeBasedOnDegree = (nodes, links) => {
 		})
 		const totalDegree = inDegreeCount + outDegreeCount
 		const symbolSize = totalDegree
-		newNodes.push({ ...n, symbolSize: (symbolSize + 10) / 2, value: symbolSize })
+		newNodes.push({ ...n, symbolSize: Math.log2(symbolSize + 2) * 5, value: symbolSize })
 	})
 	return newNodes
 }

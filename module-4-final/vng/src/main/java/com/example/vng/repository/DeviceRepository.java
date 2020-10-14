@@ -69,4 +69,57 @@ public interface DeviceRepository extends ArangoRepository<String, String> {
             "    COLLECT bName = e.bankName, status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    RETURN {bName, status, status_count}")
     List<Map<String, Object>> getMappingBank(@BindVars Map<String, Object> bindVars);
+
+    @Query("    LET a = (FOR e IN device_map_card FILTER e._to == @id AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+            "    LET b = (FOR e IN device_map_account FILTER e._to == @id AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+            "    LET totalMapping = UNION(a, b)\n" +
+            "    \n" +
+            "    LET popularBank = FIRST((FOR e IN totalMapping\n" +
+            "        COLLECT bankName = e.bankName WITH COUNT INTO bankNameCount\n" +
+            "        SORT bankNameCount DESC\n" +
+            "        LIMIT 1\n" +
+            "        RETURN bankName))\n" +
+            "    LET successPercent = FIRST((FOR e IN totalMapping\n" +
+            "        COLLECT status = e.isSuccessful WITH COUNT INTO statusCount\n" +
+            "        FILTER status == true\n" +
+            "        RETURN statusCount / COUNT(totalMapping) * 100\n" +
+            "    ))\n" +
+            "    \n" +
+            "    RETURN {card: count(a), account: count(b), popularBank, totalMappingTimes: COUNT(totalMapping), successPercent}")
+    Map<String, Object> getMappingStatisticsOverview(@BindVars Map<String, Object> bindVars);
+
+    @Query("LET totalPayment = (FOR e IN user_device_transaction FILTER e._to == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+            "LET popularMerchant = FIRST((FOR e IN totalPayment\n" +
+            "        COLLECT merchant = e.merchant WITH COUNT INTO merchantCount\n" +
+            "        SORT merchantCount DESC\n" +
+            "        LIMIT 1\n" +
+            "        RETURN merchant))\n" +
+            "\n" +
+            "LET graphData = (FOR e IN totalPayment\n" +
+            "                    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +
+            "                    AGGREGATE amount = SUM(TO_NUMBER(e.amount))\n" +
+            "                    RETURN {date, amount})\n" +
+            "    \n" +
+            "LET totalAmount = SUM((FOR e IN totalPayment RETURN TO_NUMBER(e.amount)))\n" +
+            "    \n" +
+            "RETURN {popularMerchant, totalAmount, graphData}")
+    Map<String, Object> getSpendingStatisticsOverview(@BindVars Map<String, Object> bindVars);
+
+    @Query("LET totalPayment = (FOR e IN user_device_transaction FILTER e._to == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+            "\n" +
+            "LET graphData = (FOR e in totalPayment\n" +
+            "    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +
+            "    AGGREGATE frequency = count(e.reqDate)\n" +
+            "    RETURN {date, frequency})\n" +
+            "    \n" +
+            "LET peakDate = FIRST((FOR e IN graphData\n" +
+            "                        SORT e.frequency DESC\n" +
+            "                        RETURN e.date))\n" +
+            "                        \n" +
+            "LET sumFrequency = SUM((FOR e IN graphData\n" +
+            "                        RETURN e.frequency))\n" +
+            "                        \n" +
+            "                        \n" +
+            "return {graphData, peakDate, sumFrequency, lastDate: LAST(graphData).date}")
+    Map<String, Object> getSpendingFrequencyOverview(@BindVars Map<String, Object> bindVars);
 }

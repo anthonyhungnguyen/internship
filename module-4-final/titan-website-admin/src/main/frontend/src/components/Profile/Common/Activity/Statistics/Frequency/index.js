@@ -2,14 +2,17 @@ import { Statistic, Card, Divider, Row, Col, Skeleton } from 'antd'
 import React, { useEffect, useState } from 'react'
 import ReactEcharts from 'echarts-for-react'
 import axios from 'axios'
+import { generalSelector } from '../../../../../../slices/general'
+import {useSelector} from 'react-redux'
 
 export default ({ id, filters, queryUrl, queryParams }) => {
+	const {type} = useSelector(generalSelector)
 	const [ monetaryFrequencyOverview, setMonetaryFrequencyOverview ] = useState(null)
 
 	useEffect(
 		() => {
 			axios
-				.post(queryUrl, {...queryParams, id: `users/${id}`})
+				.post(queryUrl, {...queryParams, id: `${type}/${id}`})
 				.then((response) => setMonetaryFrequencyOverview(response.data))
 				.catch(console.error)
 		},
