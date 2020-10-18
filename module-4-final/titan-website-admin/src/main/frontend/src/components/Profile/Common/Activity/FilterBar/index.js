@@ -2,10 +2,9 @@ import React from 'react'
 import { DatePicker } from 'antd'
 import { useDispatch } from 'react-redux'
 import moment from 'moment'
-import { storeDateRange } from '../../../../../slices/user'
 const { RangePicker } = DatePicker
 
-export default React.memo(({ filters }) => {
+export default React.memo(({ filters, storeDateRange }) => {
 	const dispatch = useDispatch()
 
 	const handleRangeChange = (_, dateStrings) => {
@@ -16,12 +15,15 @@ export default React.memo(({ filters }) => {
 
 	return (
 		<React.Fragment>
-			<p className="font-bold ">Timeline</p>
+			<p className='font-bold '>Timeline</p>
 			<RangePicker
-				format="YYYY-MM-DD"
-				className="w-full"
+				format='YYYY-MM-DD'
+				className='w-full'
 				onCalendarChange={handleRangeChange}
-				defaultValue={[ moment(filters.range[0], 'YYYY-MM-DD'), moment(filters.range[1], 'YYYY-MM-DD') ]}
+				defaultValue={[
+					moment(filters.range[0], 'YYYY-MM-DD'),
+					moment(filters.range[1], 'YYYY-MM-DD')
+				]}
 			/>
 		</React.Fragment>
 	)

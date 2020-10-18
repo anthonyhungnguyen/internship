@@ -2,19 +2,21 @@ import { Statistic, Card, Divider, Row, Col, Skeleton } from 'antd'
 import React, { useEffect, useState } from 'react'
 import ReactEcharts from 'echarts-for-react'
 import axios from 'axios'
+import {useSelector} from 'react-redux'
+import { generalSelector } from '../../../../../../slices/general'
 
 export default ({ id, filters, queryUrl, queryParams }) => {
+	const {type} = useSelector(generalSelector)
 	const [ monetaryStatistics, setMonetaryStatistics ] = useState(null)
 	useEffect(
 		() => {
 			axios
-				.post(queryUrl, {...queryParams, id: `users/${id}`})
+				.post(queryUrl, {...queryParams, id: `${type}/${id}`})
 				.then((response) => setMonetaryStatistics(response.data))
 				.catch(console.error)
 		},
 		[ id, filters ]
 	)
-	console.log(monetaryStatistics)
 	return monetaryStatistics ? (
 		<Card>
 			<Row>
@@ -53,7 +55,7 @@ export default ({ id, filters, queryUrl, queryParams }) => {
 				<Col span={12}>
 					<Statistic
 						title="Success"
-						value={67.28}
+						value={100}
 						precision={2}
 						valueStyle={{ color: '#3f8600' }}
 						suffix="%"

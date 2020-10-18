@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import { generalSelector } from '../../../../../slices/general'
 import axios from 'axios'
-import { storeLastDate } from '../../../../../slices/user'
 import DeviceTable from '../../../Common/Overview/Identity/DeviceTable'
 import CardTable from '../../../Common/Overview/Identity/CardTable'
 import AccountTable from '../../../Common/Overview/Identity/AccountTable'
@@ -18,22 +17,6 @@ export default () => {
 
 	useEffect(
 		() => {
-			const fetchLastOnboardAndTransactionDate = async () => {
-				await axios
-					.post(`http://localhost:8085/api/profile/lastOnboardAndLastTransaction`, {
-						type: 'users',
-						id: id
-					})
-					.then((response) => {
-						const data = response.data
-						const { last_device_onboard, last_device_transaction } = data[0]
-						dispatch(storeLastDate({ last_device_onboard, last_device_transaction }))
-					})
-					.catch((err) => {
-						console.log(err)
-					})
-			}
-
 			const fetchDeviceList = async () => {
 				axios
 					.post(`http://localhost:8085/api/profile/user/deviceList`, {
@@ -74,7 +57,6 @@ export default () => {
 					.catch(console.error)
 			}
 
-			// fetchLastOnboardAndTransactionDate()
 			fetchDeviceList()
 			fetchCardOverview()
 			fetchAccountOverview()
@@ -83,14 +65,8 @@ export default () => {
 	)
 
 	return (
-		<Card title="Identity" headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
+		<Card title='Identity' headStyle={{ fontWeight: 'bold', fontSize: '1.3em' }} hoverable={true}>
 			<Descriptions column={1} bordered>
-				{/* <Descriptions.Item label="Last Device Onboard">
-					{date.lastOnboard ? moment(date.lastOnboard).format('L LTS') : 'Unknown'}
-				</Descriptions.Item>
-				<Descriptions.Item label="Last Device Transaction">
-					{date.lastTransaction ? moment(date.lastTransaction).format('L LTS') : 'Unknown'}
-				</Descriptions.Item> */}
 				{devices && devices.length > 0 ? (
 					<Descriptions.Item label={`Total Devices (${devices.length})`}>
 						<DeviceTable data={devices} />

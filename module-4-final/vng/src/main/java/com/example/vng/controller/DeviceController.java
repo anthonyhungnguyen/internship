@@ -67,4 +67,19 @@ public class DeviceController {
         body.put("@col", "device_map_account");
         return deviceRepository.getMappingBank(body);
     }
+
+    @PostMapping("mapping/overview")
+    public Map<String, Object> getMappingStatisticsOverview(@RequestBody Map<String, Object> body) {
+        return deviceService.getMappingStatisticsOverview(body);
+    }
+
+    @PostMapping("monetary/overview")
+    public Map<String, Object> getSpendingStatisticsOverview(@RequestBody Map<String, Object> body) {
+        return deviceService.getSpendingStatisticsOverview(body);
+    }
+
+    @PostMapping("monetary/overview/frequency")
+    public Map<String, Object> getSpendingFrequencyOverview(@RequestBody Map<String, Object> body) {
+        return deviceService.getSpendingFrequencyOverview(body);
+    }
 }

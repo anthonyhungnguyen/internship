@@ -9,38 +9,22 @@ import Monetary from '../../Common/Activity/Monetary'
 import Geolocation from '../../Common/Activity/Geolocation'
 import { generalSelector } from '../../../../slices/general'
 import Frequency from '../../Common/Activity/Frequency'
-import FilterBar from '../../Common/Activity/FilterBar'
 import Merchant from '../../Common/Activity/Merchant'
 import Card from '../../Common/Activity/Card'
+import Statistics from '../../Common/Activity/Statistics'
 export default React.memo(() => {
 	const { loading, hasErrors, filters } = useSelector(deviceSelector)
 	const { id, type } = useSelector(generalSelector)
 	return (
-		<div className="animated fadeIn">
+		<div className='animated fadeIn'>
 			{!loading && !hasErrors ? (
 				<React.Fragment>
 					<Row gutter={[ 12, 12 ]}>
 						<Col span={24}>
-							<FilterBar filters={filters} storeDateRange={storeDateRange} />
-						</Col>
-					</Row>
-					<Row gutter={[ 12, 12 ]}>
-						<Col span={12}>
-							<Frequency id={id} type={type} filters={filters} />
-						</Col>
-						<Col span={12}>
-							<Merchant id={id} type={type} filters={filters} />
-						</Col>
-					</Row>
-					<Row gutter={[ 12, 12 ]}>
-						<Col span={12}>
-							<Monetary id={id} type={type} filters={filters} />
-						</Col>
-						<Col span={12}>
-							<Card
+							<Statistics
 								id={id}
 								filters={filters}
-								queryUrl="http://localhost:8085/api/profile/device/"
+								queryUrl='http://localhost:8085/api/profile/device/'
 								queryParams={{
 									id: `deviceid/${id}`,
 									fromDate: filters.range[0],
@@ -48,10 +32,46 @@ export default React.memo(() => {
 								}}
 							/>
 						</Col>
-					</Row>
-					<Row gutter={[ 12, 12 ]}>
 						<Col span={12}>
-							<Geolocation id={id} type={type} filters={filters} />
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Frequency id={id} type={type} filters={filters} />
+								</Col>
+							</Row>
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Card
+										id={id}
+										filters={filters}
+										queryUrl='http://localhost:8085/api/profile/device/'
+										queryParams={{
+											id: `deviceid/${id}`,
+											fromDate: filters.range[0],
+											toDate: filters.range[1]
+										}}
+									/>
+								</Col>
+							</Row>
+
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Monetary id={id} type={type} filters={filters} />
+								</Col>
+							</Row>
+							<Row />
+						</Col>
+						<Col span={12}>
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Merchant id={id} type={type} filters={filters} />
+								</Col>
+							</Row>
+
+							<Row gutter={[ 12, 12 ]}>
+								<Col span={24}>
+									<Geolocation id={id} type={type} filters={filters} />
+								</Col>
+							</Row>
 						</Col>
 					</Row>
 				</React.Fragment>
