@@ -70,8 +70,7 @@ public interface DeviceRepository extends ArangoRepository<String, String> {
             "    RETURN {bName, status, status_count}")
     List<Map<String, Object>> getMappingBank(@BindVars Map<String, Object> bindVars);
 
-<<<<<<< HEAD
-=======
+
     @Query("    LET a = (FOR e IN device_map_card FILTER e._to == @id AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "    LET b = (FOR e IN device_map_account FILTER e._to == @id AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "    LET totalMapping = UNION(a, b)\n" +
@@ -124,5 +123,5 @@ public interface DeviceRepository extends ArangoRepository<String, String> {
             "                        \n" +
             "return {graphData, peakDate, sumFrequency, lastDate: LAST(graphData).date}")
     Map<String, Object> getSpendingFrequencyOverview(@BindVars Map<String, Object> bindVars);
->>>>>>> 66f7f0ce1a4fe3488f40264413f6d342bb1d3457
+
 }
