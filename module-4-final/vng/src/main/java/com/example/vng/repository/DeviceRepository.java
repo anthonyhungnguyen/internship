@@ -69,4 +69,5 @@ public interface DeviceRepository extends ArangoRepository<String, String> {
             "    COLLECT bName = e.bankName, status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    RETURN {bName, status, status_count}")
     List<Map<String, Object>> getMappingBank(@BindVars Map<String, Object> bindVars);
+
 }

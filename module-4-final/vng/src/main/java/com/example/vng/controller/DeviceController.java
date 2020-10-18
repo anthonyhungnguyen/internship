@@ -1,6 +1,6 @@
 package com.example.vng.controller;
 
-import com.example.vng.service.DeviceService;
+import com.example.vng.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,50 +13,58 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/profile/device")
 public class DeviceController {
-    private final DeviceService deviceService;
+    private final DeviceRepository deviceRepository;
 
     @Autowired
-    public DeviceController(DeviceService deviceService) {
-        this.deviceService = deviceService;
+    public DeviceController(DeviceRepository deviceRepository) {
+        this.deviceRepository = deviceRepository;
     }
 
     @PostMapping("card/overview")
     public List<Map<String, Object>> getCardOverview(@RequestBody Map<String, Object> body) {
-        return deviceService.getCardOverview(body);
+        body.put("id", "deviceid/" + body.get("id"));
+        return deviceRepository.getCardOverview(body);
     }
 
     @PostMapping("account/overview")
     public List<Map<String, Object>> getAccountOverview(@RequestBody Map<String, Object> body) {
-        return deviceService.getAccountOverview(body);
+        body.put("id", "deviceid/" + body.get("id"));
+        return deviceRepository.getAccountOverview(body);
     }
 
     @PostMapping("card/mapping/overview")
     public List<Map<String, Object>> getCardMappingOverview(@RequestBody Map<String, Object> body) {
-        return deviceService.getCardMappingOverview(body);
+        body.put("@col", "device_map_card");
+        return deviceRepository.getMappingOverview(body);
     }
 
     @PostMapping("card/mapping/timeline")
     public List<Map<String, Object>> getCardMappingTimeline(@RequestBody Map<String, Object> body) {
-        return deviceService.getCardMappingTimeline(body);
+        body.put("@col", "device_map_card");
+        return deviceRepository.getMappingTimeline(body);
     }
 
     @PostMapping("card/mapping/bank")
     public List<Map<String, Object>> getCardMappingBank(@RequestBody Map<String, Object> body) {
-        return deviceService.getCardMappingBank(body);
+        body.put("@col", "device_map_card");
+        return deviceRepository.getMappingBank(body);
     }
 
     @PostMapping("account/mapping/overview")
     public List<Map<String, Object>> getAccountMappingOverview(@RequestBody Map<String, Object> body) {
-        return deviceService.getAccountMappingOverview(body);
+        body.put("@col", "device_map_account");
+        return deviceRepository.getMappingOverview(body);
     }
 
     @PostMapping("account/mapping/timeline")
     public List<Map<String, Object>> getAccountMappingTimeline(@RequestBody Map<String, Object> body) {
-        return deviceService.getAccountMappingTimeline(body);
+        body.put("@col", "device_map_account");
+        return deviceRepository.getMappingTimeline(body);
     }
 
     @PostMapping("account/mapping/bank")
     public List<Map<String, Object>> getAccountMappingBank(@RequestBody Map<String, Object> body) {
-        return deviceService.getAccountMappingBank(body);
+        body.put("@col", "device_map_account");
+        return deviceRepository.getMappingBank(body);
     }
 }

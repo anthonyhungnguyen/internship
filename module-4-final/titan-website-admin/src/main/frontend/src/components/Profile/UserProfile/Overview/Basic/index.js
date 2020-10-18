@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Descriptions, Skeleton } from 'antd'
+import { Card, Descriptions, Skeleton, Image } from 'antd'
 import axios from 'axios'
 import { generalSelector } from '../../../../../slices/general'
 import { useSelector } from 'react-redux'
@@ -18,7 +18,7 @@ export default () => {
 				.then((response) => {
 					const data = response.data
 					setInfo({
-						Avatar: <img src={data['avatar']} />,
+						Avatar: <Image src={data['avatar']} />,
 						'Display Name': data['displayname'],
 						Birthday: data['birthdate'],
 						Gender: data['usergender'],
