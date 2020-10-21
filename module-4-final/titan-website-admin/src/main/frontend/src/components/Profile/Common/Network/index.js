@@ -1,112 +1,89 @@
-import React from 'react'
-import ReactEcharts from 'echarts-for-react'
+import React from "react"
+import ReactEcharts from "echarts-for-react"
+import { Card } from "antd"
 
 export default function Network() {
-    const data = {
-        nodes: [
-            { name: 'Billing address fingerprint' },
-            { name: 'Billing name fingerprint' },
-            { name: 'IP Address' },
-            { name: 'Device fingerprint' },
-            { name: 'aragog8898' },
-            { name: 'Patel1152' },
-            { name: 'basilisk692' },
-        ],
-        links: [
-            {
-                source: 'Billing address fingerprint',
-                target: 'aragog8898',
-                value: 0.1,
-            },
-            {
-                source: 'Billing name fingerprint',
-                target: 'aragog8898',
-                value: 0.1,
-            },
-            {
-                source: 'IP Address',
-                target: 'Patel1152',
-                value: 0.1,
-            },
-            {
-                source: 'IP Address',
-                target: 'basilisk692',
-                value: 0.1,
-            },
-            {
-                source: 'Device fingerprint',
-                target: 'aragog8898',
-                value: 0.1,
-            },
-        ],
-    }
-
-    const options = {
+    const option = {
         title: {
-            text: 'Sankey Diagram',
+            text: "Graph 简单示例",
         },
-        tooltip: {
-            trigger: 'item',
-            triggerOn: 'mousemove',
-        },
+        tooltip: {},
+        animationDurationUpdate: 1500,
+        animationEasingUpdate: "quinticInOut",
         series: [
             {
-                type: 'sankey',
-                data: data.nodes,
-                links: data.links,
-                focusNodeAdjacency: true,
-                levels: [
+                type: "graph",
+                layout: "none",
+                symbolSize: 50,
+                roam: true,
+                label: {
+                    show: true,
+                },
+                edgeSymbol: ["circle", "arrow"],
+                edgeSymbolSize: [4, 10],
+                edgeLabel: {
+                    fontSize: 20,
+                },
+                data: [
                     {
-                        depth: 0,
-                        itemStyle: {
-                            color: '#fbb4ae',
-                        },
-                        lineStyle: {
-                            color: 'source',
-                            opacity: 0.6,
+                        name: "Same Card",
+                        x: 0,
+                        y: 0,
+                        label: {
+                            position: "left",
                         },
                     },
                     {
-                        depth: 1,
-                        itemStyle: {
-                            color: '#b3cde3',
-                        },
-                        lineStyle: {
-                            color: 'source',
-                            opacity: 0.6,
+                        name: "Same Device",
+                        x: 0,
+                        y: 100,
+                        label: {
+                            position: "left",
                         },
                     },
                     {
-                        depth: 2,
-                        itemStyle: {
-                            color: '#ccebc5',
-                        },
-                        lineStyle: {
-                            color: 'source',
-                            opacity: 0.6,
+                        name: "23456",
+                        x: 200,
+                        y: 0,
+                        label: {
+                            position: "right",
                         },
                     },
                     {
-                        depth: 3,
-                        itemStyle: {
-                            color: '#decbe4',
-                        },
-                        lineStyle: {
-                            color: 'source',
-                            opacity: 0.6,
+                        name: "86432",
+                        x: 200,
+                        y: 100,
+                        label: {
+                            position: "right",
                         },
                     },
                 ],
+                // links: [],
+                links: [
+                    {
+                        source: "Same Card",
+                        target: "23456",
+                    },
+                    {
+                        source: "Same Device",
+                        target: "86432",
+                    },
+                    {
+                        source: "Same Card",
+                        target: "86432",
+                    },
+                ],
                 lineStyle: {
-                    curveness: 0.5,
+                    opacity: 0.9,
+                    width: 2,
+                    curveness: 0,
                 },
             },
         ],
     }
-
     return (
-        <div>
-            <ReactEcharts option={options} />
-        </div>
+        <Card title='Network' style={{ height: "80vh" }}>
+            <ReactEcharts option={option} />
+        </Card>
     )
 }
