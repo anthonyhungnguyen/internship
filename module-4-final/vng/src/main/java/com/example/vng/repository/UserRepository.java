@@ -3,6 +3,7 @@ package com.example.vng.repository;
 import com.arangodb.springframework.annotation.BindVars;
 import com.arangodb.springframework.annotation.Query;
 import com.arangodb.springframework.repository.ArangoRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -116,4 +117,9 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "                        \n" +
             "return {graphData, peakDate, sumFrequency, lastDate: LAST(graphData).date}")
     Map<String, Object> getSpendingFrequencyOverview(@BindVars Map<String, Object> bindVars);
+
+    @Query("FOR u in @list\n" +
+            "    LET userDoc = document(u)\n" +
+            "    return {userid: userDoc._key, abuseScore: userDoc.abuseScore, abuseUpdateTime: userDoc.abuseUpdateTime}")
+    List<Map<String, Object>> getAbuseScoreList(@Param("list") List<String> userList);
 }

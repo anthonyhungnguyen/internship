@@ -103,4 +103,9 @@ public class UserController {
     public Map<String, Object> getSpendingFrequencyOverview(@RequestBody Map<String, Object> body) {
         return userRepository.getSpendingFrequencyOverview(body);
     }
+
+    @PostMapping("abuseScore")
+    public List<Map<String, Object>> getAbuseScoreList(@RequestBody List<String> userList) {
+        return userRepository.getAbuseScoreList(userList);
+    }
 }
