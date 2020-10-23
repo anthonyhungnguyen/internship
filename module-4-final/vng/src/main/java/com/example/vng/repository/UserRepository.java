@@ -118,6 +118,28 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "return {graphData, peakDate, sumFrequency, lastDate: LAST(graphData).date}")
     Map<String, Object> getSpendingFrequencyOverview(@BindVars Map<String, Object> bindVars);
 
+    @Query("LET card_user = (FOR v, e IN 1..2 ANY @id map_card\n" +
+            "    COLLECT cardId = e.cardId, userId = e._from\n" +
+            "    RETURN {cardId, userId})\n" +
+            "\n" +
+            "FOR cu in card_user\n" +
+            "    LET userList = (FOR cu_in IN card_user FILTER cu_in.userId != @id AND cu_in.cardId == cu.cardId RETURN cu_in.userId)\n" +
+            "    LET userListLength = length(userList)\n" +
+            "    SORT userListLength DESC\n" +
+            "    RETURN DISTINCT {cardId: cu.cardId, userList: userList, userListLength, userListLength}")
+    List<Map<String, Object>> getNetworkCard(@BindVars Map<String, Object> bindVars);
+
+    @Query("LET account_user = (FOR v, e IN 1..2 ANY @id map_account\n" +
+            "    COLLECT accountId = e.accountId, userId = e._from\n" +
+            "    RETURN {accountId, userId})\n" +
+            "\n" +
+            "FOR cu in account_user\n" +
+            "    LET userList = (FOR cu_in IN account_user FILTER cu_in.userId != @id AND cu_in.accountId == cu.accountId RETURN cu_in.userId)\n" +
+            "    LET userListLength = length(userList)\n" +
+            "    SORT userListLength DESC\n" +
+            "    RETURN DISTINCT {accountId: cu.accountId, userList: userList, userListLength, userListLength}")
+    List<Map<String, Object>> getNetworkAccount(@BindVars Map<String, Object> bindVars);
+
     @Query("FOR u in @list\n" +
             "    LET userDoc = document(u)\n" +
             "    return {userid: userDoc._key, abuseScore: userDoc.abuseScore, abuseUpdateTime: userDoc.abuseUpdateTime}")
