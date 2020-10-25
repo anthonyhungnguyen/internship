@@ -1,33 +1,34 @@
-import React, { useState, Suspense } from 'react'
-import { Input, Tabs, Skeleton, Select, Drawer } from 'antd'
-import { useSelector, useDispatch } from 'react-redux'
-import swal from 'sweetalert'
-import { generalSelector, storeId, storeType } from '../../../slices/general'
-import { SettingTwoTone } from '@ant-design/icons'
-import FilterBar from '../Common/Activity/FilterBar'
-import { userSelector, storeDateRange } from '../../../slices/user'
-import Network from '../Common/Network'
+import React, { useState, Suspense } from "react"
+import { Input, Tabs, Skeleton, Select, Drawer } from "antd"
+import { useSelector, useDispatch } from "react-redux"
+import swal from "sweetalert"
+import { generalSelector, storeId, storeType } from "../../../slices/general"
+import { SettingTwoTone } from "@ant-design/icons"
+import FilterBar from "../Common/Activity/FilterBar"
+import { userSelector, storeDateRange } from "../../../slices/user"
+import Network from "../Common/Network"
+import Transaction from "./Transaction"
 
 const { TabPane } = Tabs
 const { Option } = Select
 const { Search } = Input
 
-const Activity = React.lazy(() => import('./Activity'))
-const Connection = React.lazy(() => import('./Connection'))
-const Overview = React.lazy(() => import('./Overview'))
-const Tool = React.lazy(() => import('../Common/Tool'))
+const Activity = React.lazy(() => import("./Activity"))
+const Connection = React.lazy(() => import("./Connection"))
+const Overview = React.lazy(() => import("./Overview"))
+const Tool = React.lazy(() => import("../Common/Tool"))
 
 export default () => {
     const { id, hasErrors } = useSelector(generalSelector)
     const { filters } = useSelector(userSelector)
-    const [activeTab, setActiveTab] = useState('overview')
-    const [typeSelect, setTypeSelect] = useState('users')
+    const [activeTab, setActiveTab] = useState("overview")
+    const [typeSelect, setTypeSelect] = useState("users")
     const [currentID, setCurrentID] = useState(id)
     const [visible, setVisible] = useState(false)
     const dispatch = useDispatch()
 
     const handleTypeChange = (type) => {
-        setCurrentID('')
+        setCurrentID("")
         setTypeSelect(type)
     }
 
@@ -40,7 +41,7 @@ export default () => {
             dispatch(storeType(typeSelect))
             dispatch(storeId(newId))
         } else {
-            swal('Error', 'Please re-check device ID', 'error')
+            swal("Error", "Please re-check device ID", "error")
         }
     }
 
@@ -65,11 +66,11 @@ export default () => {
             </Drawer>
             <button
                 style={{
-                    position: 'fixed',
-                    top: '200px',
-                    right: '20px',
-                    fontSize: '30px',
-                    zIndex: '9999',
+                    position: "fixed",
+                    top: "200px",
+                    right: "20px",
+                    fontSize: "30px",
+                    zIndex: "9999",
                 }}
                 onClick={showDrawer}
             >
@@ -119,11 +120,6 @@ export default () => {
                         <TabPane tab='Connection' key='connection'>
                             <Suspense fallback={<Skeleton active />}>
                                 <Connection />
-                            </Suspense>
-                        </TabPane>
-                        <TabPane tab='Network' key='network'>
-                            <Suspense fallback={<Skeleton active />}>
-                                <Network />
                             </Suspense>
                         </TabPane>
                         <TabPane tab='Tool' key='tool'>

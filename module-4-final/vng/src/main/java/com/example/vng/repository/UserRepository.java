@@ -12,6 +12,35 @@ public interface UserRepository extends ArangoRepository<String, String> {
     @Query("RETURN KEEP(DOCUMENT(@id), @keepList)")
     Map<String, Object> getUserInfo(@BindVars Map<String, Object> bindVars);
 
+    @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
+            "    FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) \n" +
+            "    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +
+            "    AGGREGATE amount = SUM(TO_NUMBER(e.amount)), frequency = COUNT(e)\n" +
+            "    RETURN {date, amount, frequency}")
+    List<Map<String, Object>> getMonetary(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
+            "    FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
+            "    LET reqDate = DATE_ISO8601(e.reqDate)\n" +
+            "    SORT reqDate DESC\n" +
+            "    RETURN {reqDate, amount: e.amount, description: e.description, transStatus: e.transStatus}")
+    List<Map<String, Object>> getMonetaryTimeline(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v , e IN 1..1 ANY @id transaction\n" +
+            "    FILTER TO_NUMBER(e.latitude) != 0 AND TO_NUMBER(e.longitude) != 0\n" +
+            "    AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
+            "    COLLECT lat = TO_NUMBER(e.latitude), lng = TO_NUMBER(e.longitude) WITH COUNT INTO location_count\n" +
+            "    RETURN {lat, lng, location_count}")
+    List<Map<String, Object>> getGeolocation(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
+            "FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
+            "COLLECT app_id = e.appid \n" +
+            "AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)\n" +
+            "SORT app_id_count, app_total\n" +
+            "RETURN {app_id, app_id_count, app_total}")
+    List<Map<String, Object>> getMerchantDetails(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
     @Query("LET device_list = (FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
             "    COLLECT deviceid = e._to\n" +
             "    return deviceid)\n" +
@@ -83,7 +112,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    RETURN {card: count(a), account: count(b), popularBank, totalMappingTimes: COUNT(totalMapping), successPercent}")
     Map<String, Object> getMappingStatisticsOverview(@BindVars Map<String, Object> bindVars);
 
-    @Query("LET totalPayment = (FOR e IN user_device_transaction FILTER e._from == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+    @Query("LET totalPayment = (FOR e IN transaction FILTER e._from == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "LET popularMerchant = FIRST((FOR e IN totalPayment\n" +
             "        COLLECT merchant = e.merchant WITH COUNT INTO merchantCount\n" +
             "        SORT merchantCount DESC\n" +
@@ -100,7 +129,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "RETURN {popularMerchant, totalAmount, graphData}")
     Map<String, Object> getSpendingStatisticsOverview(@BindVars Map<String, Object> bindVars);
 
-    @Query("LET totalPayment = (FOR e IN user_device_transaction FILTER e._from == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+    @Query("LET totalPayment = (FOR e IN transaction FILTER e._from == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "\n" +
             "LET graphData = (FOR e in totalPayment\n" +
             "    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +

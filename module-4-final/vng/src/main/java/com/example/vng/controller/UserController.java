@@ -2,10 +2,7 @@ package com.example.vng.controller;
 
 import com.example.vng.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +21,7 @@ public class UserController {
 
     @PostMapping("info")
     public Map<String, Object> getUserInfo(@RequestBody Map<String, Object> body) {
-        List<String> list = Stream.of( "profilelevel",
+        List<String> list = Stream.of("profilelevel",
                 "acquital_result",
                 "postmortem_add_date",
                 "postmortem_result",
@@ -40,6 +37,26 @@ public class UserController {
                 "zaloid").collect(Collectors.toList());
         body.put("keepList", list);
         return userRepository.getUserInfo(body);
+    }
+
+    @PostMapping("{id}/monetary")
+    public List<Map<String, Object>> getMonetary(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+        return userRepository.getMonetary("userid/" + id, body);
+    }
+
+    @PostMapping("{id}/monetary/timeline")
+    public List<Map<String, Object>> getMonetaryTimeline(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+        return userRepository.getMonetaryTimeline("userid/" + id, body);
+    }
+
+    @PostMapping("{id}/geolocation")
+    public List<Map<String, Object>> getGeolocation(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+        return userRepository.getGeolocation("userid/" + id, body);
+    }
+
+    @PostMapping("{id}/merchant/details")
+    public List<Map<String, Object>> getMerchantDetails(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+        return userRepository.getMerchantDetails("userid/" + id, body);
     }
 
     @PostMapping("card/overview")
