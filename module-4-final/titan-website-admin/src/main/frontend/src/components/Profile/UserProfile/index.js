@@ -6,8 +6,6 @@ import { generalSelector, storeId, storeType } from "../../../slices/general"
 import { SettingTwoTone } from "@ant-design/icons"
 import FilterBar from "../Common/Activity/FilterBar"
 import { userSelector, storeDateRange } from "../../../slices/user"
-import Network from "../Common/Network"
-import Transaction from "./Transaction"
 
 const { TabPane } = Tabs
 const { Option } = Select

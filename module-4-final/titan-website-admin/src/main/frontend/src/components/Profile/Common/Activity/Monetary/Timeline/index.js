@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react"
+import { Empty, Modal, Skeleton } from "antd"
 import ReactEcharts from "echarts-for-react"
-import { Card, Empty, Modal, Skeleton, Tabs } from "antd"
 import axios from "axios"
-import Overview from "./Overview"
-import Timeline from "./Timeline"
-
-const { TabPane } = Tabs
 
 export default React.memo(({ id, type, filters }) => {
     const [visible, setVisible] = useState(false)
     const [option, setOption] = useState(null)
     const [noData, setNoData] = useState(false)
-    const [activeTab, setActiveTab] = useState("overview")
 
     useEffect(() => {
         const fetchMonetaryFrequency = async () => {
@@ -194,36 +189,45 @@ export default React.memo(({ id, type, filters }) => {
         setVisible((old) => !old)
     }
 
-    return (
-        <Card
-            title='Monetary'
-            headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
-            hoverable={true}
+    return noData ? (
+        <div
             style={{
-                height: "50vh",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
             }}
-            bodyStyle={{ height: "100%" }}
-            renderer='canvas'
-            extra={
-                <Tabs
-                    defaultActiveKey={activeTab}
-                    animated={true}
-                    onChange={(e) => setActiveTab(e)}
-                    type='card'
-                    tabBarStyle={{ margin: 0 }}
-                >
-                    <TabPane tab='Overview' key='overview' />
-
-                    <TabPane tab='Timeline' key='timeline' />
-                </Tabs>
-            }
         >
-            {activeTab === "overview" && (
-                <Overview id={id} type={type} filters={filters} />
-            )}
-            {activeTab === "timeline" && (
-                <Timeline id={id} type={type} filters={filters} />
-            )}
-        </Card>
+            <Empty />
+        </div>
+    ) : option ? (
+        <React.Fragment>
+            <ReactEcharts
+                theme={"infographic"}
+                lazyUpdate={true}
+                style={{ height: "90%", width: "100%" }}
+                option={option}
+                notMerge={true}
+                renderer='canvas'
+            />
+            <Modal
+                title='Monetary'
+                visible={visible}
+                onOk={handleToggleVisible}
+                onCancel={handleToggleVisible}
+                centered
+                width={1000}
+                footer={null}
+            >
+                <ReactEcharts
+                    option={option}
+                    style={{ height: "70vh", width: "100%" }}
+                    renderer='canvas'
+                    lazyUpdate={true}
+                />
+            </Modal>
+        </React.Fragment>
+    ) : (
+        <Skeleton active />
     )
 })

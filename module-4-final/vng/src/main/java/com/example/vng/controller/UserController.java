@@ -39,14 +39,19 @@ public class UserController {
         return userRepository.getUserInfo(body);
     }
 
-    @PostMapping("{id}/monetary")
+    @PostMapping("{id}/monetary/timeline")
     public List<Map<String, Object>> getMonetary(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
         return userRepository.getMonetary("userid/" + id, body);
     }
 
-    @PostMapping("{id}/monetary/timeline")
-    public List<Map<String, Object>> getMonetaryTimeline(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
-        return userRepository.getMonetaryTimeline("userid/" + id, body);
+    @PostMapping("{id}/monetary/overview")
+    public List<Map<String, Object>> getMonetaryOverview(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
+        return userRepository.getMonetaryStatus("userid/" + id, body);
+    }
+
+    @PostMapping("{id}/transaction")
+    public List<Map<String, Object>> getTransaction(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+        return userRepository.getTransaction("userid/" + id, body);
     }
 
     @PostMapping("{id}/geolocation")
@@ -103,6 +108,7 @@ public class UserController {
 
     @PostMapping("account/mapping/bank")
     public List<Map<String, Object>> getAccountMappingBank(@RequestBody Map<String, Object> body) {
+        body.put("@col", "map_account");
         return userRepository.getMappingBank(body);
     }
 

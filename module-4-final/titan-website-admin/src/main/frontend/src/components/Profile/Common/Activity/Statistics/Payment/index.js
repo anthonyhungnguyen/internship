@@ -24,14 +24,14 @@ export default ({ id, filters, queryUrl, queryParams }) => {
     return monetaryStatistics ? (
         <Card>
             <Row>
-                <Col span={12}>
+                <Col span={14}>
                     <Statistic
                         title='Monetary'
                         value={monetaryStatistics["totalAmount"] ?? 0}
                         suffix='VND'
                     />
                 </Col>
-                <Col span={12}>
+                <Col span={10}>
                     <ReactEcharts
                         theme='walden'
                         style={{ height: "100%", width: "100%" }}
@@ -67,7 +67,9 @@ export default ({ id, filters, queryUrl, queryParams }) => {
                 <Col span={12}>
                     <Statistic
                         title='Success'
-                        value={100}
+                        value={parseFloat(
+                            monetaryStatistics["successRate"] * 100
+                        )}
                         precision={2}
                         valueStyle={{ color: "#3f8600" }}
                         suffix='%'

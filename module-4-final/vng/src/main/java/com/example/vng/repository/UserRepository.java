@@ -21,10 +21,17 @@ public interface UserRepository extends ArangoRepository<String, String> {
 
     @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
             "    FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
+            "    COLLECT transStatus = e.transStatus WITH COUNT INTO transStatusCount\n" +
+            "    SORT transStatusCount DESC\n" +
+            "    RETURN {transStatus, transStatusCount}")
+    List<Map<String, Object>> getMonetaryStatus(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
+            "    FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
             "    LET reqDate = DATE_ISO8601(e.reqDate)\n" +
             "    SORT reqDate DESC\n" +
-            "    RETURN {reqDate, amount: e.amount, description: e.description, transStatus: e.transStatus}")
-    List<Map<String, Object>> getMonetaryTimeline(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+            "    RETURN {transID: e.transID, reqDate: reqDate, amount: e.amount, description: e.description, transStatus: e.transStatus}")
+    List<Map<String, Object>> getTransaction(@Param("id") String id, @BindVars Map<String, Object> bindVars);
 
     @Query("FOR v , e IN 1..1 ANY @id transaction\n" +
             "    FILTER TO_NUMBER(e.latitude) != 0 AND TO_NUMBER(e.longitude) != 0\n" +
@@ -112,7 +119,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    RETURN {card: count(a), account: count(b), popularBank, totalMappingTimes: COUNT(totalMapping), successPercent}")
     Map<String, Object> getMappingStatisticsOverview(@BindVars Map<String, Object> bindVars);
 
-    @Query("LET totalPayment = (FOR e IN transaction FILTER e._from == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+    @Query("LET totalPayment = (FOR v, e IN 1..1 ANY @id transaction FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "LET popularMerchant = FIRST((FOR e IN totalPayment\n" +
             "        COLLECT merchant = e.merchant WITH COUNT INTO merchantCount\n" +
             "        SORT merchantCount DESC\n" +
@@ -126,10 +133,11 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    \n" +
             "LET totalAmount = SUM((FOR e IN totalPayment RETURN TO_NUMBER(e.amount)))\n" +
             "    \n" +
-            "RETURN {popularMerchant, totalAmount, graphData}")
+            "LET successRate = COUNT(FOR v in totalPayment FILTER v.transStatus == 'SUCCESSFUL' RETURN v) / COUNT(totalPayment)\n" +
+            "RETURN {popularMerchant, totalAmount, graphData, successRate}")
     Map<String, Object> getSpendingStatisticsOverview(@BindVars Map<String, Object> bindVars);
 
-    @Query("LET totalPayment = (FOR e IN transaction FILTER e._from == @id AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
+    @Query("LET totalPayment = (FOR v, e IN 1..1 ANY @id transaction FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "\n" +
             "LET graphData = (FOR e in totalPayment\n" +
             "    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +

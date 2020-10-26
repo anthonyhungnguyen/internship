@@ -5,8 +5,7 @@ import { useSelector } from "react-redux"
 import { generalSelector } from "../../../../slices/general"
 import Monetary from "../../Common/Activity/Monetary"
 import Geolocation from "../../Common/Activity/Geolocation"
-import { storeDateRange, userSelector } from "../../../../slices/user"
-import FilterBar from "../../Common/Activity/FilterBar"
+import { userSelector } from "../../../../slices/user"
 import Merchant from "../../Common/Activity/Merchant"
 import Card from "../../Common/Activity/Card"
 import Statistics from "../../Common/Activity/Statistics"
@@ -33,7 +32,7 @@ export default () => {
                                 }}
                             />
                         </Col>
-                        <Col span={12}>
+                        <Col span={10}>
                             <Row gutter={[12, 12]}>
                                 <Col span={24}>
                                     <Monetary
@@ -60,7 +59,7 @@ export default () => {
                             </Row>
                             <Row />
                         </Col>
-                        <Col span={12}>
+                        <Col span={14}>
                             <Row gutter={[12, 12]}>
                                 <Col span={24}>
                                     <Transaction
@@ -79,16 +78,13 @@ export default () => {
                                     />
                                 </Col>
                             </Row>
-
-                            <Row gutter={[12, 12]}>
-                                <Col span={24}>
-                                    <Geolocation
-                                        id={id}
-                                        type={type}
-                                        filters={filters}
-                                    />
-                                </Col>
-                            </Row>
+                        </Col>
+                        <Col span={24}>
+                            <Geolocation
+                                id={id}
+                                type={type}
+                                filters={filters}
+                            />
                         </Col>
                     </Row>
                 </React.Fragment>
