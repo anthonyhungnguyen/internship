@@ -127,6 +127,16 @@ public class UserController {
         return userRepository.getSpendingFrequencyOverview(body);
     }
 
+    @PostMapping("network/card")
+    public List<Map<String, Object>> getNetworkCard(@RequestBody Map<String, Object> body) {
+        return userRepository.getNetworkCard(body);
+    }
+
+    @PostMapping("network/account")
+    public List<Map<String, Object>> getNetworkAccount(@RequestBody Map<String, Object> body) {
+        return userRepository.getNetworkAccount(body);
+    }
+
     @PostMapping("abuseScore")
     public List<Map<String, Object>> getAbuseScoreList(@RequestBody List<String> userList) {
         return userRepository.getAbuseScoreList(userList);
