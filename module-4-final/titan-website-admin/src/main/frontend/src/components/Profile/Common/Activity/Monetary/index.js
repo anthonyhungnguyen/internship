@@ -198,11 +198,8 @@ export default React.memo(({ id, type, filters }) => {
         <Card
             title='Monetary'
             headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
+            className='h-full'
             hoverable={true}
-            style={{
-                height: "50vh",
-            }}
-            bodyStyle={{ height: "100%" }}
             renderer='canvas'
             extra={
                 <Tabs

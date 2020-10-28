@@ -1,15 +1,15 @@
-import React from 'react'
-import { Row, Col, Skeleton, BackTop } from 'antd'
-import { UpCircleFilled } from '@ant-design/icons'
-import { useSelector } from 'react-redux'
-import { generalSelector } from '../../../../slices/general'
-import Monetary from '../../Common/Activity/Monetary'
-import Geolocation from '../../Common/Activity/Geolocation'
-import { userSelector } from '../../../../slices/user'
-import Merchant from '../../Common/Activity/Merchant'
-import Card from '../../Common/Activity/Card'
-import Statistics from '../../Common/Activity/Statistics'
-import Transaction from '../../Common/Activity/Transaction'
+import React from "react"
+import { Row, Col, Skeleton, BackTop } from "antd"
+import { UpCircleFilled } from "@ant-design/icons"
+import { useSelector } from "react-redux"
+import { generalSelector } from "../../../../slices/general"
+import Monetary from "../../Common/Activity/Monetary"
+import Geolocation from "../../Common/Activity/Geolocation"
+import { userSelector } from "../../../../slices/user"
+import Merchant from "../../Common/Activity/Merchant"
+import Card from "../../Common/Activity/Card"
+import Statistics from "../../Common/Activity/Statistics"
+import Transaction from "../../Common/Activity/Transaction"
 
 export default () => {
     const { loading, hasErrors, filters } = useSelector(userSelector)
@@ -141,7 +141,7 @@ export default () => {
             )}
             <BackTop>
                 <UpCircleFilled
-                    style={{ fontSize: '30px', color: '#3498db' }}
+                    style={{ fontSize: "30px", color: "#3498db" }}
                 />
             </BackTop>
         </div>

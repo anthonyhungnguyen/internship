@@ -62,6 +62,29 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "RETURN {app_id, app_id_count, app_total}")
     List<Map<String, Object>> getMerchantDetails(@Param("id") String id, @BindVars Map<String, Object> bindVars);
 
+    @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
+            "    FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
+            "    COLLECT appid = e.appid\n" +
+            "    AGGREGATE appid_count = COUNT(e.appid), appid_monetary = SUM(TO_NUMBER(e.amount))\n" +
+            "    LET merchantRaw = DOCUMENT(CONCAT(\"merchant/\", appid))\n" +
+            "    SORT appid_monetary DESC\n" +
+            "    RETURN {appName: merchantRaw.appName, merchant: merchantRaw.merchant, appid_count, appid_monetary}")
+    List<Map<String, Object>> getMerchantOverviewTable(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v, e IN 1..1 ANY @id map_card\n" +
+            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
+            "    COLLECT bankName = e.bankName, cardName = e.cardName, first6CardNo = e.first6CardNo, last4CardNo = e.last4CardNo WITH COUNT INTO frequency\n" +
+            "    SORT frequency DESC\n" +
+            "    RETURN {bankName, cardName, first6CardNo, last4CardNo, frequency}")
+    List<Map<String, Object>> getMappingCardTable(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
+    @Query("FOR v, e IN 1..1 ANY @id map_account\n" +
+            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
+            "    COLLECT bankName = e.bankName, firstAccountNo = e.firstAccountNo, lastAccountNo = e.lastAccountNo WITH COUNT INTO frequency\n" +
+            "    SORT frequency DESC\n" +
+            "    RETURN {bankName, firstAccountNo, lastAccountNo, frequency}")
+    List<Map<String, Object>> getMappingAccountTable(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
     @Query("LET device_list = (FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
             "    COLLECT deviceid = e._to\n" +
             "    return deviceid)\n" +

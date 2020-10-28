@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Empty, Modal, Skeleton } from 'antd'
-import ReactEcharts from 'echarts-for-react'
-import axios from 'axios'
+import React, { useState, useEffect } from "react"
+import { Empty, Modal, Skeleton } from "antd"
+import ReactEcharts from "echarts-for-react"
+import axios from "axios"
 
 export default React.memo(({ id, type, filters }) => {
     const [visible, setVisible] = useState(false)
@@ -10,7 +10,7 @@ export default React.memo(({ id, type, filters }) => {
 
     useEffect(() => {
         const fetchGeneralMerchantAcitivty = async () => {
-            if (type === 'users') {
+            if (type === "users") {
                 await axios
                     .post(
                         `http://localhost:8085/api/profile/user/${id}/merchant/overview`,
@@ -63,26 +63,26 @@ export default React.memo(({ id, type, filters }) => {
         if (data.length > 0) {
             return {
                 tooltip: {
-                    trigger: 'item',
-                    formatter: '{b} : {c} ({d}%)',
+                    trigger: "item",
+                    formatter: "{b} : {c} ({d}%)",
                 },
                 toolbox: {
                     show: true,
                     feature: {
                         saveAsImage: {
-                            title: 'Save',
-                            name: 'device_merchant_general',
+                            title: "Save",
+                            name: "device_merchant_general",
                         },
                         restore: {
                             show: true,
-                            title: 'Restore',
+                            title: "Restore",
                         },
                         myFeature: {
                             show: true,
-                            title: 'Zoom In',
+                            title: "Zoom In",
                             icon: `image://${
                                 process.env.PUBLIC_URL +
-                                '/assets/icon/fullscreen.png'
+                                "/assets/icon/fullscreen.png"
                             }`,
                             onclick: () => {
                                 handleToggleVisible()
@@ -92,21 +92,21 @@ export default React.memo(({ id, type, filters }) => {
                 },
                 series: [
                     {
-                        type: 'pie',
-                        selectedMode: 'multiple',
+                        type: "pie",
+                        selectedMode: "multiple",
                         data: data.map((mf) => ({
                             name: `${mf.merchant} - ${
                                 mf.merchant_count
-                            } - ${mf.merchant_total.toLocaleString('en-EN', {
-                                style: 'currency',
-                                currency: 'VND',
+                            } - ${mf.merchant_total.toLocaleString("en-EN", {
+                                style: "currency",
+                                currency: "VND",
                             })}`,
                             value: mf.merchant_count,
                         })),
                         animation: true,
                         label: {
-                            position: 'outside',
-                            alignTo: 'none',
+                            position: "outside",
+                            alignTo: "none",
                             bleedMargin: 5,
                         },
                     },
@@ -115,7 +115,7 @@ export default React.memo(({ id, type, filters }) => {
                     itemStyle: {
                         shadowBlur: 10,
                         shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)',
+                        shadowColor: "rgba(0, 0, 0, 0.5)",
                     },
                 },
             }
@@ -129,10 +129,10 @@ export default React.memo(({ id, type, filters }) => {
     return noData ? (
         <div
             style={{
-                height: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
             }}
         >
             <Empty />
@@ -140,9 +140,9 @@ export default React.memo(({ id, type, filters }) => {
     ) : option ? (
         <React.Fragment>
             <ReactEcharts
-                theme={'infographic'}
+                theme={"infographic"}
                 lazyUpdate={true}
-                style={{ height: '90%', width: '100%' }}
+                style={{ height: "400px" }}
                 option={option}
                 notMerge={true}
                 renderer='canvas'
@@ -159,9 +159,9 @@ export default React.memo(({ id, type, filters }) => {
                 renderer='canvas'
             >
                 <ReactEcharts
-                    theme={'infographic'}
+                    theme={"infographic"}
                     lazyUpdate={true}
-                    style={{ height: '70vh' }}
+                    style={{ height: "70vh" }}
                     option={option}
                     renderer='canvas'
                 />

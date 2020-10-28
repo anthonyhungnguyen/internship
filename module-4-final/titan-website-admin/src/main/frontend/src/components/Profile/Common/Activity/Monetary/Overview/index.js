@@ -111,7 +111,7 @@ export default React.memo(({ id, type, filters }) => {
             <ReactEcharts
                 theme={"infographic"}
                 lazyUpdate={true}
-                style={{ height: "90%", width: "100%" }}
+                style={{ height: "400px" }}
                 option={option}
                 notMerge={true}
                 renderer='canvas'

@@ -4,31 +4,26 @@ import Overview from "./Overview"
 import Bank from "./Bank"
 import Timestamp from "./Timestamp"
 import "./index.css"
+import MappingCardTable from "./MappingCardTable"
+import MappingAccountTable from "./MappingAccountTable"
 
 const { TabPane } = Tabs
 
 export default ({ id, type, filters, queryUrl, queryParams }) => {
-    const [activeTab, setActiveTab] = useState("overview")
-
+    const [OuterActiveTab, setOuterActiveTab] = useState("card")
+    const [InnerActiveTab, setInnerActiveTab] = useState("overview")
     return (
-        <Card
-            style={{
-                height: "50vh",
-            }}
-            hoverable={true}
-            className='h-full'
-            bodyStyle={{ height: "100%" }}
-        >
+        <Card hoverable={true} className='h-full'>
             <Tabs
                 defaultActiveKey='card'
+                onChange={(e) => setOuterActiveTab(e)}
                 type='card'
                 tabBarStyle={{ margin: 0, fontWeight: "bold" }}
-                className='h-full'
                 tabBarExtraContent={
                     <Tabs
-                        defaultActiveKey={activeTab}
+                        defaultActiveKey={InnerActiveTab}
                         animated={true}
-                        onChange={(e) => setActiveTab(e)}
+                        onChange={(e) => setInnerActiveTab(e)}
                         type='line'
                         tabBarStyle={{ margin: 0, fontWeight: "normal" }}
                     >
@@ -39,7 +34,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                 }
             >
                 <TabPane tab='Card' key='card'>
-                    {activeTab === "overview" && (
+                    {InnerActiveTab === "overview" && (
                         <Overview
                             id={id}
                             type={type}
@@ -48,7 +43,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                             queryParams={queryParams}
                         />
                     )}
-                    {activeTab === "timestamp" && (
+                    {InnerActiveTab === "timestamp" && (
                         <Timestamp
                             id={id}
                             type={type}
@@ -57,7 +52,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                             queryParams={queryParams}
                         />
                     )}
-                    {activeTab === "bank" && (
+                    {InnerActiveTab === "bank" && (
                         <Bank
                             id={id}
                             type={type}
@@ -68,7 +63,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                     )}
                 </TabPane>
                 <TabPane tab='Account' key='account'>
-                    {activeTab === "overview" && (
+                    {InnerActiveTab === "overview" && (
                         <Overview
                             id={id}
                             type={type}
@@ -77,7 +72,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                             queryParams={queryParams}
                         />
                     )}
-                    {activeTab === "timestamp" && (
+                    {InnerActiveTab === "timestamp" && (
                         <Timestamp
                             id={id}
                             type={type}
@@ -86,7 +81,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                             queryParams={queryParams}
                         />
                     )}
-                    {activeTab === "bank" && (
+                    {InnerActiveTab === "bank" && (
                         <Bank
                             id={id}
                             type={type}
@@ -97,7 +92,12 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                     )}
                 </TabPane>
             </Tabs>
-            <p>Hello</p>
+
+            {OuterActiveTab === "card" ? (
+                <MappingCardTable id={id} filters={filters} />
+            ) : (
+                <MappingAccountTable id={id} filters={filters} />
+            )}
         </Card>
     )
 }

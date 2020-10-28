@@ -69,6 +69,21 @@ public class UserController {
         return userRepository.getMerchantDetails("userid/" + id, body);
     }
 
+    @PostMapping("{id}/merchant/table")
+    public List<Map<String, Object>> getMerchantOverviewTable(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+        return userRepository.getMerchantOverviewTable("userid/" + id, body);
+    }
+
+    @PostMapping("{id}/mapping/card/table")
+    public List<Map<String, Object>> getMappingCardTable(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
+        return userRepository.getMappingCardTable("userid/" + id, body);
+    }
+
+    @PostMapping("{id}/mapping/account/table")
+    public List<Map<String, Object>> getMappingAccountTable(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
+        return userRepository.getMappingAccountTable("userid/" + id, body);
+    }
+
     @PostMapping("card/overview")
     public List<Map<String, Object>> getCardOverview(@RequestBody Map<String, Object> body) {
         body.put("id", "userid/" + body.get("id"));
@@ -98,6 +113,7 @@ public class UserController {
         body.put("@col", "map_card");
         return userRepository.getMappingBank(body);
     }
+
 
     @PostMapping("account/mapping/overview")
     public List<Map<String, Object>> getAccountMappingOverview(@RequestBody Map<String, Object> body) {
