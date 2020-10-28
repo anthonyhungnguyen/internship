@@ -59,6 +59,11 @@ public class UserController {
         return userRepository.getGeolocation("userid/" + id, body);
     }
 
+    @PostMapping("{id}/merchant/overview")
+    public List<Map<String, Object>> getMerchantOverview(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
+        return userRepository.getMerchantOverview("userid/" + id, body);
+    }
+
     @PostMapping("{id}/merchant/details")
     public List<Map<String, Object>> getMerchantDetails(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
         return userRepository.getMerchantDetails("userid/" + id, body);

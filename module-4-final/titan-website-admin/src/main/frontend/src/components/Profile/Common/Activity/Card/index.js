@@ -97,6 +97,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                     )}
                 </TabPane>
             </Tabs>
+            <p>Hello</p>
         </Card>
     )
 }

@@ -40,6 +40,20 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    RETURN {lat, lng, location_count}")
     List<Map<String, Object>> getGeolocation(@Param("id") String id, @BindVars Map<String, Object> bindVars);
 
+    @Query("LET appid_list = (FOR v, e IN 1..1 ANY @id transaction\n" +
+            "    FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
+            "    COLLECT appid = e.appid\n" +
+            "    AGGREGATE app_count = COUNT(e.appid), app_monetary = SUM(TO_NUMBER(e.amount))\n" +
+            "    LET merchant = DOCUMENT(CONCAT(\"merchant/\", appid)).merchant\n" +
+            "    RETURN {merchant, app_count, app_monetary})\n" +
+            "\n" +
+            "FOR v IN appid_list\n" +
+            "    COLLECT merchant = v.merchant\n" +
+            "    AGGREGATE merchant_count = SUM(v.app_count), merchant_total = SUM(v.app_monetary)\n" +
+            "    SORT merchant_total DESC\n" +
+            "    RETURN {merchant, merchant_count, merchant_total}")
+    List<Map<String, Object>> getMerchantOverview(@Param("id") String id, @BindVars Map<String, Object> bindVars);
+
     @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
             "FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
             "COLLECT app_id = e.appid \n" +
@@ -120,12 +134,18 @@ public interface UserRepository extends ArangoRepository<String, String> {
     Map<String, Object> getMappingStatisticsOverview(@BindVars Map<String, Object> bindVars);
 
     @Query("LET totalPayment = (FOR v, e IN 1..1 ANY @id transaction FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
-            "LET popularMerchant = FIRST((FOR e IN totalPayment\n" +
-            "        COLLECT merchant = e.merchant WITH COUNT INTO merchantCount\n" +
-            "        SORT merchantCount DESC\n" +
-            "        LIMIT 1\n" +
-            "        RETURN merchant))\n" +
+            "LET appid_list = (FOR v IN totalPayment\n" +
+            "    COLLECT appid = v.appid\n" +
+            "    AGGREGATE app_count = COUNT(v.appid), app_monetary = SUM(TO_NUMBER(v.amount))\n" +
+            "    LET merchant = DOCUMENT(CONCAT(\"merchant/\", appid)).merchant\n" +
+            "    RETURN {merchant, app_count, app_monetary})\n" +
             "\n" +
+            "LET popularMerchant = (FOR v IN appid_list\n" +
+            "    COLLECT merchant = v.merchant\n" +
+            "    AGGREGATE merchant_count = SUM(v.app_count), merchant_total = SUM(v.app_monetary)\n" +
+            "    SORT merchant_total DESC\n" +
+            "    LIMIT 1\n" +
+            "    RETURN merchant)\n" +
             "LET graphData = (FOR e IN totalPayment\n" +
             "                    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +
             "                    AGGREGATE amount = SUM(TO_NUMBER(e.amount))\n" +

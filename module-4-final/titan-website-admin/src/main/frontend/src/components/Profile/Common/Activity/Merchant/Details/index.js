@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react"
-import ReactEcharts from "echarts-for-react"
-import { Modal, Skeleton, Select, Empty } from "antd"
-import axios from "axios"
+import React, { useState, useEffect, useRef } from 'react'
+import ReactEcharts from 'echarts-for-react'
+import { Modal, Skeleton, Select, Empty } from 'antd'
+import axios from 'axios'
 
 export default React.memo(({ id, type, filters }) => {
     const [visible, setVisible] = useState(false)
@@ -12,7 +12,7 @@ export default React.memo(({ id, type, filters }) => {
 
     useEffect(() => {
         const fetchAppIDFrequency = async () => {
-            if (type === "users") {
+            if (type === 'users') {
                 await axios
                     .post(
                         `http://localhost:8085/api/profile/user/${id}/merchant/details`,
@@ -69,35 +69,35 @@ export default React.memo(({ id, type, filters }) => {
 
     const getOption = (data) => {
         const formatMarkPoint = (params) => {
-            params.data.value = params.data.value.toLocaleString("en-EN", {
-                style: "currency",
-                currency: "VND",
+            params.data.value = params.data.value.toLocaleString('en-EN', {
+                style: 'currency',
+                currency: 'VND',
             })
         }
         if (data.length > 0) {
             return {
                 legend: {
-                    data: ["Frequency", "Monetary"],
+                    data: ['Frequency', 'Monetary'],
                 },
                 tooltip: {
-                    trigger: "axis",
+                    trigger: 'axis',
                     axisPointer: {
-                        type: "cross",
+                        type: 'cross',
                         crossStyle: {
-                            color: "#999",
+                            color: '#999',
                         },
                     },
                 },
                 dataZoom: [
                     {
-                        type: "slider",
+                        type: 'slider',
                         xAxisIndex: [0],
                         show: true,
                         // start: 70
                     },
 
                     {
-                        type: "inside",
+                        type: 'inside',
                         show: true,
                         xAxisIndex: [0],
                     },
@@ -106,19 +106,19 @@ export default React.memo(({ id, type, filters }) => {
                     show: true,
                     feature: {
                         saveAsImage: {
-                            title: "Save",
-                            name: "device_merchant_details",
+                            title: 'Save',
+                            name: 'device_merchant_details',
                         },
                         restore: {
                             show: true,
-                            title: "Restore",
+                            title: 'Restore',
                         },
                         myFeature: {
                             show: true,
-                            title: "Zoom In",
+                            title: 'Zoom In',
                             icon: `image://${
                                 process.env.PUBLIC_URL +
-                                "/assets/icon/fullscreen.png"
+                                '/assets/icon/fullscreen.png'
                             }`,
 
                             onclick: () => {
@@ -128,21 +128,21 @@ export default React.memo(({ id, type, filters }) => {
                     },
                 },
                 xAxis: {
-                    type: "category",
-                    name: "App ID",
+                    type: 'category',
+                    name: 'App ID',
                     data: data.map((x) => x.app_id),
                 },
                 yAxis: [
                     {
-                        name: "Frequency",
-                        type: "value",
+                        name: 'Frequency',
+                        type: 'value',
                         scale: true,
                         min: 0,
                         boundaryGap: [0.2, 0.2],
                     },
                     {
-                        name: "VND",
-                        type: "value",
+                        name: 'VND',
+                        type: 'value',
                         scale: true,
                         min: 0,
                         boundaryGap: [0.2, 0.2],
@@ -150,21 +150,21 @@ export default React.memo(({ id, type, filters }) => {
                 ],
                 series: [
                     {
-                        name: "Frequency",
-                        type: "bar",
+                        name: 'Frequency',
+                        type: 'bar',
                         data: data.map((x) => x.app_id_count),
                     },
                     {
-                        name: "Monetary",
-                        type: "line",
+                        name: 'Monetary',
+                        type: 'line',
                         yAxisIndex: 1,
                         markPoint: {
                             label: {
                                 formatter: formatMarkPoint,
                             },
                             data: [
-                                { type: "max", name: "max" },
-                                { type: "min", name: "min" },
+                                { type: 'max', name: 'max' },
+                                { type: 'min', name: 'min' },
                             ],
                         },
                         data: data.map((x) => x.app_total),
@@ -175,7 +175,7 @@ export default React.memo(({ id, type, filters }) => {
                     itemStyle: {
                         shadowBlur: 10,
                         shadowOffsetX: 0,
-                        shadowColor: "rgba(0, 0, 0, 0.5)",
+                        shadowColor: 'rgba(0, 0, 0, 0.5)',
                     },
                 },
             }
@@ -211,10 +211,10 @@ export default React.memo(({ id, type, filters }) => {
     return noData ? (
         <div
             style={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
             }}
         >
             <Empty />
@@ -223,7 +223,7 @@ export default React.memo(({ id, type, filters }) => {
         <React.Fragment>
             <Select
                 mode='multiple'
-                style={{ width: "51%" }}
+                style={{ width: '51%' }}
                 placeholder='Choose AppID'
                 defaultValue={appid.map((a) => a.app_id)}
                 onSelect={handleSelect}
@@ -237,11 +237,11 @@ export default React.memo(({ id, type, filters }) => {
                 onClear={handleClear}
             />
             <ReactEcharts
-                theme={"infographic"}
+                theme={'infographic'}
                 lazyUpdate={true}
                 option={option}
                 renderer='canvas'
-                style={{ height: "80%", width: "100%" }}
+                style={{ height: '80%', width: '100%' }}
                 ref={ref}
                 notMerge={true}
             />
@@ -256,10 +256,10 @@ export default React.memo(({ id, type, filters }) => {
                     footer={null}
                 >
                     <ReactEcharts
-                        theme={"infographic"}
+                        theme={'infographic'}
                         lazyUpdate={true}
                         option={ref.current.getEchartsInstance().getOption()}
-                        style={{ height: "70vh", width: "100%" }}
+                        style={{ height: '70vh', width: '100%' }}
                         renderer='canvas'
                     />
                 </Modal>
