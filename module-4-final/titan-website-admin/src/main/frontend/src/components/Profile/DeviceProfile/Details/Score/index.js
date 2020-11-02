@@ -103,7 +103,7 @@ export default function DeviceScore() {
                         <Col span={12} className='gutter-row'>
                             <p className='text-4xl'>13.42</p>
                             <p className='text-xs  text-gray-500 font-bold'>
-                                PROXY SCORE
+                                ABUSE SCORE
                             </p>
                             <Progress
                                 percent='13.42'
@@ -118,7 +118,7 @@ export default function DeviceScore() {
                         <Col span={12} className='gutter-row'>
                             <p className='text-4xl'>52.8</p>
                             <p className='text-xs  text-gray-500 font-bold'>
-                                USER SCORE
+                                LOCATION SCORE
                             </p>
                             <Progress
                                 percent='52.8'
@@ -131,7 +131,7 @@ export default function DeviceScore() {
                         <Col span={12} className='gutter-row'>
                             <p className='text-4xl'>98.8</p>
                             <p className='text-xs  text-gray-500 font-bold'>
-                                VELOCITY SCORE
+                                IP SCORE
                             </p>
                             <Progress
                                 percent='98.8'

@@ -1,17 +1,17 @@
-import Axios from 'axios'
-import ReactEcharts from 'echarts-for-react'
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { generalSelector } from '../../../../../slices/general'
+import Axios from "axios"
+import ReactEcharts from "echarts-for-react"
+import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import { generalSelector } from "../../../../../slices/general"
 
-export default function CardNetwork() {
+export default function AccountNetwork() {
     const { id } = useSelector(generalSelector)
     const [option, setOption] = useState(null)
 
     useEffect(() => {
         const fetchNetwork = async () => {
             await Axios.post(
-                'http://localhost:8085/api/profile/user/network/account',
+                "http://localhost:8085/api/profile/user/network/account",
                 {
                     id: `userid/${id}`,
                 }
@@ -32,32 +32,32 @@ export default function CardNetwork() {
                 .flat()
 
             return {
-                backgroundColor: '#FFFFFF',
+                backgroundColor: "#FFFFFF",
                 series: [
                     {
-                        type: 'sankey',
+                        type: "sankey",
                         data: [
                             ...new Set(sourceTarget.map((x) => x.target)),
                             ...new Set(sourceTarget.map((x) => x.source)),
                         ].map((x) => ({ name: x })),
                         links: sourceTarget,
                         lineStyle: {
-                            color: 'source',
+                            color: "source",
                             curveness: 0.5,
                         },
                         itemStyle: {
-                            color: '#1f77b4',
-                            borderColor: '#1f77b4',
+                            color: "#1f77b4",
+                            borderColor: "#1f77b4",
                         },
                         label: {
-                            color: 'rgba(0,0,0,0.7)',
-                            fontFamily: 'Arial',
+                            color: "rgba(0,0,0,0.7)",
+                            fontFamily: "Arial",
                             fontSize: 10,
                         },
                     },
                 ],
                 tooltip: {
-                    trigger: 'item',
+                    trigger: "item",
                 },
             }
         }
@@ -65,5 +65,5 @@ export default function CardNetwork() {
         fetchNetwork()
     }, [])
 
-    return option && <ReactEcharts option={option} style={{ height: '80vh' }} />
+    return option && <ReactEcharts option={option} style={{ height: "80vh" }} />
 }

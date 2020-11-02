@@ -50,26 +50,36 @@ export default function UserBasic() {
             hoverable={true}
         >
             <Descriptions column={1} bordered>
-                {Object.keys(info).map((k, i) => (
+                {/* {Object.keys(info).map((k, i) => (
                     <DescriptionsItem label={k} key={i}>
                         {info[k]}
                     </DescriptionsItem>
-                ))}
-                {/* <DescriptionsItem label='Avatar'>
-					<img src='https://via.placeholder.com/150' />
-				</DescriptionsItem>
-				<DescriptionsItem label='Birthday'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='Gender'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='Is Locked'>
-					<CloseCircleTwoTone twoToneColor='#e74c3c' />
-				</DescriptionsItem>
-				<DescriptionsItem label='KYC DOB'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='KYC Fullname'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='KYC Gender'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='KYC Phonenumber'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='Postmoterm Add Date'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='Postmoterm Result'>UNKNOWN</DescriptionsItem>
-				<DescriptionsItem label='Profile Level'>UNKNOWN</DescriptionsItem> */}
+                ))} */}
+                <DescriptionsItem label='Avatar'>
+                    <img src='https://via.placeholder.com/150' />
+                </DescriptionsItem>
+                <DescriptionsItem label='Birthday'>UNKNOWN</DescriptionsItem>
+                <DescriptionsItem label='Gender'>UNKNOWN</DescriptionsItem>
+                <DescriptionsItem label='Is Locked'>
+                    <CloseCircleTwoTone twoToneColor='#e74c3c' />
+                </DescriptionsItem>
+                <DescriptionsItem label='KYC DOB'>UNKNOWN</DescriptionsItem>
+                <DescriptionsItem label='KYC Fullname'>
+                    UNKNOWN
+                </DescriptionsItem>
+                <DescriptionsItem label='KYC Gender'>UNKNOWN</DescriptionsItem>
+                <DescriptionsItem label='KYC Phonenumber'>
+                    UNKNOWN
+                </DescriptionsItem>
+                <DescriptionsItem label='Postmoterm Add Date'>
+                    UNKNOWN
+                </DescriptionsItem>
+                <DescriptionsItem label='Postmoterm Result'>
+                    UNKNOWN
+                </DescriptionsItem>
+                <DescriptionsItem label='Profile Level'>
+                    UNKNOWN
+                </DescriptionsItem>
             </Descriptions>
         </Card>
     ) : (

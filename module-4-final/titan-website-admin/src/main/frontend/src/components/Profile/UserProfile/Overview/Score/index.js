@@ -31,7 +31,7 @@ export default function UserScore() {
                         >
                             <p className='text-4xl'>32.23</p>
                             <p className='text-xs text-gray-500 font-bold'>
-                                HARDWARE SCORE (0-30)
+                                HARDWARE SCORE
                             </p>
                             <Progress
                                 percent='32.23'
@@ -44,7 +44,7 @@ export default function UserScore() {
                         <Col span={12} className='gutter-row'>
                             <p className='text-4xl'>13.42</p>
                             <p className='text-xs  text-gray-500 font-bold'>
-                                PROXY SCORE
+                                ABUSE SCORE
                             </p>
                             <Progress
                                 percent='13.42'
@@ -59,7 +59,7 @@ export default function UserScore() {
                         <Col span={12} className='gutter-row'>
                             <p className='text-4xl'>52.8</p>
                             <p className='text-xs  text-gray-500 font-bold'>
-                                USER SCORE
+                                IP SCORE
                             </p>
                             <Progress
                                 percent='52.8'
@@ -72,7 +72,7 @@ export default function UserScore() {
                         <Col span={12} className='gutter-row'>
                             <p className='text-4xl'>98.8</p>
                             <p className='text-xs  text-gray-500 font-bold'>
-                                VELOCITY SCORE
+                                LOCATION SCORE
                             </p>
                             <Progress
                                 percent='98.8'

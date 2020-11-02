@@ -5,6 +5,7 @@ import { generalSelector, storeId, storeType } from "../../../slices/general"
 import { SettingTwoTone } from "@ant-design/icons"
 import FilterBar from "../Common/Activity/FilterBar"
 import { userSelector, storeDateRange } from "../../../slices/user"
+import CardNetwork from "../Common/Network/CardNetwork"
 
 const { TabPane } = Tabs
 const { Option } = Select
@@ -117,6 +118,11 @@ export default function UserProfile() {
                         <TabPane tab='Connection' key='connection'>
                             <Suspense fallback={<Skeleton active />}>
                                 <Connection />
+                            </Suspense>
+                        </TabPane>
+                        <TabPane tab='Network' key='network'>
+                            <Suspense fallback={<Skeleton active />}>
+                                <CardNetwork />
                             </Suspense>
                         </TabPane>
                         <TabPane tab='Tool' key='tool'>

@@ -1,0 +1,20 @@
+.viz-biPartite-subBar {
+    shape-rendering: crispEdges;
+}
+.viz-biPartite-mainBar rect {
+    fill-opacity: 0;
+    stroke-width: 0.5px;
+    stroke: rgb(0, 0, 0);
+    stroke-opacity: 0;
+}
+.viz-biPartite-mainBar .perc {
+    fill: white;
+    text-anchor: middle;
+    font-size: 12px;
+}
+
+.viz-biPartite-mainBar .key {
+    fill: black;
+    text-anchor: end;
+    font-size: 10px;
+}

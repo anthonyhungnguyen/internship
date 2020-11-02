@@ -30,6 +30,28 @@ export default React.memo(({ id, type, filters }) => {
                     .catch((err) => {
                         console.log(err)
                     })
+            } else {
+                await axios
+                    .post(
+                        `http://localhost:8085/api/profile/device/monetary/overview`,
+                        {
+                            id: id,
+                            fromDate: filters.range[0],
+                            toDate: filters.range[1],
+                        }
+                    )
+                    .then((response) => {
+                        const data = response.data
+                        if (data && data.length > 0) {
+                            setNoData(false)
+                            setOption(getOption(data))
+                        } else {
+                            setNoData(true)
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
             }
         }
         const getOption = (data) => {
