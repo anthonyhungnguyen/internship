@@ -151,7 +151,7 @@ export default React.memo(({ id, type, filters }) => {
             }
         }
         fetchGeolocationActivity()
-    }, [id, filters])
+    }, [id, filters, type])
 
     const handleToggleVisible = () => {
         setVisible((old) => !old)

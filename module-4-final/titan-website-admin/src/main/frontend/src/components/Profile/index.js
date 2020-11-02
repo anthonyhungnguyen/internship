@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { useSelector } from "react-redux"
 import "./index.css"
 import DeviceProfile from "./DeviceProfile"
 import UserProfile from "./UserProfile"
-import {
-    generalSelector,
-    storeExist,
-    storeId,
-    storeType,
-} from "../../slices/general"
+import { generalSelector, storeExist } from "../../slices/general"
 import axios from "axios"
 import { message } from "antd"
 import { useDispatch } from "react-redux"
@@ -35,7 +30,7 @@ export default React.memo(() => {
                 .catch(console.error)
         }
         checkIdAndTypeExists()
-    }, [id, type])
+    }, [id, type, dispatch])
 
     return (
         <React.Fragment>

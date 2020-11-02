@@ -5,7 +5,7 @@ import axios from "axios"
 import { generalSelector } from "../../../../../../slices/general"
 import { useSelector } from "react-redux"
 
-export default ({ id, filters, queryUrl, queryParams }) => {
+export default function Frequency({ id, queryUrl, queryParams }) {
     const { type } = useSelector(generalSelector)
     const [monetaryFrequencyOverview, setMonetaryFrequencyOverview] = useState(
         null
@@ -23,7 +23,7 @@ export default ({ id, filters, queryUrl, queryParams }) => {
                 .then((response) => setMonetaryFrequencyOverview(response.data))
                 .catch(console.error)
         }
-    }, [id, filters])
+    }, [queryUrl, queryParams, type, id])
 
     return monetaryFrequencyOverview ? (
         <Card>

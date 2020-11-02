@@ -7,7 +7,6 @@ const columns = [
         title: "User ID",
         dataIndex: "userid",
         key: "userid",
-        render: (text) => <a>{text}</a>,
     },
     {
         title: "First Seen",
@@ -25,7 +24,7 @@ const columns = [
     },
 ]
 
-export default React.memo(({ data }) => {
+export default function UserTable({ data }) {
     return (
         <Table
             columns={columns}
@@ -35,4 +34,4 @@ export default React.memo(({ data }) => {
             pagination={false}
         />
     )
-})
+}

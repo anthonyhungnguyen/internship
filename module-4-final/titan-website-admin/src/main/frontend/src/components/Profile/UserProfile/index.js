@@ -1,7 +1,6 @@
 import React, { useState, Suspense } from "react"
 import { Input, Tabs, Skeleton, Select, Drawer } from "antd"
 import { useSelector, useDispatch } from "react-redux"
-import swal from "sweetalert"
 import { generalSelector, storeId, storeType } from "../../../slices/general"
 import { SettingTwoTone } from "@ant-design/icons"
 import FilterBar from "../Common/Activity/FilterBar"
@@ -16,7 +15,7 @@ const Connection = React.lazy(() => import("./Connection"))
 const Overview = React.lazy(() => import("./Overview"))
 const Tool = React.lazy(() => import("../Common/Tool"))
 
-export default () => {
+export default function UserProfile() {
     const { id, hasErrors } = useSelector(generalSelector)
     const { filters } = useSelector(userSelector)
     const [activeTab, setActiveTab] = useState("overview")
@@ -39,7 +38,7 @@ export default () => {
             dispatch(storeType(typeSelect))
             dispatch(storeId(newId))
         } else {
-            swal("Error", "Please re-check device ID", "error")
+            alert("Error", "Please re-check device ID", "error")
         }
     }
 

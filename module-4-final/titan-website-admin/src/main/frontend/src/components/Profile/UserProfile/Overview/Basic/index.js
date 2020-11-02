@@ -5,7 +5,7 @@ import { generalSelector } from "../../../../../slices/general"
 import { useSelector } from "react-redux"
 import DescriptionsItem from "antd/lib/descriptions/Item"
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
-export default () => {
+export default function UserBasic() {
     const { id } = useSelector(generalSelector)
     const [info, setInfo] = useState(null)
     useEffect(() => {

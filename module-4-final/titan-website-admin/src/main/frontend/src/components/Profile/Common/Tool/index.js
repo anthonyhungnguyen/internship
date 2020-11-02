@@ -1,11 +1,11 @@
-import React from 'react'
-import { Tabs } from 'antd'
-import UserListGraph from './UserListGraph'
-import AbuseScore from './AbuseScore'
+import React from "react"
+import { Tabs } from "antd"
+import UserListGraph from "./UserListGraph"
+import AbuseScore from "./AbuseScore"
 
 const { TabPane } = Tabs
 
-export default () => {
+export default function Tool() {
     return (
         <Tabs tabPosition='right'>
             <TabPane tab='User List Graph' key='userListGraph'>

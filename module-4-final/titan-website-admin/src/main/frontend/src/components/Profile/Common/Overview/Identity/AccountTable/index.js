@@ -24,7 +24,7 @@ const columns = [
     },
 ]
 
-export default ({ data }) => {
+export default function AccountTable({ data }) {
     return (
         <Table
             columns={columns}
