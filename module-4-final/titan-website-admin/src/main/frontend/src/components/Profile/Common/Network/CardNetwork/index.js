@@ -1,71 +1,140 @@
-import Axios from 'axios'
-import ReactEcharts from 'echarts-for-react'
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { generalSelector } from '../../../../../slices/general'
+import { Card } from "antd"
+import Axios from "axios"
+import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import { generalSelector } from "../../../../../slices/general"
+import { userSelector } from "../../../../../slices/user"
+import "./index.css"
 
 export default function CardNetwork() {
     const { id } = useSelector(generalSelector)
-    const [option, setOption] = useState(null)
-
+    const { filters } = useSelector(userSelector)
     useEffect(() => {
-        const fetchNetworkCard = async () => {
-            await Axios.post(
-                'http://localhost:8085/api/profile/user/network/card',
-                {
-                    id: `userid/${id}`,
-                }
-            ).then((response) => {
-                setOption(getOptionCard(response.data))
-            })
-        }
-
-        const getOptionCard = (data) => {
-            const sourceTarget = data
+        Axios.post("http://localhost:8085/api/profile/user/network/card", {
+            id: `userid/${id}`,
+            fromDate: filters.range[0],
+            toDate: filters.range[1],
+        }).then((response) => {
+            const links_ = response.data
                 .map((x) => {
-                    return x.userList.map((z) => ({
-                        source: `cardid/${x.cardId}`,
-                        target: z,
-                        value: 1,
+                    return x.userList.map((d) => ({
+                        source: x.cardId,
+                        target: d.split("/")[1],
                     }))
                 })
                 .flat()
+                .map((x) => [x.source, x.target, 1])
 
-            return {
-                backgroundColor: '#FFFFFF',
-                series: [
-                    {
-                        type: 'sankey',
-                        data: [
-                            ...new Set(sourceTarget.map((x) => x.target)),
-                            ...new Set(sourceTarget.map((x) => x.source)),
-                        ].map((x) => ({ name: x })),
-                        links: sourceTarget,
-                        lineStyle: {
-                            color: 'source',
-                            curveness: 0.5,
-                        },
-                        itemStyle: {
-                            color: '#1f77b4',
-                            borderColor: '#1f77b4',
-                        },
-                        label: {
-                            color: 'rgba(0,0,0,0.7)',
-                            fontFamily: 'Arial',
-                            fontSize: 10,
-                        },
-                    },
-                ],
-                tooltip: {
-                    trigger: 'item',
-                },
+            const sortNow = () => {
+                const sortOrder = response.data
+                    .sort((a, b) => a.userListLength - b.userListLength)
+                    .map((x) => x.cardId)
+                return function (a, b) {
+                    return window.d3.descending(
+                        sortOrder.indexOf(a),
+                        sortOrder.indexOf(b)
+                    )
+                }
             }
-        }
 
-        fetchNetworkCard()
-    }, [])
+            const svg = window.d3.select("svg")
+
+            const bP = window.viz
+                .biPartite()
+                .pad(4)
+                .width(500)
+                .height(1600)
+                .sortPrimary(sortNow())
+                .data(links_)
+            const bPg = window.d3.select("g").call(bP)
+
+            bPg.append("text")
+                .attr("x", -50)
+                .attr("y", -8)
+                .style("text-anchor", "middle")
+                .text("Card")
+
+            bPg.append("text")
+                .attr("x", 550)
+                .attr("y", -8)
+                .style("text-anchor", "middle")
+                .text("User")
+
+            bPg.append("line").attr("x1", -100).attr("x2", 0)
+
+            bPg.append("line").attr("x1", 500).attr("x2", 600)
+
+            bPg.selectAll(".viz-biPartite-mainBar")
+                .append("text")
+                .attr("fill", "black")
+                .attr("font-size", "10px")
+                .attr("x", (d) => (d.part === "primary" ? -30 : 30))
+                .attr("y", (d) => 6)
+                .attr("text-anchor", (d) =>
+                    d.part === "primary" ? "end" : "start"
+                )
+                .text((d) => d.key)
+
+            // bPg.selectAll(".viz-biPartite-mainBar")
+            //     .append("text")
+            //     .attr("fill", "black")
+            //     .attr("font-size", "10px")
+            //     .attr("x", (d) => (d.part === "primary" ? -150 : 140))
+            //     .attr("y", (d) => 6)
+            //     .attr("text-anchor", (d) =>
+            //         d.part === "primary" ? "end" : "start"
+            //     )
+            //     .text((d) => window.d3.format("0.0%")(d.percent))
+
+            bPg.selectAll(".viz-biPartite-mainBar")
+                .on("mouseover", mouseover)
+                .on("mouseout", mouseout)
+
+            function mouseover(d) {
+                bP.mouseover(d)
+
+                bPg.selectAll(".viz-biPartite-mainBar")
+                    .filter((d) => d.part === "primary")
+                    .select(".perc")
+                    .text(function (d) {
+                        return window.d3.format(".0%")(d.percent)
+                    })
+                if (d.part === "primary") {
+                    bPg.selectAll(".viz-biPartite-mainBar")
+                        .filter(
+                            (d) => d.part === "secondary" && d.percent === 0
+                        )
+                        .style("visibility", "hidden")
+                } else {
+                    bPg.selectAll(".viz-biPartite-mainBar")
+                        .filter((d) => d.part === "primary" && d.percent === 0)
+                        .style("visibility", "hidden")
+                }
+            }
+
+            function mouseout(d) {
+                bP.mouseout(d)
+
+                bPg.selectAll(".viz-biPartite-mainBar")
+                    .filter((d) => d.part === "primary")
+                    .select(".perc")
+                    .text(function (d) {
+                        return window.d3.format(".0%")(d.percent)
+                    })
+
+                bPg.selectAll(".viz-biPartite-mainBar").style(
+                    "visibility",
+                    "visible"
+                )
+            }
+        })
+    }, [id, filters])
 
     return (
-        option && <ReactEcharts option={option} style={{ height: '2000px' }} />
+        <Card>
+            <svg style={{ width: 3000, height: 5000 }}>
+                <g transform='translate(120, 50)'></g>
+            </svg>
+        </Card>
     )
 }

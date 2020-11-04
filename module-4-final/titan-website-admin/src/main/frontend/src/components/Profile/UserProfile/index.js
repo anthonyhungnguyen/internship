@@ -6,6 +6,8 @@ import { generalSelector, storeId, storeType } from "../../../slices/general"
 import { SettingTwoTone } from "@ant-design/icons"
 import FilterBar from "../Common/Activity/FilterBar"
 import { userSelector, storeDateRange } from "../../../slices/user"
+import CardNetwork from "../Common/Network/CardNetwork"
+import Network from "../Common/Network"
 
 const { TabPane } = Tabs
 const { Option } = Select
@@ -113,6 +115,11 @@ export default () => {
                         <TabPane tab='Activity' key='activity'>
                             <Suspense fallback={<Skeleton active />}>
                                 <Activity />
+                            </Suspense>
+                        </TabPane>
+                        <TabPane tab='Network' key='network'>
+                            <Suspense fallback={<Skeleton active />}>
+                                <Network />
                             </Suspense>
                         </TabPane>
                         <TabPane tab='Connection' key='connection'>

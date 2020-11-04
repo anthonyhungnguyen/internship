@@ -199,6 +199,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
     Map<String, Object> getSpendingFrequencyOverview(@BindVars Map<String, Object> bindVars);
 
     @Query("LET card_user = (FOR v, e IN 1..2 ANY @id map_card\n" +
+            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
             "    COLLECT cardId = e.cardId, userId = e._from\n" +
             "    RETURN {cardId, userId})\n" +
             "\n" +
@@ -210,6 +211,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
     List<Map<String, Object>> getNetworkCard(@BindVars Map<String, Object> bindVars);
 
     @Query("LET account_user = (FOR v, e IN 1..2 ANY @id map_account\n" +
+            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
             "    COLLECT accountId = e.accountId, userId = e._from\n" +
             "    RETURN {accountId, userId})\n" +
             "\n" +
