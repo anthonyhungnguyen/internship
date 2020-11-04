@@ -11,16 +11,13 @@ export default function BriefCard({ id }) {
     useEffect(() => {
         const fetchUserList = async () => {
             await axios
-                .post(`http://localhost:8085/api/profile/card/userList`, {
-                    type: "card_account",
-                    id: id,
-                })
+                .get(
+                    `http://localhost:8085/api/profile/funding_channel/${id}/connection/users`
+                )
                 .then((response) => {
                     const data = response.data.map((d, k) => ({
                         key: k,
                         userid: d.userid.split("/")[1].trim(),
-                        firstseen: moment(d.firstseen).format("L LT"),
-                        lastseen: moment(d.lastseen).format("L LT"),
                     }))
                     setUsers(data)
                 })
@@ -29,12 +26,15 @@ export default function BriefCard({ id }) {
 
         const fetchCardBasicInfo = async () => {
             await axios
-                .post(`http://localhost:8085/api/profile/mapping/basicInfo`, {
-                    type: "card_account",
-                    id: id,
-                })
+                .post(
+                    `http://localhost:8085/api/profile/funding_channel/${id}/connection/info`,
+                    {
+                        type: "card_account",
+                        id: id,
+                    }
+                )
                 .then((response) => {
-                    setCard(response.data[0])
+                    setCard(response.data)
                 })
                 .catch(console.err)
         }
@@ -55,9 +55,6 @@ export default function BriefCard({ id }) {
                 </Descriptions.Item>
                 <Descriptions.Item label='Bank Code'>
                     {card.bankCode}
-                </Descriptions.Item>
-                <Descriptions.Item label='Last Request Date'>
-                    {moment(card.reqDate).format("L LTS")}
                 </Descriptions.Item>
                 <Descriptions.Item label={`Total Users (${users.length})`}>
                     <UserTable data={users} />

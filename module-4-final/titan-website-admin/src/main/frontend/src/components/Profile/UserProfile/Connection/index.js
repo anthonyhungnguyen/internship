@@ -33,13 +33,13 @@ export default React.memo(() => {
                     />
                 </Col>
                 <Col span={8}>
-                    {currentType === "devices" && (
+                    {currentType === "deviceid" && (
                         <Device id={currentChosenId} type={type} />
                     )}
-                    {currentType === "users" && (
+                    {currentType === "userid" && (
                         <User id={currentChosenId} type={type} />
                     )}
-                    {currentType === "card_account" && (
+                    {currentType === "funding_channel" && (
                         <Card id={currentChosenId} type={type} />
                     )}
                 </Col>

@@ -16,15 +16,15 @@ export default React.memo(
         let ref = useRef()
 
         const handleOnClick = async (e) => {
-            if (e.data.type === "devices") {
+            if (e.data.type === "deviceid") {
                 copy(e.data.id.trim())
                 setCurrentChosenId(e.data.id.trim())
                 setCurrentType(e.data.type)
-            } else if (e.data.type === "users") {
+            } else if (e.data.type === "userid") {
                 copy(e.data.id.trim())
                 setCurrentChosenId(e.data.id.trim())
                 setCurrentType(e.data.type)
-            } else if (e.data.type === "card_account") {
+            } else if (e.data.type === "funding_channel") {
                 copy(e.data.id.trim())
                 setCurrentChosenId(e.data.id.trim())
                 setCurrentType(e.data.type)

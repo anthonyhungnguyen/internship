@@ -9,7 +9,7 @@ export default React.memo(({ id, type, filters }) => {
     const [noData, setNoData] = useState(false)
     useEffect(() => {
         const fetchMonetaryOverview = async () => {
-            if (type === "users") {
+            if (type === "userid") {
                 await axios
                     .post(
                         `http://localhost:8085/api/profile/user/${id}/monetary/overview`,

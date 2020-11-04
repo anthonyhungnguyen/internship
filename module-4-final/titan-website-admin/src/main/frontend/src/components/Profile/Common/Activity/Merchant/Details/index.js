@@ -12,7 +12,7 @@ export default React.memo(({ id, type, filters }) => {
 
     useEffect(() => {
         const fetchAppIDFrequency = async () => {
-            if (type === "users") {
+            if (type === "userid") {
                 await axios
                     .post(
                         `http://localhost:8085/api/profile/user/${id}/merchant/details`,

@@ -35,7 +35,7 @@ export default React.memo(() => {
     return (
         <React.Fragment>
             {type === "devices" && <DeviceProfile />}
-            {type === "users" && <UserProfile />}
+            {type === "userid" && <UserProfile />}
         </React.Fragment>
     )
 })

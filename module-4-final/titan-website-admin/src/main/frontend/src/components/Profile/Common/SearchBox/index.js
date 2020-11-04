@@ -19,9 +19,13 @@ export default function SearchBox({
                     style={{ width: 100 }}
                     onChange={handleTypeChange}
                 >
-                    <Option value='device'>Device</Option>
+                    <Option value='device' disabled>
+                        Device
+                    </Option>
                     <Option value='user'>User</Option>
-                    <Option value='card'>Card</Option>
+                    <Option value='card' disabled>
+                        Card
+                    </Option>
                 </Select>
             }
             value={id}

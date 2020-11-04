@@ -1,31 +1,31 @@
-import React, { Suspense, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Input, Tabs, Skeleton, message, Select, Drawer } from 'antd'
-import { deviceSelector, storeDateRange } from '../../../slices/device'
-import { generalSelector, storeId, storeType } from '../../../slices/general'
-import FilterBar from '../Common/Activity/FilterBar'
-import { SettingTwoTone } from '@ant-design/icons'
+import React, { Suspense, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { Input, Tabs, Skeleton, message, Select, Drawer } from "antd"
+import { deviceSelector, storeDateRange } from "../../../slices/device"
+import { generalSelector, storeId, storeType } from "../../../slices/general"
+import FilterBar from "../Common/Activity/FilterBar"
+import { SettingTwoTone } from "@ant-design/icons"
 
 const { TabPane } = Tabs
 const { Option } = Select
 const { Search } = Input
 
-const Details = React.lazy(() => import('./Details'))
-const Activity = React.lazy(() => import('./Activity'))
-const Connection = React.lazy(() => import('./Connection'))
-const Tool = React.lazy(() => import('../Common/Tool'))
+const Details = React.lazy(() => import("./Details"))
+const Activity = React.lazy(() => import("./Activity"))
+const Connection = React.lazy(() => import("./Connection"))
+const Tool = React.lazy(() => import("../Common/Tool"))
 
 export default React.memo(() => {
-    const [activeTab, setActiveTab] = useState('overview')
+    const [activeTab, setActiveTab] = useState("overview")
     const { id, hasErrors } = useSelector(generalSelector)
     const { loading, filters } = useSelector(deviceSelector)
     const [visible, setVisible] = useState(false)
-    const [typeSelect, setTypeSelect] = useState('devices')
+    const [typeSelect, setTypeSelect] = useState("devices")
     const [currentID, setCurrentID] = useState(id)
     const dispatch = useDispatch()
 
     const handleTypeChange = (type) => {
-        setCurrentID('')
+        setCurrentID("")
         setTypeSelect(type)
     }
 
@@ -39,9 +39,9 @@ export default React.memo(() => {
             dispatch(storeId(newId))
         } else {
             message.error({
-                content: 'ID Not Found',
+                content: "ID Not Found",
                 style: {
-                    marginTop: '5vh',
+                    marginTop: "5vh",
                 },
             })
         }
@@ -68,11 +68,11 @@ export default React.memo(() => {
             </Drawer>
             <button
                 style={{
-                    position: 'fixed',
-                    top: '200px',
-                    right: '20px',
-                    fontSize: '30px',
-                    zIndex: '9999',
+                    position: "fixed",
+                    top: "200px",
+                    right: "20px",
+                    fontSize: "30px",
+                    zIndex: "9999",
                 }}
                 onClick={showDrawer}
             >

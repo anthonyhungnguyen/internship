@@ -84,8 +84,8 @@ export const generateGraphData = (data, type) => {
                 // focusNodeAdjacency: true,
                 force: {
                     edgeLength: 70,
-                    repulsion: 1000,
-                    friction: 0.2,
+                    repulsion: 500,
+                    friction: 0.05,
                 },
                 draggable: true,
                 edges: data.links,
@@ -98,9 +98,9 @@ export const generateGraphData = (data, type) => {
 }
 
 export const generateCategoriesAndLegendsFromRoot = (type) => {
-    const users = generateSymbolFromType("users")
-    const devices = generateSymbolFromType("devices")
-    const cards = generateSymbolFromType("card_account")
+    const users = generateSymbolFromType("userid")
+    const devices = generateSymbolFromType("deviceid")
+    const cards = generateSymbolFromType("funding_channel")
     const rootUser = generateSymbolFromType("rootUser")
     const rootDevice = generateSymbolFromType("rootDevice")
     let defaultType = [
@@ -120,7 +120,7 @@ export const generateCategoriesAndLegendsFromRoot = (type) => {
             icon: cards,
         },
     ]
-    if (type === "users") {
+    if (type === "userid") {
         defaultType = [
             {
                 name: "Root User",
@@ -129,7 +129,7 @@ export const generateCategoriesAndLegendsFromRoot = (type) => {
             },
             ...defaultType,
         ]
-    } else if (type === "devices") {
+    } else if (type === "deviceid") {
         defaultType = [
             {
                 name: "Root Device",
@@ -144,11 +144,11 @@ export const generateCategoriesAndLegendsFromRoot = (type) => {
 
 export const generateCategoryFromType = (type) => {
     switch (type) {
-        case "devices":
+        case "deviceid":
             return 2
-        case "users":
+        case "userid":
             return 1
-        case "card_account":
+        case "funding_channel":
             return 3
         default:
             return 0
@@ -165,13 +165,13 @@ export const generateSymbolFromType = (type) => {
             return `image://${
                 process.env.PUBLIC_URL + "/assets/icon/rootUser.png"
             }`
-        case "devices":
+        case "deviceid":
             return `image://${
                 process.env.PUBLIC_URL + "/assets/icon/smartphone.png"
             }`
-        case "users":
+        case "userid":
             return `image://${process.env.PUBLIC_URL + "/assets/icon/man.png"}`
-        case "card_account":
+        case "funding_channel":
             return `image://${
                 process.env.PUBLIC_URL + "/assets/icon/credit-card.png"
             }`

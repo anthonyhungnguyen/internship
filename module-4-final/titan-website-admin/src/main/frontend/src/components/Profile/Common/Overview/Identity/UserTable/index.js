@@ -8,20 +8,6 @@ const columns = [
         dataIndex: "userid",
         key: "userid",
     },
-    {
-        title: "First Seen",
-        dataIndex: "firstseen",
-        key: "firstseen",
-        sorter: (a, b) =>
-            moment(a.firstseen, "L LT").isAfter(moment(b.firstseen, "L LT")),
-    },
-    {
-        title: "Last Seen",
-        dataIndex: "lastseen",
-        key: "lastseen",
-        sorter: (a, b) =>
-            moment(a.lastseen, "L LT").isAfter(moment(b.lastseen, "L LT")),
-    },
 ]
 
 export default function UserTable({ data }) {

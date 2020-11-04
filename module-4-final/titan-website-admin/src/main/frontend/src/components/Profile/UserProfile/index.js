@@ -20,7 +20,7 @@ export default function UserProfile() {
     const { id, hasErrors } = useSelector(generalSelector)
     const { filters } = useSelector(userSelector)
     const [activeTab, setActiveTab] = useState("overview")
-    const [typeSelect, setTypeSelect] = useState("users")
+    const [typeSelect, setTypeSelect] = useState("userid")
     const [currentID, setCurrentID] = useState(id)
     const [visible, setVisible] = useState(false)
     const dispatch = useDispatch()
@@ -87,9 +87,13 @@ export default function UserProfile() {
                                 style={{ width: 100 }}
                                 onChange={handleTypeChange}
                             >
-                                <Option value='devices'>Device</Option>
+                                <Option value='devices' disabled>
+                                    Device
+                                </Option>
                                 <Option value='users'>User</Option>
-                                <Option value='cards'>Card</Option>
+                                <Option value='cards' disabled>
+                                    Card
+                                </Option>
                             </Select>
                         }
                         value={currentID}
