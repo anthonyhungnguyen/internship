@@ -59,7 +59,6 @@ export default function AccountNetwork() {
 
             bPg.append("line").attr("x1", -100).attr("x2", 0)
 
-<<<<<<< HEAD
             bPg.append("line").attr("x1", 500).attr("x2", 600)
 
             bPg.selectAll(".viz-biPartite-mainBar")
@@ -108,36 +107,6 @@ export default function AccountNetwork() {
                         .filter((d) => d.part === "primary" && d.percent === 0)
                         .style("visibility", "hidden")
                 }
-=======
-            return {
-                backgroundColor: "#FFFFFF",
-                series: [
-                    {
-                        type: "sankey",
-                        data: [
-                            ...new Set(sourceTarget.map((x) => x.target)),
-                            ...new Set(sourceTarget.map((x) => x.source)),
-                        ].map((x) => ({ name: x })),
-                        links: sourceTarget,
-                        lineStyle: {
-                            color: "source",
-                            curveness: 0.5,
-                        },
-                        itemStyle: {
-                            color: "#1f77b4",
-                            borderColor: "#1f77b4",
-                        },
-                        label: {
-                            color: "rgba(0,0,0,0.7)",
-                            fontFamily: "Arial",
-                            fontSize: 10,
-                        },
-                    },
-                ],
-                tooltip: {
-                    trigger: "item",
-                },
->>>>>>> d565d57915cc7324891cabef1b819850ca7d7bcb
             }
 
             function mouseout(d) {
@@ -158,7 +127,6 @@ export default function AccountNetwork() {
         })
     }, [id, filters])
 
-<<<<<<< HEAD
     return (
         <Card>
             <svg style={{ width: 3000, height: 5000 }}>
@@ -166,7 +134,4 @@ export default function AccountNetwork() {
             </svg>
         </Card>
     )
-=======
-    return option && <ReactEcharts option={option} style={{ height: "80vh" }} />
->>>>>>> d565d57915cc7324891cabef1b819850ca7d7bcb
 }
