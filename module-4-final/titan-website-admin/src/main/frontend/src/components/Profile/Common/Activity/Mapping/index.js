@@ -2,14 +2,14 @@ import React, { useState } from "react"
 import { Tabs, Card } from "antd"
 import Overview from "./Overview"
 import Bank from "./Bank"
-import Timestamp from "./Timestamp"
+import Timeline from "./Timeline"
 import "./index.css"
 import MappingCardTable from "./MappingCardTable"
 import MappingAccountTable from "./MappingAccountTable"
 
 const { TabPane } = Tabs
 
-export default ({ id, type, filters, queryUrl, queryParams }) => {
+export default function Mapping({ id, type, filters, queryUrl, queryParams }) {
     const [OuterActiveTab, setOuterActiveTab] = useState("card")
     const [InnerActiveTab, setInnerActiveTab] = useState("overview")
     return (
@@ -28,7 +28,7 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                         tabBarStyle={{ margin: 0, fontWeight: "normal" }}
                     >
                         <TabPane tab='Overview' key='overview' />
-                        <TabPane tab='Timestamp' key='timestamp' />
+                        <TabPane tab='Timeline' key='timeline' />
                         <TabPane tab='Bank' key='bank' />
                     </Tabs>
                 }
@@ -43,8 +43,8 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                             queryParams={queryParams}
                         />
                     )}
-                    {InnerActiveTab === "timestamp" && (
-                        <Timestamp
+                    {InnerActiveTab === "timeline" && (
+                        <Timeline
                             id={id}
                             type={type}
                             filters={filters}
@@ -72,8 +72,8 @@ export default ({ id, type, filters, queryUrl, queryParams }) => {
                             queryParams={queryParams}
                         />
                     )}
-                    {InnerActiveTab === "timestamp" && (
-                        <Timestamp
+                    {InnerActiveTab === "timeline" && (
+                        <Timeline
                             id={id}
                             type={type}
                             filters={filters}

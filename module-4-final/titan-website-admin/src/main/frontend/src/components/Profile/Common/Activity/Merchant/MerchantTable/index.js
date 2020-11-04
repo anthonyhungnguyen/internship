@@ -1,6 +1,6 @@
-import { Card, Skeleton, Table, Tag, Timeline } from "antd"
+import { Table } from "antd"
 import React, { useEffect, useState } from "react"
-import moment from "moment"
+
 import Axios from "axios"
 
 const columns = [
@@ -30,7 +30,7 @@ const columns = [
     },
 ]
 
-export default function MerchantTable({ id, type, filters }) {
+export default function MerchantTable({ id, filters }) {
     const [data, setData] = useState(null)
 
     useEffect(() => {

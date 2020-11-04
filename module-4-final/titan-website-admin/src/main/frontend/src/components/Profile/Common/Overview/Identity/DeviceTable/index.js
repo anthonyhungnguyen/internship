@@ -25,7 +25,7 @@ const columns = [
     },
 ]
 
-export default ({ data }) => {
+export default function DeviceTable({ data }) {
     return (
         <Table
             columns={columns}

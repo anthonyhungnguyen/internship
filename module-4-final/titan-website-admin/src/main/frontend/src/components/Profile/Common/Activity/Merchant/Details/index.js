@@ -64,123 +64,123 @@ export default React.memo(({ id, type, filters }) => {
                     })
             }
         }
-        fetchAppIDFrequency()
-    }, [id, filters])
 
-    const getOption = (data) => {
-        const formatMarkPoint = (params) => {
-            params.data.value = params.data.value.toLocaleString("en-EN", {
-                style: "currency",
-                currency: "VND",
-            })
-        }
-        if (data.length > 0) {
-            return {
-                legend: {
-                    data: ["Frequency", "Monetary"],
-                },
-                tooltip: {
-                    trigger: "axis",
-                    axisPointer: {
-                        type: "cross",
-                        crossStyle: {
-                            color: "#999",
-                        },
+        const getOption = (data) => {
+            const formatMarkPoint = (params) => {
+                params.data.value = params.data.value.toLocaleString("en-EN", {
+                    style: "currency",
+                    currency: "VND",
+                })
+            }
+            if (data.length > 0) {
+                return {
+                    legend: {
+                        data: ["Frequency", "Monetary"],
                     },
-                },
-                dataZoom: [
-                    {
-                        type: "slider",
-                        xAxisIndex: [0],
-                        show: true,
-                        // start: 70
-                    },
-
-                    {
-                        type: "inside",
-                        show: true,
-                        xAxisIndex: [0],
-                    },
-                ],
-                toolbox: {
-                    show: true,
-                    feature: {
-                        saveAsImage: {
-                            title: "Save",
-                            name: "device_merchant_details",
-                        },
-                        restore: {
-                            show: true,
-                            title: "Restore",
-                        },
-                        myFeature: {
-                            show: true,
-                            title: "Zoom In",
-                            icon: `image://${
-                                process.env.PUBLIC_URL +
-                                "/assets/icon/fullscreen.png"
-                            }`,
-
-                            onclick: () => {
-                                handleToggleVisible()
+                    tooltip: {
+                        trigger: "axis",
+                        axisPointer: {
+                            type: "cross",
+                            crossStyle: {
+                                color: "#999",
                             },
                         },
                     },
-                },
-                xAxis: {
-                    type: "category",
-                    name: "App ID",
-                    data: data.map((x) => x.app_id),
-                },
-                yAxis: [
-                    {
-                        name: "Frequency",
-                        type: "value",
-                        scale: true,
-                        min: 0,
-                        boundaryGap: [0.2, 0.2],
-                    },
-                    {
-                        name: "VND",
-                        type: "value",
-                        scale: true,
-                        min: 0,
-                        boundaryGap: [0.2, 0.2],
-                    },
-                ],
-                series: [
-                    {
-                        name: "Frequency",
-                        type: "bar",
-                        data: data.map((x) => x.app_id_count),
-                    },
-                    {
-                        name: "Monetary",
-                        type: "line",
-                        yAxisIndex: 1,
-                        markPoint: {
-                            label: {
-                                formatter: formatMarkPoint,
-                            },
-                            data: [
-                                { type: "max", name: "max" },
-                                { type: "min", name: "min" },
-                            ],
+                    dataZoom: [
+                        {
+                            type: "slider",
+                            xAxisIndex: [0],
+                            show: true,
+                            // start: 70
                         },
-                        data: data.map((x) => x.app_total),
-                        smooth: true,
+
+                        {
+                            type: "inside",
+                            show: true,
+                            xAxisIndex: [0],
+                        },
+                    ],
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            saveAsImage: {
+                                title: "Save",
+                                name: "device_merchant_details",
+                            },
+                            restore: {
+                                show: true,
+                                title: "Restore",
+                            },
+                            myFeature: {
+                                show: true,
+                                title: "Zoom In",
+                                icon: `image://${
+                                    process.env.PUBLIC_URL +
+                                    "/assets/icon/fullscreen.png"
+                                }`,
+
+                                onclick: () => {
+                                    handleToggleVisible()
+                                },
+                            },
+                        },
                     },
-                ],
-                emphasis: {
-                    itemStyle: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: "rgba(0, 0, 0, 0.5)",
+                    xAxis: {
+                        type: "category",
+                        name: "App ID",
+                        data: data.map((x) => x.app_id),
                     },
-                },
+                    yAxis: [
+                        {
+                            name: "Frequency",
+                            type: "value",
+                            scale: true,
+                            min: 0,
+                            boundaryGap: [0.2, 0.2],
+                        },
+                        {
+                            name: "VND",
+                            type: "value",
+                            scale: true,
+                            min: 0,
+                            boundaryGap: [0.2, 0.2],
+                        },
+                    ],
+                    series: [
+                        {
+                            name: "Frequency",
+                            type: "bar",
+                            data: data.map((x) => x.app_id_count),
+                        },
+                        {
+                            name: "Monetary",
+                            type: "line",
+                            yAxisIndex: 1,
+                            markPoint: {
+                                label: {
+                                    formatter: formatMarkPoint,
+                                },
+                                data: [
+                                    { type: "max", name: "max" },
+                                    { type: "min", name: "min" },
+                                ],
+                            },
+                            data: data.map((x) => x.app_total),
+                            smooth: true,
+                        },
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: "rgba(0, 0, 0, 0.5)",
+                        },
+                    },
+                }
             }
         }
-    }
+        fetchAppIDFrequency()
+    }, [id, filters, type])
 
     const handleToggleVisible = () => {
         setVisible((old) => !old)

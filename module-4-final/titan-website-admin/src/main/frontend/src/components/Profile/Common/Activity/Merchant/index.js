@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Tabs, Card, Table } from "antd"
+import { Tabs, Card } from "antd"
 import Overview from "./Overview"
 import Details from "./Details"
 import "./index.css"
@@ -7,7 +7,7 @@ import MerchantTable from "./MerchantTable"
 
 const { TabPane } = Tabs
 
-export default ({ id, type, filters }) => {
+export default function Merchant({ id, type, filters }) {
     const [activeTab, setActiveTab] = useState("overview")
     return (
         <Card

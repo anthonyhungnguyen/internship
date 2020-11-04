@@ -53,137 +53,135 @@ export default React.memo(({ id, type, filters }) => {
                     })
             }
         }
-        fetchMonetaryFrequency()
-    }, [id, filters])
+        const getOption = (data) => {
+            const formatMarkPoint = (params) => {
+                params.data.value = params.data.value.toLocaleString("en-EN", {
+                    style: "currency",
+                    currency: "VND",
+                })
+            }
 
-    const getOption = (data) => {
-        const formatMarkPoint = (params) => {
-            params.data.value = params.data.value.toLocaleString("en-EN", {
-                style: "currency",
-                currency: "VND",
-            })
-        }
+            if (data.length > 0) {
+                const dates = data.map((sf) => sf.date)
+                const dateFrequency = data.map((sf) => sf.frequency)
+                const amount = data.map((sf) => sf.amount)
 
-        if (data.length > 0) {
-            const dates = data.map((sf) => sf.date)
-            const dateFrequency = data.map((sf) => sf.frequency)
-            const amount = data.map((sf) => sf.amount)
-            const amountSum = amount.reduce((a, b) => a + b)
+                return {
+                    legend: {
+                        data: ["Frequency", "Monetary"],
+                    },
+                    tooltip: {
+                        trigger: "axis",
+                        axisPointer: {
+                            type: "cross",
+                            crossStyle: {
+                                color: "#999",
+                            },
+                        },
+                    },
+                    dataZoom: [
+                        {
+                            type: "slider",
+                            show: true,
+                            xAxisIndex: [0],
+                        },
+                        {
+                            type: "inside",
+                            show: true,
+                            xAxisIndex: [0],
+                        },
+                    ],
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            saveAsImage: {
+                                title: "Save",
+                                name: "device_spending",
+                            },
+                            restore: {
+                                show: true,
+                                title: "Restore",
+                            },
+                            myFeature: {
+                                show: true,
+                                title: "Zoom In",
+                                icon: `image://${
+                                    process.env.PUBLIC_URL +
+                                    "/assets/icon/fullscreen.png"
+                                }`,
 
+                                onclick: () => {
+                                    handleToggleVisible()
+                                },
+                            },
+                        },
+                    },
+                    xAxis: {
+                        type: "category",
+                        name: "Date",
+                        data: dates,
+                    },
+                    yAxis: [
+                        {
+                            name: "Frequency",
+                            type: "value",
+                            scale: true,
+                            min: 0,
+                            boundaryGap: [0.2, 0.2],
+                        },
+                        {
+                            name: "VND",
+                            type: "value",
+                            scale: true,
+                            min: 0,
+                            boundaryGap: [0.2, 0.2],
+                            splitLine: {
+                                show: false,
+                            },
+                        },
+                    ],
+                    series: [
+                        {
+                            name: "Frequency",
+                            type: "bar",
+                            data: dateFrequency,
+                        },
+                        {
+                            name: "Monetary",
+                            data: amount,
+                            type: "line",
+                            yAxisIndex: 1,
+                            markPoint: {
+                                label: {
+                                    formatter: formatMarkPoint,
+                                },
+                                data: [
+                                    { type: "max", name: "max" },
+                                    { type: "min", name: "min" },
+                                ],
+                            },
+                            markLine: {
+                                label: {
+                                    formatter: formatMarkPoint,
+                                },
+                                data: [{ type: "average", name: "average" }],
+                            },
+                            smooth: true,
+                        },
+                    ],
+                }
+            }
             return {
-                legend: {
-                    data: ["Frequency", "Monetary"],
+                title: {
+                    text: "No Records",
                 },
-                tooltip: {
-                    trigger: "axis",
-                    axisPointer: {
-                        type: "cross",
-                        crossStyle: {
-                            color: "#999",
-                        },
-                    },
-                },
-                dataZoom: [
-                    {
-                        type: "slider",
-                        show: true,
-                        xAxisIndex: [0],
-                    },
-                    {
-                        type: "inside",
-                        show: true,
-                        xAxisIndex: [0],
-                    },
-                ],
-                toolbox: {
-                    show: true,
-                    feature: {
-                        saveAsImage: {
-                            title: "Save",
-                            name: "device_spending",
-                        },
-                        restore: {
-                            show: true,
-                            title: "Restore",
-                        },
-                        myFeature: {
-                            show: true,
-                            title: "Zoom In",
-                            icon: `image://${
-                                process.env.PUBLIC_URL +
-                                "/assets/icon/fullscreen.png"
-                            }`,
-
-                            onclick: () => {
-                                handleToggleVisible()
-                            },
-                        },
-                    },
-                },
-                xAxis: {
-                    type: "category",
-                    name: "Date",
-                    data: dates,
-                },
-                yAxis: [
-                    {
-                        name: "Frequency",
-                        type: "value",
-                        scale: true,
-                        min: 0,
-                        boundaryGap: [0.2, 0.2],
-                    },
-                    {
-                        name: "VND",
-                        type: "value",
-                        scale: true,
-                        min: 0,
-                        boundaryGap: [0.2, 0.2],
-                        splitLine: {
-                            show: false,
-                        },
-                    },
-                ],
-                series: [
-                    {
-                        name: "Frequency",
-                        type: "bar",
-                        data: dateFrequency,
-                    },
-                    {
-                        name: "Monetary",
-                        data: amount,
-                        type: "line",
-                        yAxisIndex: 1,
-                        markPoint: {
-                            label: {
-                                formatter: formatMarkPoint,
-                            },
-                            data: [
-                                { type: "max", name: "max" },
-                                { type: "min", name: "min" },
-                            ],
-                        },
-                        markLine: {
-                            label: {
-                                formatter: formatMarkPoint,
-                            },
-                            data: [{ type: "average", name: "average" }],
-                        },
-                        smooth: true,
-                    },
-                ],
+                xAxis: { data: [] },
+                yAxis: { data: [] },
+                series: [{ data: [] }],
             }
         }
-        return {
-            title: {
-                text: "No Records",
-            },
-            xAxis: { data: [] },
-            yAxis: { data: [] },
-            series: [{ data: [] }],
-        }
-    }
+        fetchMonetaryFrequency()
+    }, [id, filters, type])
 
     const handleToggleVisible = () => {
         setVisible((old) => !old)

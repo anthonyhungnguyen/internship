@@ -1,15 +1,15 @@
-import { Statistic, Card, Divider, Row, Col, Skeleton } from 'antd'
-import React, { useEffect, useState } from 'react'
-import ReactEcharts from 'echarts-for-react'
-import axios from 'axios'
-import { useSelector } from 'react-redux'
-import { generalSelector } from '../../../../../../slices/general'
+import { Statistic, Card, Divider, Row, Col, Skeleton } from "antd"
+import React, { useEffect, useState } from "react"
+import ReactEcharts from "echarts-for-react"
+import axios from "axios"
+import { useSelector } from "react-redux"
+import { generalSelector } from "../../../../../../slices/general"
 
-export default ({ id, filters, queryUrl, queryParams }) => {
+export default function Payment({ id, filters, queryUrl, queryParams }) {
     const { type } = useSelector(generalSelector)
     const [monetaryStatistics, setMonetaryStatistics] = useState(null)
     useEffect(() => {
-        if (type === 'users') {
+        if (type === "users") {
             axios
                 .post(queryUrl, { ...queryParams, id: `userid/${id}` })
                 .then((response) => setMonetaryStatistics(response.data))
@@ -20,40 +20,40 @@ export default ({ id, filters, queryUrl, queryParams }) => {
                 .then((response) => setMonetaryStatistics(response.data))
                 .catch(console.error)
         }
-    }, [id, filters])
+    }, [id, filters, queryUrl, queryParams, type])
     return monetaryStatistics ? (
         <Card>
             <Row>
                 <Col span={14}>
                     <Statistic
                         title='Monetary'
-                        value={monetaryStatistics['totalAmount'] ?? 0}
+                        value={monetaryStatistics["totalAmount"] ?? 0}
                         suffix='VND'
                     />
                 </Col>
                 <Col span={10}>
                     <ReactEcharts
                         theme='walden'
-                        style={{ height: '100%', width: '100%' }}
+                        style={{ height: "100%", width: "100%" }}
                         option={{
                             tooltip: {},
                             xAxis: {
-                                type: 'category',
-                                data: monetaryStatistics['graphData'].map(
-                                    (x) => x['date']
+                                type: "category",
+                                data: monetaryStatistics["graphData"].map(
+                                    (x) => x["date"]
                                 ),
                                 show: false,
                             },
                             yAxis: {
-                                type: 'value',
+                                type: "value",
                                 show: false,
                             },
                             series: [
                                 {
-                                    data: monetaryStatistics['graphData'].map(
-                                        (x) => x['amount']
+                                    data: monetaryStatistics["graphData"].map(
+                                        (x) => x["amount"]
                                     ),
-                                    type: 'line',
+                                    type: "line",
                                     smooth: true,
                                     areaStyle: {},
                                 },
@@ -68,10 +68,10 @@ export default ({ id, filters, queryUrl, queryParams }) => {
                     <Statistic
                         title='Success'
                         value={parseFloat(
-                            monetaryStatistics['successRate'] * 100
+                            monetaryStatistics["successRate"] * 100
                         )}
                         precision={2}
-                        valueStyle={{ color: '#3f8600' }}
+                        valueStyle={{ color: "#3f8600" }}
                         suffix='%'
                     />
                 </Col>
@@ -79,9 +79,9 @@ export default ({ id, filters, queryUrl, queryParams }) => {
                     <Statistic
                         title='Popular type'
                         value={
-                            monetaryStatistics['popularMerchant'] ?? 'Unknown'
+                            monetaryStatistics["popularMerchant"] ?? "Unknown"
                         }
-                        valueStyle={{ color: '#cf1322' }}
+                        valueStyle={{ color: "#cf1322" }}
                     />
                 </Col>
             </Row>

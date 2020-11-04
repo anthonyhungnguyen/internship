@@ -1,74 +1,55 @@
 import React, { useState, useEffect } from "react"
-import { Empty, Modal, Skeleton } from "antd"
-import ReactEcharts from "echarts-for-react"
+import { Modal, Skeleton, Empty } from "antd"
 import axios from "axios"
+import ReactEcharts from "echarts-for-react"
 
-export default React.memo(({ id, type, filters }) => {
+export default React.memo(({ queryUrl, queryParams }) => {
     const [visible, setVisible] = useState(false)
     const [option, setOption] = useState(null)
     const [noData, setNoData] = useState(false)
 
     useEffect(() => {
-        const fetchGeneralMerchantAcitivty = async () => {
-            if (type === "users") {
-                await axios
-                    .post(
-                        `http://localhost:8085/api/profile/user/${id}/merchant/overview`,
-                        {
-                            fromDate: filters.range[0],
-                            toDate: filters.range[1],
-                        }
-                    )
-                    .then((response) => {
-                        const data = response.data
-                        if (data && data.length > 0) {
-                            setNoData(false)
-                            setOption(getOption(data))
-                        } else {
-                            setNoData(true)
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-            } else {
-                await axios
-                    .post(
-                        `http://localhost:8085/api/profile/merchant/overview`,
-                        {
-                            id: id,
-                            type: type,
-                            fromDate: filters.range[0],
-                            toDate: filters.range[1],
-                        }
-                    )
-                    .then((response) => {
-                        const data = response.data
-                        if (data && data.length > 0) {
-                            setNoData(false)
-                            setOption(getOption(data))
-                        } else {
-                            setNoData(true)
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-            }
+        const fetchStatusActivity = async () => {
+            await axios
+                .post(queryUrl, queryParams)
+                .then((response) => {
+                    const data = response.data
+                    if (data && data.length > 0) {
+                        setNoData(false)
+                        setOption(getOption(data))
+                    } else {
+                        setNoData(true)
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
         }
         const getOption = (data) => {
             if (data.length > 0) {
+                // const preprocessedStatus = preprocessStatus(status)
                 return {
                     tooltip: {
                         trigger: "item",
                         formatter: "{b} : {c} ({d}%)",
+                    },
+                    legend: {
+                        orient: "vertical",
+                        right: "10",
+                        top: "50",
+                        data: data.map((s) => s.status),
+                        emphasis: {
+                            selectorLabel: {
+                                show: true,
+                            },
+                        },
                     },
                     toolbox: {
                         show: true,
                         feature: {
                             saveAsImage: {
                                 title: "Save",
-                                name: "device_merchant_general",
+                                name: "mapping_overview",
                             },
                             restore: {
                                 show: true,
@@ -91,24 +72,25 @@ export default React.memo(({ id, type, filters }) => {
                         {
                             type: "pie",
                             selectedMode: "multiple",
-                            data: data.map((mf) => ({
-                                name: `${mf.merchant} - ${
-                                    mf.merchant_count
-                                } - ${mf.merchant_total.toLocaleString(
-                                    "en-EN",
-                                    {
-                                        style: "currency",
-                                        currency: "VND",
-                                    }
-                                )}`,
-                                value: mf.merchant_count,
+                            avoidLabelOverlap: true,
+                            label: {
+                                show: false,
+                                position: "center",
+                            },
+                            // data: Object.keys(preprocessedStatus).map((mf) => ({
+                            // 	name: `${mf} - ${preprocessedStatus[mf]}`,
+                            // 	value: preprocessedStatus[mf]
+                            // })),
+                            data: data.map((s) => ({
+                                name: s.status,
+                                value: s.status_count,
                             })),
                             animation: true,
-                            label: {
-                                position: "outside",
-                                alignTo: "none",
-                                bleedMargin: 5,
-                            },
+                            // label: {
+                            // 	position: 'outside',
+                            // 	alignTo: 'labelLine',
+                            // 	formatter: '{d}'
+                            // }
                         },
                     ],
                     emphasis: {
@@ -121,8 +103,9 @@ export default React.memo(({ id, type, filters }) => {
                 }
             }
         }
-        fetchGeneralMerchantAcitivty()
-    }, [id, filters, type])
+
+        fetchStatusActivity()
+    }, [queryUrl, queryParams])
 
     const handleToggleVisible = () => {
         setVisible((old) => !old)
@@ -143,15 +126,15 @@ export default React.memo(({ id, type, filters }) => {
         <React.Fragment>
             <ReactEcharts
                 theme={"infographic"}
-                lazyUpdate={true}
                 style={{ height: "400px" }}
+                // style={{ height: '100%', width: '100%' }}
                 option={option}
                 notMerge={true}
-                renderer='canvas'
+                lazyUpdate={true}
             />
 
             <Modal
-                title='Merchant Frequency'
+                title='Mapping Status'
                 visible={visible}
                 onOk={handleToggleVisible}
                 onCancel={handleToggleVisible}
@@ -163,9 +146,9 @@ export default React.memo(({ id, type, filters }) => {
                 <ReactEcharts
                     theme={"infographic"}
                     lazyUpdate={true}
-                    style={{ height: "70vh" }}
                     option={option}
                     renderer='canvas'
+                    style={{ height: "70vh", width: "100%" }}
                 />
             </Modal>
         </React.Fragment>

@@ -7,11 +7,11 @@ import Monetary from "../../Common/Activity/Monetary"
 import Geolocation from "../../Common/Activity/Geolocation"
 import { userSelector } from "../../../../slices/user"
 import Merchant from "../../Common/Activity/Merchant"
-import Card from "../../Common/Activity/Card"
+import Mapping from "../../Common/Activity/Mapping"
 import Statistics from "../../Common/Activity/Statistics"
 import Transaction from "../../Common/Activity/Transaction"
 
-export default () => {
+export default function UserActivity() {
     const { loading, hasErrors, filters } = useSelector(userSelector)
     const { id, type } = useSelector(generalSelector)
 
@@ -60,7 +60,7 @@ export default () => {
                                     />
                                 </Col>
                                 <Col span={12}>
-                                    <Card
+                                    <Mapping
                                         id={id}
                                         filters={filters}
                                         queryUrl='http://localhost:8085/api/profile/user/'
