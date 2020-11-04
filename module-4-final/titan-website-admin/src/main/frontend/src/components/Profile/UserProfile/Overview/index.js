@@ -1,55 +1,145 @@
 import React from "react"
-import { Row, Col, BackTop, Skeleton, Empty } from "antd"
+import { Row, Col, Skeleton, BackTop } from "antd"
 import { UpCircleFilled } from "@ant-design/icons"
-import Score from "./Score"
-import Basic from "./Basic"
-import Identity from "./Identity"
 import { useSelector } from "react-redux"
 import { generalSelector } from "../../../../slices/general"
+import Monetary from "../../Common/Activity/Monetary"
+import Geolocation from "../../Common/Activity/Geolocation"
 import { userSelector } from "../../../../slices/user"
+import Merchant from "../../Common/Activity/Merchant"
+import Mapping from "../../Common/Activity/Mapping"
+import Statistics from "../../Common/Activity/Statistics"
+import UserBasic from "./Identity"
 
-export default React.memo(() => {
-    const { exist } = useSelector(generalSelector)
-    const { loading, hasErrors } = useSelector(userSelector)
+export default function UserActivity() {
+    const { loading, hasErrors, filters } = useSelector(userSelector)
+    const { id, type } = useSelector(generalSelector)
 
-    return exist ? (
-        !loading && !hasErrors ? (
-            <div className='animated fadeIn text-gray-700'>
-                {exist ? (
-                    <React.Fragment>
-                        <Row gutter={[12, 12]}>
-                            <Col span={24}>
-                                <Score />
-                            </Col>
-                        </Row>
-                        <Row gutter={[12, 12]}>
-                            <Col span={10}>
-                                <Basic />
-                            </Col>
-
-                            <Col span={14}>
-                                <Row gutter={[12, 12]}>
-                                    <Col span={24}>
-                                        <Identity />
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-
-                        <BackTop>
-                            <UpCircleFilled
-                                style={{ fontSize: "30px", color: "#3498db" }}
+    return (
+        <div className='animated fadeIn'>
+            {!loading && !hasErrors ? (
+                <React.Fragment>
+                    <Row gutter={[12, 12]}>
+                        <Col span={24}>
+                            <Statistics
+                                id={id}
+                                filters={filters}
+                                queryUrl='http://localhost:8085/api/profile/user/'
+                                queryParams={{
+                                    id: `userid/${id}`,
+                                    fromDate: filters.range[0],
+                                    toDate: filters.range[1],
+                                }}
                             />
-                        </BackTop>
-                    </React.Fragment>
-                ) : (
-                    <Empty />
-                )}
-            </div>
-        ) : (
-            <Skeleton active />
-        )
-    ) : (
-        <Empty />
+                        </Col>
+                        <Col span={24}>
+                            <Row gutter={[12, 12]} className='items-stretch'>
+                                <Col span={14}>
+                                    <Monetary
+                                        id={id}
+                                        type={type}
+                                        filters={filters}
+                                    />
+                                </Col>
+                                <Col span={10}>
+                                    <UserBasic />
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Col span={24}>
+                            <Row gutter={[12, 12]}>
+                                <Col span={12}>
+                                    <Merchant
+                                        id={id}
+                                        type={type}
+                                        filters={filters}
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <Mapping
+                                        id={id}
+                                        filters={filters}
+                                        queryUrl='http://localhost:8085/api/profile/user/'
+                                        queryParams={{
+                                            id: `userid/${id}`,
+                                            fromDate: filters.range[0],
+                                            toDate: filters.range[1],
+                                        }}
+                                    />
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Col span={24}>
+                            <Geolocation
+                                id={id}
+                                type={type}
+                                filters={filters}
+                            />
+                        </Col>
+                        {/* <Col span={10}>
+                            <Row gutter={[12, 12]}>
+                                <Col span={24}>
+                                    <Monetary
+                                        id={id}
+                                        type={type}
+                                        filters={filters}
+                                    />
+                                </Col>
+                            </Row>
+
+                            <Row gutter={[12, 12]}>
+                                <Col span={24}>
+                                    <Card
+                                        id={id}
+                                        filters={filters}
+                                        queryUrl='http://localhost:8085/api/profile/user/'
+                                        queryParams={{
+                                            id: `userid/${id}`,
+                                            fromDate: filters.range[0],
+                                            toDate: filters.range[1],
+                                        }}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row />
+                        </Col>
+                        <Col span={14}>
+                            <Row gutter={[12, 12]}>
+                                <Col span={24}>
+                                    <Transaction
+                                        id={id}
+                                        type={type}
+                                        filters={filters}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row gutter={[12, 12]}>
+                                <Col span={24}>
+                                    <Merchant
+                                        id={id}
+                                        type={type}
+                                        filters={filters}
+                                    />
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Col span={24}>
+                            <Geolocation
+                                id={id}
+                                type={type}
+                                filters={filters}
+                            />
+                        </Col> */}
+                    </Row>
+                </React.Fragment>
+            ) : (
+                <Skeleton active />
+            )}
+            <BackTop>
+                <UpCircleFilled
+                    style={{ fontSize: "30px", color: "#3498db" }}
+                />
+            </BackTop>
+        </div>
     )
-})
+}

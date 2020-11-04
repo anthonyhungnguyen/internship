@@ -11,7 +11,6 @@ const { TabPane } = Tabs
 const { Option } = Select
 const { Search } = Input
 
-const Activity = React.lazy(() => import("./Activity"))
 const Connection = React.lazy(() => import("./Connection"))
 const Overview = React.lazy(() => import("./Overview"))
 const Tool = React.lazy(() => import("../Common/Tool"))
@@ -112,11 +111,6 @@ export default function UserProfile() {
                         <TabPane tab='Overview' key='overview'>
                             <Suspense fallback={<Skeleton active />}>
                                 <Overview />
-                            </Suspense>
-                        </TabPane>
-                        <TabPane tab='Activity' key='activity'>
-                            <Suspense fallback={<Skeleton active />}>
-                                <Activity />
                             </Suspense>
                         </TabPane>
                         <TabPane tab='Connection' key='connection'>

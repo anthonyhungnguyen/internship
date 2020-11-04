@@ -1,105 +1,67 @@
-import React, { useState, useEffect } from "react"
-import { Card, Descriptions } from "antd"
-import { useSelector, useDispatch } from "react-redux"
-import moment from "moment"
-import { generalSelector } from "../../../../../slices/general"
+import React, { useEffect, useState } from "react"
+import { Card, Descriptions, Skeleton, Image, Row, Col } from "antd"
 import axios from "axios"
-import DeviceTable from "../../../Common/Overview/Identity/DeviceTable"
-import CardTable from "../../../Common/Overview/Identity/CardTable"
-import AccountTable from "../../../Common/Overview/Identity/AccountTable"
-
-export default function UserIdentity() {
+import { generalSelector } from "../../../../../slices/general"
+import { useSelector } from "react-redux"
+import DescriptionsItem from "antd/lib/descriptions/Item"
+import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
+export default function UserBasic() {
     const { id } = useSelector(generalSelector)
-    const [devices, setDevices] = useState(null)
-    const [cardOverview, setCardOverview] = useState(null)
-    const [accountOverview, setAccountOverview] = useState(null)
-    const dispatch = useDispatch()
-
+    const [info, setInfo] = useState(null)
     useEffect(() => {
-        const fetchDeviceList = async () => {
-            axios
-                .post(`http://localhost:8085/api/profile/user/deviceList`, {
-                    type: "users",
-                    id: id,
+        axios
+            .post("http://localhost:8085/api/profile/user/info", {
+                id: `userid/${id}`,
+            })
+            .then((response) => {
+                const data = response.data
+                setInfo({
+                    Avatar: <Image src={data["avatar"]} />,
+                    "Display Name": data["displayname"],
+                    Birthday: data["birthdate"],
+                    Gender: data["usergender"],
+                    "Is Locked": data["islocked"] ? (
+                        <CheckCircleTwoTone twoToneColor='#52c41a' />
+                    ) : (
+                        <CloseCircleTwoTone twoToneColor='#e74c3c' />
+                    ),
+                    "Profile Level": data["profilelevel"],
+                    "Acquital Result": data["acquital_result"] ? (
+                        <CheckCircleTwoTone twoToneColor='#52c41a' />
+                    ) : (
+                        <CloseCircleTwoTone twoToneColor='#e74c3c' />
+                    ),
+                    "Postmoterm Add Date": data["postmortem_add_date"],
+                    "Postmoterm Result": data["postmortem_result"],
+                    "KYC DOB": data["kycdob"],
+                    "KYC Fullname": data["kycfullname"],
+                    "KYC Gender": data["kycgender"],
+                    "Phone Number": data["phonenumber"],
+                    "Zalo ID": data["zaloid"],
                 })
-                .then((response) => {
-                    const data = response.data.map((d, k) => ({
-                        key: k,
-                        deviceid: d.deviceid.split("/")[1].trim(),
-                        firstseen: moment(d.firstseen).format("L LT"),
-                        lastseen: moment(d.lastseen).format("L LT"),
-                    }))
-                    setDevices(data)
-                })
-                .catch(console.error)
-        }
+            })
+            .catch(console.err)
+    }, [id])
 
-        const fetchCardOverview = async () => {
-            axios
-                .post(`http://localhost:8085/api/profile/user/card/overview`, {
-                    id: id,
-                })
-                .then((response) => {
-                    setCardOverview(response.data)
-                })
-                .catch(console.error)
-        }
-
-        const fetchAccountOverview = async () => {
-            axios
-                .post(
-                    `http://localhost:8085/api/profile/user/account/overview`,
-                    {
-                        id: id,
-                    }
-                )
-                .then((response) => {
-                    setAccountOverview(response.data)
-                })
-                .catch(console.error)
-        }
-
-        fetchDeviceList()
-        fetchCardOverview()
-        fetchAccountOverview()
-    }, [id, dispatch])
-
-    return (
+    return info ? (
         <Card
-            title='Linking'
+            title='Identity'
             headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
             hoverable={true}
+            className='h-full'
         >
-            <Descriptions column={1} bordered>
-                {devices && devices.length > 0 ? (
-                    <Descriptions.Item
-                        label={`Total Devices (${devices.length})`}
-                    >
-                        <DeviceTable data={devices} />
-                    </Descriptions.Item>
-                ) : (
-                    <Descriptions.Item label={`Total Devices (0)`} />
-                )}
-
-                {cardOverview && cardOverview.length > 0 ? (
-                    <Descriptions.Item
-                        label={`Total Cards (${cardOverview.length})`}
-                    >
-                        <CardTable id={id} data={cardOverview} />
-                    </Descriptions.Item>
-                ) : (
-                    <Descriptions.Item label={`Total Cards (0)`} />
-                )}
-                {accountOverview && accountOverview.length > 0 ? (
-                    <Descriptions.Item
-                        label={`Total Accounts (${accountOverview.length})`}
-                    >
-                        <AccountTable id={id} data={accountOverview} />
-                    </Descriptions.Item>
-                ) : (
-                    <Descriptions.Item label={`Total Accounts (0)`} />
-                )}
-            </Descriptions>
+            {Object.keys(info).map((k, i) => (
+                <Row key={i} gutter={[24, 24]}>
+                    <Col span={12} className='font-bold text-base'>
+                        {k}
+                    </Col>
+                    <Col span={12} className='break-words'>
+                        {info[k]}
+                    </Col>
+                </Row>
+            ))}
         </Card>
+    ) : (
+        <Skeleton />
     )
 }

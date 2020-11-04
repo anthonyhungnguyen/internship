@@ -3,7 +3,6 @@ import { Row, Col, BackTop, Skeleton, Empty } from "antd"
 import { UpCircleFilled } from "@ant-design/icons"
 import Score from "./Score"
 import System from "./System"
-import Identity from "./Identity"
 import IP from "./IP"
 import { deviceSelector, fetchDevice } from "../../../../slices/device"
 import { useDispatch, useSelector } from "react-redux"
@@ -33,11 +32,6 @@ export default React.memo(() => {
                             </Col>
 
                             <Col span={16}>
-                                <Row gutter={[12, 12]}>
-                                    <Col span={24}>
-                                        <Identity />
-                                    </Col>
-                                </Row>
                                 <Row>
                                     <Col span={24}>
                                         <IP />

@@ -58,20 +58,11 @@ export default function Transaction({ id, type, filters }) {
             .catch(console.error)
     }, [id, filters])
     return (
-        <Card
-            title='Transaction'
-            hoverable={true}
-            headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
-            bodyStyle={{
-                padding: "10px 0 0 0",
-            }}
-        >
-            <Table
-                loading={data ? false : true}
-                dataSource={data}
-                columns={columns}
-                scroll={{ y: 318 }}
-            />
-        </Card>
+        <Table
+            loading={data ? false : true}
+            dataSource={data}
+            columns={columns}
+            scroll={{ y: 330 }}
+        />
     )
 }

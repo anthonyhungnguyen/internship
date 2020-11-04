@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Card, Tabs } from "antd"
 import Overview from "./Overview"
 import Timeline from "./Timeline"
+import Transaction from "./Transaction"
 
 const { TabPane } = Tabs
 
@@ -35,6 +36,7 @@ export default React.memo(({ id, type, filters }) => {
             {activeTab === "timeline" && (
                 <Timeline id={id} type={type} filters={filters} />
             )}
+            <Transaction id={id} type={type} filters={filters} />
         </Card>
     )
 })

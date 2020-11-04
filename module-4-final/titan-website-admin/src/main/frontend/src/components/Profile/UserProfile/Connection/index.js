@@ -4,9 +4,6 @@ import { Row, Col, BackTop, Skeleton } from "antd"
 import { UpCircleFilled } from "@ant-design/icons"
 import { generalSelector } from "../../../../slices/general"
 import { userSelector, fetchConnection } from "../../../../slices/user"
-import Device from "../../Common/Connection/Brief/Device"
-import User from "../../Common/Connection/Brief/User"
-import Card from "../../Common/Connection/Brief/Card"
 import Graph from "../../Common/Connection/Graph"
 
 export default React.memo(() => {
@@ -23,7 +20,7 @@ export default React.memo(() => {
     return !loading && !hasErrors ? (
         <React.Fragment>
             <Row gutter={[24, 24]}>
-                <Col span={16}>
+                <Col span={24}>
                     <Graph
                         setCurrentType={setCurrentType}
                         setCurrentChosenId={setCurrentChosenId}
@@ -31,17 +28,6 @@ export default React.memo(() => {
                         type={type}
                         graphData={graphData}
                     />
-                </Col>
-                <Col span={8}>
-                    {currentType === "deviceid" && (
-                        <Device id={currentChosenId} type={type} />
-                    )}
-                    {currentType === "userid" && (
-                        <User id={currentChosenId} type={type} />
-                    )}
-                    {currentType === "funding_channel" && (
-                        <Card id={currentChosenId} type={type} />
-                    )}
                 </Col>
             </Row>
 
