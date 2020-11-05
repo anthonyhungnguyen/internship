@@ -18,48 +18,11 @@ public interface ArangoDBRepository extends ArangoRepository<String, String> {
     @Query("RETURN DOCUMENT(@id)")
     List<Map<String, Object>> getInfo(@BindVars Map<String, Object> bindVars);
 
-    @Query("FOR v, e IN 1..1 ANY @id user_device_transaction " +
-            "   COLLECT ip = e.userIP" +
-            "   RETURN ip")
-    List<String> getIPList(@BindVars Map<String, Object> bindVars);
-
     @Query("FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
             "FILTER TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)\n" +
             "COLLECT date = DATE_FORMAT(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), @dateFormat) WITH COUNT INTO date_count\n" +
             "RETURN {date, date_count}")
     List<Map<String, Object>> getFrequency(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR v, e IN 1..1 ANY @id user_device_transaction\n" +
-            "FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
-            "COLLECT merchant = e.merchant\n" +
-            "AGGREGATE merchant_count = COUNT(e.merchant), merchant_total = SUM(TO_NUMBER(e.amount))\n" +
-            "SORT merchant_count DESC\n" +
-            "RETURN {merchant, merchant_count, merchant_total}")
-    List<Map<String, Object>> getMerchantOverview(@BindVars Map<String, Object> bindVars);
-
-
-    @Query("FOR v, e IN 1..1 ANY @id user_device_transaction\n" +
-            "FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
-            "COLLECT app_id = e.appid \n" +
-            "AGGREGATE app_total = SUM(TO_NUMBER(e.amount)), app_id_count = COUNT(e.appid)\n" +
-            "SORT app_id_count, app_total\n" +
-            "RETURN {app_id, app_id_count, app_total}")
-    List<Map<String, Object>> getMerchantDetails(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR v, e IN 1..1 ANY @id user_device_transaction\n" +
-            "FILTER e.merchant != 'Money Transfer' AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
-            "COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +
-            "AGGREGATE amount = SUM(TO_NUMBER(e.amount)), frequency = count(e.reqDate)\n" +
-            "RETURN {date, amount, frequency}")
-    List<Map<String, Object>> getMonetary(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR v, e IN 1..1 ANY @id user_device_transaction\n" +
-            "FILTER e.latitude != '0.0' AND e.longitude != '0.0'\n" +
-            "AND DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate)\n" +
-            "COLLECT lat = TO_NUMBER(e.latitude),\n" +
-            "lng = TO_NUMBER(e.longitude) WITH COUNT INTO location_count\n" +
-            "RETURN {lat, lng, location_count}")
-    List<Map<String, Object>> getGeolocation(@BindVars Map<String, Object> bindVars);
 
     @Query("LET idList = @idList\n" +
             "FOR id in idList\n" +
@@ -68,14 +31,11 @@ public interface ArangoDBRepository extends ArangoRepository<String, String> {
             "RETURN {source, target}")
     List<Map<String, Object>> getOneMoreDepth(@BindVars Map<String, Object> bindVars);
 
+
     @Query("LET idList = @idList\n" +
             "FOR id in idList\n" +
-            "FOR v, e IN 1..1 ANY id GRAPH \"graph0\"\n" +
+            "FOR v, e IN 1..@depth ANY id GRAPH \"test\"\n" +
             "COLLECT source = e._from, target = e._to\n" +
             "RETURN {source, target}")
-    List<Map<String, Object>> getGraph0MoreDepth(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR v, e IN 1..@depth ANY @id GRAPH \"graph0\"\n" +
-            "    RETURN e")
-    List<Map<String, Object>> getGraph0(@BindVars Map<String, Object> bindVars);
+    List<Map<String, Object>> getDepth(@BindVars Map<String, Object> bindVars);
 }

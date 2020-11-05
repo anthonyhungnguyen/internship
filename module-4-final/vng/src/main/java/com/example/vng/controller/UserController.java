@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("{id}/monetary/timeline")
-    public List<Map<String, Object>> getMonetary(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getMonetary(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
         return userRepository.getMonetary("userid/" + id, body);
     }
 
@@ -50,12 +50,12 @@ public class UserController {
     }
 
     @PostMapping("{id}/transaction")
-    public List<Map<String, Object>> getTransaction(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getTransaction(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
         return userRepository.getTransaction("userid/" + id, body);
     }
 
     @PostMapping("{id}/geolocation")
-    public List<Map<String, Object>> getGeolocation(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getGeolocation(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
         return userRepository.getGeolocation("userid/" + id, body);
     }
 
@@ -65,12 +65,12 @@ public class UserController {
     }
 
     @PostMapping("{id}/merchant/details")
-    public List<Map<String, Object>> getMerchantDetails(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getMerchantDetails(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
         return userRepository.getMerchantDetails("userid/" + id, body);
     }
 
     @PostMapping("{id}/merchant/table")
-    public List<Map<String, Object>> getMerchantOverviewTable(@PathVariable("id") String id ,@RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> getMerchantOverviewTable(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
         return userRepository.getMerchantOverviewTable("userid/" + id, body);
     }
 

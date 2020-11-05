@@ -2,7 +2,6 @@ package com.example.vng.controller;
 
 import com.example.vng.repository.ArangoDBRepository;
 import com.example.vng.repository.DeviceRepository;
-import com.example.vng.repository.MappingRepository;
 import com.example.vng.repository.UserRepository;
 import com.example.vng.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,38 +20,19 @@ public class ProfileController {
     private final DeviceService deviceService;
     private final ArangoDBRepository arangoDBRepository;
     private final DeviceRepository deviceRepository;
-    private final UserRepository userRepository;
-    private final MappingRepository mappingRepository;
 
     @Autowired
-    public ProfileController(DeviceService deviceService, ArangoDBRepository arangoDBRepository, DeviceRepository deviceRepository, UserRepository userRepository, MappingRepository mappingRepository) {
+    public ProfileController(DeviceService deviceService, ArangoDBRepository arangoDBRepository, DeviceRepository deviceRepository) {
         this.deviceService = deviceService;
         this.arangoDBRepository = arangoDBRepository;
         this.deviceRepository = deviceRepository;
-        this.userRepository = userRepository;
-        this.mappingRepository = mappingRepository;
     }
-
 
     @PostMapping("profile/exists")
     public boolean checkTypeAndIDExists(@RequestBody Map<String, Object> body) {
         body.put("id", body.get("type") + "/" + body.get("id"));
         body.remove("type");
         return arangoDBRepository.checkTypeAndIDExists(body).get(0);
-    }
-
-    @PostMapping("/profile/info")
-    public List<Map<String, Object>> getDeviceInfo(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return arangoDBRepository.getInfo(body);
-    }
-
-    @PostMapping("/profile/ip")
-    public List<String> getIPList(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return arangoDBRepository.getIPList(body);
     }
 
     @PostMapping("/profile/device/score/hardware")
@@ -83,40 +63,6 @@ public class ProfileController {
         return deviceService.getDeviceHardwareScore(scoreList);
     }
 
-    @PostMapping("/profile/mapping/basicInfo")
-    public List<Map<String, Object>> getMappingBasicInfo(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return mappingRepository.getBasicInfo(body);
-    }
-
-    @PostMapping("/profile/device/userList")
-    public List<Map<String, Object>> getDeviceUserList(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return deviceRepository.getUserList(body);
-    }
-
-    @PostMapping("/profile/user/deviceList")
-    public List<Map<String, Object>> getUserDeviceList(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return userRepository.getDeviceList(body);
-    }
-
-    @PostMapping("/profile/user/cardList")
-    public List<Map<String, Object>> getUserCardList(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return userRepository.getCardList(body);
-    }
-
-    @PostMapping("/profile/card/userList")
-    public List<Map<String, Object>> getMappingUserList(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return mappingRepository.getUserList(body);
-    }
 
     @PostMapping("/profile/device/basicInfo")
     public List<Map<String, Object>> getDeviceBasicInfo(@RequestBody Map<String, Object> body) {
@@ -132,50 +78,9 @@ public class ProfileController {
         return arangoDBRepository.getFrequency(body);
     }
 
-    @PostMapping("/profile/merchant/overview")
-    public List<Map<String, Object>> getMerchantOverview(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return arangoDBRepository.getMerchantOverview(body);
-    }
-
-    @PostMapping("/profile/merchant/details")
-    public List<Map<String, Object>> getMerchantDetails(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return arangoDBRepository.getMerchantDetails(body);
-    }
-
-    @PostMapping("/profile/monetary")
-    public List<Map<String, Object>> getMonetary(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return arangoDBRepository.getMonetary(body);
-    }
-
-    @PostMapping("/profile/geolocation")
-    public List<Map<String, Object>> getGeolocation(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return arangoDBRepository.getGeolocation(body);
-    }
-
     @PostMapping("profile/depth")
     public List<Map<String, Object>> getOneMoreDepth(@RequestBody Map<String, Object> body) {
         return arangoDBRepository.getOneMoreDepth(body);
-    }
-
-
-    @PostMapping("profile/graph0")
-    public List<Map<String, Object>> getGraph0(@RequestBody Map<String, Object> body) {
-        body.put("id", body.get("type") + "/" + body.get("id"));
-        body.remove("type");
-        return arangoDBRepository.getGraph0(body);
-    }
-
-    @PostMapping("profile/graph0/moreDepth")
-    public List<Map<String, Object>> getGraph0MoreDepth(@RequestBody Map<String, Object> body) {
-        return arangoDBRepository.getGraph0MoreDepth(body);
     }
 
 }
