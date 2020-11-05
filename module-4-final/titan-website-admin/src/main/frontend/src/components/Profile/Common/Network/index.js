@@ -3,8 +3,6 @@ import React from "react"
 import CardNetwork from "./CardNetwork"
 import AccountNetwork from "./AccountNetwork"
 
-const { TabPane } = Tabs
-
 export default function Network() {
     return (
         <Card>

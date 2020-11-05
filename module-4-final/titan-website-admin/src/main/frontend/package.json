@@ -34,6 +34,7 @@
 		"enzyme-adapter-react-16": "^1.14.0",
 		"flag-icon-css": "^3.3.0",
 		"font-awesome": "^4.7.0",
+		"google-map-react": "^2.1.9",
 		"jquery": "^3.5.1",
 		"js-base64": "^3.5.2",
 		"lodash": "^4.17.20",

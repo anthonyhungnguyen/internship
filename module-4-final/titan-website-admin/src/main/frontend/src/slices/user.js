@@ -1,11 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import axios from "axios"
 import moment from "moment"
-import {
-    configureSymbolSizeBasedOnDegree,
-    generateCategoryFromType,
-    generateGraphData,
-} from "./util"
 
 export const initialState = {
     loading: false,
@@ -67,69 +61,3 @@ export const userSelector = (state) => state.user
 
 // Export default reducer
 export default userSlice.reducer
-
-export function fetchConnection(id) {
-    return async (dispatch) => {
-        dispatch(getConnection())
-        axios
-            .post("http://localhost:8085/api/profile/depth", {
-                idList: [`userid/${id}`],
-            })
-            .then((response) => {
-                const formattedConnections = preprocessConnection(
-                    `userid/${id}`,
-                    response.data
-                )
-                const graphData = generateGraphData(
-                    formattedConnections,
-                    "userid"
-                )
-                dispatch(getConnectionSuccess(graphData))
-            })
-            .catch((err) => {
-                dispatch(getConnectionFailure(err))
-            })
-    }
-}
-
-export const preprocessConnection = (id, connections) => {
-    const sourceType = id.split("/")[0].trim()
-    const source = id.split("/")[1].trim()
-    let nodes = [
-        {
-            id: source,
-            name: source,
-            category: 0,
-            type: sourceType,
-            expanded: true,
-            label: {
-                fontWeight: "bold",
-            },
-            symbolSize: connections.length,
-            value: connections.length,
-        },
-    ]
-    const links = []
-
-    connections.forEach((c) => {
-        const type = c["target"].split("/")[0].trim()
-        const target = c["target"].split("/")[1].trim()
-        nodes.push({
-            id: target,
-            name: target,
-            category: generateCategoryFromType(type),
-            type: type,
-            expanded: false,
-        })
-
-        links.push({
-            source: source,
-            target: target,
-        })
-    })
-    let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)
-    return {
-        nodes: newNodes,
-        links: links,
-    }
-}

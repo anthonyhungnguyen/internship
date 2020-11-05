@@ -16,9 +16,8 @@ const Overview = React.lazy(() => import("./Overview"))
 const Tool = React.lazy(() => import("../Common/Tool"))
 
 export default function UserProfile() {
-    const { id, hasErrors } = useSelector(generalSelector)
+    const { id } = useSelector(generalSelector)
     const { filters } = useSelector(userSelector)
-    const [activeTab, setActiveTab] = useState("overview")
     const [typeSelect, setTypeSelect] = useState("userid")
     const [currentID, setCurrentID] = useState(id)
     const [visible, setVisible] = useState(false)
@@ -74,9 +73,8 @@ export default function UserProfile() {
                 <SettingTwoTone />
             </button>
             <Tabs
-                defaultActiveKey={activeTab}
+                defaultActiveKey={"overview"}
                 animated={true}
-                onChange={(e) => setActiveTab(e)}
                 type='card'
                 tabBarExtraContent={
                     <Search
@@ -106,32 +104,28 @@ export default function UserProfile() {
                     />
                 }
             >
-                {!hasErrors ? (
-                    <React.Fragment>
-                        <TabPane tab='Overview' key='overview'>
-                            <Suspense fallback={<Skeleton active />}>
-                                <Overview />
-                            </Suspense>
-                        </TabPane>
-                        <TabPane tab='Connection' key='connection'>
-                            <Suspense fallback={<Skeleton active />}>
-                                <Connection />
-                            </Suspense>
-                        </TabPane>
-                        <TabPane tab='Network' key='network'>
-                            <Suspense fallback={<Skeleton active />}>
-                                <Network />
-                            </Suspense>
-                        </TabPane>
-                        <TabPane tab='Tool' key='tool'>
-                            <Suspense fallback={<Skeleton active />}>
-                                <Tool />
-                            </Suspense>
-                        </TabPane>
-                    </React.Fragment>
-                ) : (
-                    <Skeleton active />
-                )}
+                <React.Fragment>
+                    <TabPane tab='Overview' key='overview'>
+                        <Suspense fallback={<Skeleton active />}>
+                            <Overview />
+                        </Suspense>
+                    </TabPane>
+                    <TabPane tab='Connection' key='connection'>
+                        <Suspense fallback={<Skeleton active />}>
+                            <Connection />
+                        </Suspense>
+                    </TabPane>
+                    <TabPane tab='Network' key='network'>
+                        <Suspense fallback={<Skeleton active />}>
+                            <Network />
+                        </Suspense>
+                    </TabPane>
+                    <TabPane tab='Tool' key='tool'>
+                        <Suspense fallback={<Skeleton active />}>
+                            <Tool />
+                        </Suspense>
+                    </TabPane>
+                </React.Fragment>
             </Tabs>
         </React.Fragment>
     )

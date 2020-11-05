@@ -1,19 +1,83 @@
-import React, { useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import ReactEcharts from "echarts-for-react"
 import { Card, Slider } from "antd"
 import copy from "copy-to-clipboard"
 import {
+    configureSymbolSizeBasedOnDegree,
+    generateCategoryFromType,
     generateGraphData,
     preprocessMoreConnection,
 } from "../../../../../slices/util"
 import axios from "axios"
 
+let depthData = {}
 export default React.memo(
-    ({ setCurrentChosenId, setCurrentType, type, graphData }) => {
+    ({ setCurrentChosenId, setCurrentType, id, type }) => {
         // Used for restoring old depth
-        let depthData = {}
-        depthData[1] = graphData
+        const [graphData, setgraphData] = useState([])
         let ref = useRef()
+        useEffect(() => {
+            axios
+                .post("http://localhost:8085/api/profile/depth", {
+                    idList: [`userid/${id}`],
+                })
+                .then((response) => {
+                    const formattedConnections = preprocessConnection(
+                        `userid/${id}`,
+                        response.data
+                    )
+                    const graphData = generateGraphData(
+                        formattedConnections,
+                        "userid"
+                    )
+                    setgraphData(graphData)
+                    depthData[1] = graphData
+                    console.log(depthData)
+                })
+                .catch(console.error)
+
+            const preprocessConnection = (id, connections) => {
+                const sourceType = id.split("/")[0].trim()
+                const source = id.split("/")[1].trim()
+                let nodes = [
+                    {
+                        id: source,
+                        name: source,
+                        category: 0,
+                        type: sourceType,
+                        expanded: true,
+                        label: {
+                            fontWeight: "bold",
+                        },
+                        symbolSize: connections.length,
+                        value: connections.length,
+                    },
+                ]
+                const links = []
+
+                connections.forEach((c) => {
+                    const type = c["target"].split("/")[0].trim()
+                    const target = c["target"].split("/")[1].trim()
+                    nodes.push({
+                        id: target,
+                        name: target,
+                        category: generateCategoryFromType(type),
+                        type: type,
+                        expanded: false,
+                    })
+
+                    links.push({
+                        source: source,
+                        target: target,
+                    })
+                })
+                let newNodes = configureSymbolSizeBasedOnDegree(nodes, links)
+                return {
+                    nodes: newNodes,
+                    links: links,
+                }
+            }
+        }, [id])
 
         const handleOnClick = async (e) => {
             if (e.data.type === "deviceid") {

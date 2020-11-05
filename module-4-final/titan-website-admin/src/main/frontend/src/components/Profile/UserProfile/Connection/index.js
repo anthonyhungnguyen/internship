@@ -13,9 +13,9 @@ export default React.memo(() => {
     const [currentChosenId, setCurrentChosenId] = useState(id)
     const [currentType, setCurrentType] = useState(type)
 
-    useEffect(() => {
-        dispatch(fetchConnection(id, 1))
-    }, [dispatch, id])
+    // useEffect(() => {
+    //     dispatch(fetchConnection(id, 1))
+    // }, [dispatch, id])
 
     return !loading && !hasErrors ? (
         <React.Fragment>
