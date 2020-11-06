@@ -1,10 +1,15 @@
-import React, { useState, Suspense } from "react"
-import { Input, Tabs, Skeleton, Select, Drawer } from "antd"
-import { useSelector, useDispatch } from "react-redux"
-import { generalSelector, storeId, storeType } from "../../../slices/general"
 import { SettingTwoTone } from "@ant-design/icons"
+import { Drawer, Input, Result, Select, Skeleton, Tabs } from "antd"
+import Axios from "axios"
+import React, { Suspense, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import {
+    generalSelector,
+    storeExist,
+    storeId,
+    storeType,
+} from "../../../slices"
 import FilterBar from "../Common/Activity/FilterBar"
-import { userSelector, storeDateRange } from "../../../slices/user"
 import Network from "../Common/Network"
 
 const { TabPane } = Tabs
@@ -16,8 +21,7 @@ const Overview = React.lazy(() => import("./Overview"))
 const Tool = React.lazy(() => import("../Common/Tool"))
 
 export default function UserProfile() {
-    const { id } = useSelector(generalSelector)
-    const { filters } = useSelector(userSelector)
+    const { id, exist } = useSelector(generalSelector)
     const [typeSelect, setTypeSelect] = useState("userid")
     const [currentID, setCurrentID] = useState(id)
     const [visible, setVisible] = useState(false)
@@ -32,10 +36,20 @@ export default function UserProfile() {
         setCurrentID(e.target.value)
     }
 
-    const handleSearch = (newId) => {
+    const handleSearch = async (newId) => {
         if (newId) {
-            dispatch(storeType(typeSelect))
-            dispatch(storeId(newId))
+            await Axios.post("http://localhost:8085/api/profile/exists", {
+                type: typeSelect,
+                id: newId,
+            })
+                .then((response) => {
+                    if (response.data) {
+                        dispatch(storeType(typeSelect))
+                        dispatch(storeId(newId))
+                    }
+                    dispatch(storeExist(response.data))
+                })
+                .catch(console.error)
         } else {
             alert("Error", "Please re-check device ID", "error")
         }
@@ -58,16 +72,19 @@ export default function UserProfile() {
                 onClose={onClose}
                 visible={visible}
             >
-                <FilterBar filters={filters} storeDateRange={storeDateRange} />
+                <FilterBar />
             </Drawer>
             <button
                 style={{
                     position: "fixed",
                     top: "200px",
-                    right: "20px",
+                    right: "0px",
                     fontSize: "30px",
                     zIndex: "9999",
+                    width: "60px",
+                    height: "50px",
                 }}
+                className='bg-white rounded shadow-xl flex items-center justify-center'
                 onClick={showDrawer}
             >
                 <SettingTwoTone />
@@ -104,28 +121,30 @@ export default function UserProfile() {
                     />
                 }
             >
-                <React.Fragment>
-                    <TabPane tab='Overview' key='overview'>
-                        <Suspense fallback={<Skeleton active />}>
+                {exist ? (
+                    <React.Fragment>
+                        <TabPane tab='Overview' key='overview'>
                             <Overview />
-                        </Suspense>
-                    </TabPane>
-                    <TabPane tab='Connection' key='connection'>
-                        <Suspense fallback={<Skeleton active />}>
+                        </TabPane>
+                        <TabPane tab='Connection' key='connection'>
                             <Connection />
-                        </Suspense>
-                    </TabPane>
-                    <TabPane tab='Network' key='network'>
-                        <Suspense fallback={<Skeleton active />}>
+                        </TabPane>
+                        <TabPane tab='Network' key='network'>
                             <Network />
-                        </Suspense>
-                    </TabPane>
-                    <TabPane tab='Tool' key='tool'>
-                        <Suspense fallback={<Skeleton active />}>
+                        </TabPane>
+                        <TabPane tab='Tool' key='tool'>
                             <Tool />
-                        </Suspense>
-                    </TabPane>
-                </React.Fragment>
+                        </TabPane>
+                    </React.Fragment>
+                ) : (
+                    <div className='h-full w-screen flex items-center justify-center'>
+                        <Result
+                            status='404'
+                            title='404'
+                            subTitle='User ID does not exist'
+                        />
+                    </div>
+                )}
             </Tabs>
         </React.Fragment>
     )

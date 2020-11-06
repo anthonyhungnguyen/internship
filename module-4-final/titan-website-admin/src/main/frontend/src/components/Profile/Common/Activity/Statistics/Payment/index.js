@@ -1,11 +1,11 @@
-import { Statistic, Card, Divider, Row, Col, Skeleton } from "antd"
-import React, { useEffect, useState } from "react"
-import ReactEcharts from "echarts-for-react"
+import { Card, Col, Divider, Row, Skeleton, Statistic } from "antd"
 import axios from "axios"
+import ReactEcharts from "echarts-for-react"
+import React, { memo, useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { generalSelector } from "../../../../../../slices/general"
+import { generalSelector } from "../../../../../../slices"
 
-export default function Payment({ id, filters, queryUrl, queryParams }) {
+export default memo(function Payment({ id, filters, queryUrl, queryParams }) {
     const { type } = useSelector(generalSelector)
     const [monetaryStatistics, setMonetaryStatistics] = useState(null)
     useEffect(() => {
@@ -22,7 +22,7 @@ export default function Payment({ id, filters, queryUrl, queryParams }) {
         }
     }, [id, filters, queryUrl, queryParams, type])
     return monetaryStatistics ? (
-        <Card>
+        <Card hoverable={true}>
             <Row>
                 <Col span={14}>
                     <Statistic
@@ -89,4 +89,4 @@ export default function Payment({ id, filters, queryUrl, queryParams }) {
     ) : (
         <Skeleton active />
     )
-}
+})

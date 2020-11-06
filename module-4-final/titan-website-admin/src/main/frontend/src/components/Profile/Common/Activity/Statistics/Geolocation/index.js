@@ -1,8 +1,8 @@
-import { Statistic, Card, Divider, Row, Col } from "antd"
+import { Card, Col, Divider, Row, Statistic } from "antd"
 import Axios from "axios"
-import React, { useEffect, useState } from "react"
+import React, { memo, useEffect, useState } from "react"
 
-export default function Geolocation({ id, filters }) {
+export default memo(function Geolocation({ id, filters }) {
     const [geolocation, setGeolocation] = useState(null)
     const [formattedAddress, setFormattedAddress] = useState("Unknown")
     useEffect(() => {
@@ -42,7 +42,7 @@ export default function Geolocation({ id, filters }) {
     }
 
     return (
-        <Card className='h-full'>
+        <Card className='h-full' hoverable={true}>
             <Statistic
                 title='Geolocation'
                 value={
@@ -66,4 +66,4 @@ export default function Geolocation({ id, filters }) {
             </Row>
         </Card>
     )
-}
+})

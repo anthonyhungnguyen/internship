@@ -1,13 +1,12 @@
-import React, { useState } from "react"
-import { Tabs, Card } from "antd"
-import Overview from "./Overview"
+import { Card, Tabs } from "antd"
+import React, { memo, useState } from "react"
 import Details from "./Details"
-import "./index.css"
 import MerchantTable from "./MerchantTable"
+import Overview from "./Overview"
 
 const { TabPane } = Tabs
 
-export default function Merchant({ id, type, filters }) {
+export default memo(function Merchant({ id, type, filters }) {
     const [activeTab, setActiveTab] = useState("overview")
     return (
         <Card
@@ -37,4 +36,4 @@ export default function Merchant({ id, type, filters }) {
             <MerchantTable id={id} type={type} filters={filters} />
         </Card>
     )
-}
+})

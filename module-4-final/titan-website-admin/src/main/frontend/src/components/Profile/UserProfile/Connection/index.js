@@ -1,23 +1,16 @@
-import React, { useEffect, useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { Row, Col, BackTop, Skeleton } from "antd"
 import { UpCircleFilled } from "@ant-design/icons"
-import { generalSelector } from "../../../../slices/general"
-import { userSelector, fetchConnection } from "../../../../slices/user"
+import { BackTop, Col, Row } from "antd"
+import React, { useState } from "react"
+import { useSelector } from "react-redux"
+import { generalSelector } from "../../../../slices"
 import Graph from "../../Common/Connection/Graph"
 
 export default React.memo(() => {
-    const dispatch = useDispatch()
     const { id, type } = useSelector(generalSelector)
-    const { loading, hasErrors, graphData } = useSelector(userSelector)
     const [currentChosenId, setCurrentChosenId] = useState(id)
     const [currentType, setCurrentType] = useState(type)
 
-    // useEffect(() => {
-    //     dispatch(fetchConnection(id, 1))
-    // }, [dispatch, id])
-
-    return !loading && !hasErrors ? (
+    return (
         <React.Fragment>
             <Row gutter={[24, 24]}>
                 <Col span={24}>
@@ -26,7 +19,6 @@ export default React.memo(() => {
                         setCurrentChosenId={setCurrentChosenId}
                         id={id}
                         type={type}
-                        graphData={graphData}
                     />
                 </Col>
             </Row>
@@ -37,7 +29,5 @@ export default React.memo(() => {
                 />
             </BackTop>
         </React.Fragment>
-    ) : (
-        <Skeleton active />
     )
 })

@@ -1,7 +1,7 @@
-import React from "react"
 import { Tabs } from "antd"
-import UserListGraph from "./UserListGraph"
+import React from "react"
 import AbuseScore from "./AbuseScore"
+import UserListGraph from "./UserListGraph"
 
 const { TabPane } = Tabs
 

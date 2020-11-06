@@ -1,19 +1,28 @@
-import React, { useState } from "react"
-import { Tabs, Card } from "antd"
-import Overview from "./Overview"
+import { Card, Tabs } from "antd"
+import React, { memo, useState } from "react"
 import Bank from "./Bank"
-import Timeline from "./Timeline"
-import "./index.css"
-import MappingCardTable from "./MappingCardTable"
 import MappingAccountTable from "./MappingAccountTable"
+import MappingCardTable from "./MappingCardTable"
+import Overview from "./Overview"
+import Timeline from "./Timeline"
 
 const { TabPane } = Tabs
 
-export default function Mapping({ id, type, filters, queryUrl, queryParams }) {
+export default memo(function Mapping({
+    id,
+    type,
+    filters,
+    queryUrl,
+    queryParams,
+}) {
     const [OuterActiveTab, setOuterActiveTab] = useState("card")
     const [InnerActiveTab, setInnerActiveTab] = useState("overview")
     return (
-        <Card hoverable={true} className='h-full'>
+        <Card
+            hoverable={true}
+            className='h-full'
+            bodyStyle={{ height: "100%" }}
+        >
             <Tabs
                 defaultActiveKey='card'
                 onChange={(e) => setOuterActiveTab(e)}
@@ -100,4 +109,4 @@ export default function Mapping({ id, type, filters, queryUrl, queryParams }) {
             )}
         </Card>
     )
-}
+})

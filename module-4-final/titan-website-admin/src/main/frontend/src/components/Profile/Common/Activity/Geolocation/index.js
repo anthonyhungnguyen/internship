@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react"
-import ReactMapboxGl, {
-    Layer,
-    Feature,
-    ZoomControl,
-    ScaleControl,
-} from "react-mapbox-gl"
-import axios from "axios"
 import { FullscreenOutlined } from "@ant-design/icons"
 import { Card, Empty, Modal, Skeleton } from "antd"
-import "./index.css"
+import axios from "axios"
 import mapboxgl from "mapbox-gl"
 import "mapbox-gl/dist/mapbox-gl.css"
+import React, { useEffect, useState } from "react"
+import ReactMapboxGl, {
+    Feature,
+    Layer,
+    ScaleControl,
+    ZoomControl,
+} from "react-mapbox-gl"
+import "./index.css"
 
 const Map = ReactMapboxGl({
     accessToken:

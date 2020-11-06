@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react"
-import ReactEcharts from "echarts-for-react"
-import { Modal, Skeleton, Select, Empty } from "antd"
+import { Empty, Modal, Select, Skeleton } from "antd"
 import axios from "axios"
+import ReactEcharts from "echarts-for-react"
+import React, { memo, useEffect, useRef, useState } from "react"
 
-export default React.memo(({ id, type, filters }) => {
+export default memo(function Details({ id, type, filters }) {
     const [visible, setVisible] = useState(false)
     const [appid, setAppId] = useState(null)
     const [option, setOption] = useState(null)

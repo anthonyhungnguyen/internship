@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react"
-import { Card, Descriptions, Skeleton, Image, Row, Col } from "antd"
-import axios from "axios"
-import { generalSelector } from "../../../../../slices/general"
-import { useSelector } from "react-redux"
-import DescriptionsItem from "antd/lib/descriptions/Item"
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons"
-export default function UserBasic() {
+import { Card, Col, Image, Row, Skeleton } from "antd"
+import axios from "axios"
+import React, { memo, useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import { generalSelector } from "../../../../../slices"
+export default memo(function UserBasic() {
     const { id } = useSelector(generalSelector)
     const [info, setInfo] = useState(null)
     useEffect(() => {
@@ -64,4 +63,4 @@ export default function UserBasic() {
     ) : (
         <Skeleton />
     )
-}
+})

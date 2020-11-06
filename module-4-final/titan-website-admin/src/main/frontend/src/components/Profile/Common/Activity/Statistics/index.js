@@ -1,13 +1,18 @@
 import { Col, Row } from "antd"
-import React from "react"
+import React, { memo } from "react"
 import Frequency from "./Frequency"
 import Geolocation from "./Geolocation"
 import Mapping from "./Mapping"
 import Payment from "./Payment"
 
-export default function Statistics({ id, filters, queryUrl, queryParams }) {
+export default memo(function Statistics({
+    id,
+    filters,
+    queryUrl,
+    queryParams,
+}) {
     return (
-        <Row gutter={[12, 12]} className='items-stretch'>
+        <Row gutter={[12, 0]} className='items-stretch'>
             <Col span={6}>
                 <Frequency
                     id={id}
@@ -42,4 +47,4 @@ export default function Statistics({ id, filters, queryUrl, queryParams }) {
             </Col>
         </Row>
     )
-}
+})

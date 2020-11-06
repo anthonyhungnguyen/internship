@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react"
 import { Card, Skeleton, Slider } from "antd"
+import axios from "axios"
 import ReactEchartsCore from "echarts-for-react"
 import echarts from "echarts/lib/echarts"
-import axios from "axios"
+import React, { useEffect, useRef, useState } from "react"
 import {
     configureSymbolSizeBasedOnDegree,
     generateCategoryFromType,

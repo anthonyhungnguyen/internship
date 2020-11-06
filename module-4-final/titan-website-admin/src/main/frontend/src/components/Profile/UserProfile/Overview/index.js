@@ -1,27 +1,50 @@
-import React from "react"
-import { Row, Col, Skeleton, BackTop } from "antd"
 import { UpCircleFilled } from "@ant-design/icons"
+import { BackTop, Col, Row } from "antd"
+import React from "react"
 import { useSelector } from "react-redux"
-import { generalSelector } from "../../../../slices/general"
-import Monetary from "../../Common/Activity/Monetary"
+import { generalSelector } from "../../../../slices"
 import Geolocation from "../../Common/Activity/Geolocation/GM"
-import { userSelector } from "../../../../slices/user"
-import Merchant from "../../Common/Activity/Merchant"
 import Mapping from "../../Common/Activity/Mapping"
+import Merchant from "../../Common/Activity/Merchant"
+import Monetary from "../../Common/Activity/Monetary"
 import Statistics from "../../Common/Activity/Statistics"
-import UserBasic from "./Identity"
+import UserBasic from "../../Common/Overview/UserIdentity"
 
 export default function UserActivity() {
-    const { loading, hasErrors, filters } = useSelector(userSelector)
-    const { id, type } = useSelector(generalSelector)
+    const { id, type, filters } = useSelector(generalSelector)
 
     return (
-        <div className='animated fadeIn'>
-            {!loading && !hasErrors ? (
-                <React.Fragment>
-                    <Row gutter={[12, 12]}>
-                        <Col span={24}>
-                            <Statistics
+        <>
+            <Row gutter={[12, 12]}>
+                <Col span={24}>
+                    <Statistics
+                        id={id}
+                        filters={filters}
+                        queryUrl='http://localhost:8085/api/profile/user/'
+                        queryParams={{
+                            id: `userid/${id}`,
+                            fromDate: filters.range[0],
+                            toDate: filters.range[1],
+                        }}
+                    />
+                </Col>
+                <Col span={24}>
+                    <Row gutter={[12, 0]} className='items-stretch'>
+                        <Col span={14}>
+                            <Monetary id={id} type={type} filters={filters} />
+                        </Col>
+                        <Col span={10}>
+                            <UserBasic />
+                        </Col>
+                    </Row>
+                </Col>
+                <Col span={24}>
+                    <Row gutter={[12, 0]}>
+                        <Col span={12}>
+                            <Merchant id={id} type={type} filters={filters} />
+                        </Col>
+                        <Col span={12}>
+                            <Mapping
                                 id={id}
                                 filters={filters}
                                 queryUrl='http://localhost:8085/api/profile/user/'
@@ -32,114 +55,18 @@ export default function UserActivity() {
                                 }}
                             />
                         </Col>
-                        <Col span={24}>
-                            <Row gutter={[12, 12]} className='items-stretch'>
-                                <Col span={14}>
-                                    <Monetary
-                                        id={id}
-                                        type={type}
-                                        filters={filters}
-                                    />
-                                </Col>
-                                <Col span={10}>
-                                    <UserBasic />
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col span={24}>
-                            <Row gutter={[12, 12]}>
-                                <Col span={12}>
-                                    <Merchant
-                                        id={id}
-                                        type={type}
-                                        filters={filters}
-                                    />
-                                </Col>
-                                <Col span={12}>
-                                    <Mapping
-                                        id={id}
-                                        filters={filters}
-                                        queryUrl='http://localhost:8085/api/profile/user/'
-                                        queryParams={{
-                                            id: `userid/${id}`,
-                                            fromDate: filters.range[0],
-                                            toDate: filters.range[1],
-                                        }}
-                                    />
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col span={24}>
-                            <Geolocation
-                                id={id}
-                                type={type}
-                                filters={filters}
-                            />
-                        </Col>
-                        {/* <Col span={10}>
-                            <Row gutter={[12, 12]}>
-                                <Col span={24}>
-                                    <Monetary
-                                        id={id}
-                                        type={type}
-                                        filters={filters}
-                                    />
-                                </Col>
-                            </Row>
-
-                            <Row gutter={[12, 12]}>
-                                <Col span={24}>
-                                    <Card
-                                        id={id}
-                                        filters={filters}
-                                        queryUrl='http://localhost:8085/api/profile/user/'
-                                        queryParams={{
-                                            id: `userid/${id}`,
-                                            fromDate: filters.range[0],
-                                            toDate: filters.range[1],
-                                        }}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row />
-                        </Col>
-                        <Col span={14}>
-                            <Row gutter={[12, 12]}>
-                                <Col span={24}>
-                                    <Transaction
-                                        id={id}
-                                        type={type}
-                                        filters={filters}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row gutter={[12, 12]}>
-                                <Col span={24}>
-                                    <Merchant
-                                        id={id}
-                                        type={type}
-                                        filters={filters}
-                                    />
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col span={24}>
-                            <Geolocation
-                                id={id}
-                                type={type}
-                                filters={filters}
-                            />
-                        </Col> */}
                     </Row>
-                </React.Fragment>
-            ) : (
-                <Skeleton active />
-            )}
+                </Col>
+                <Col span={24}>
+                    <Geolocation id={id} type={type} filters={filters} />
+                </Col>
+            </Row>
+
             <BackTop>
                 <UpCircleFilled
                     style={{ fontSize: "30px", color: "#3498db" }}
                 />
             </BackTop>
-        </div>
+        </>
     )
 }

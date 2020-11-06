@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react"
-import ReactEcharts from "echarts-for-react"
-import { Card, Modal, Skeleton, Empty } from "antd"
+import { Card, Empty, Modal, Skeleton } from "antd"
 import axios from "axios"
+import ReactEcharts from "echarts-for-react"
+import React, { useEffect, useState } from "react"
 
-export default React.memo(({ id, type, filters }) => {
+export default memo(function Frequency({ id, type, filters }) {
     const [visible, setVisible] = useState(false)
     const [option, setOption] = useState(null)
     const [noData, setNoData] = useState(false)

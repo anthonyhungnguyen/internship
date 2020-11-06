@@ -1,12 +1,12 @@
-import React, { useState } from "react"
 import { Card, Tabs } from "antd"
+import React, { memo, useState } from "react"
 import Overview from "./Overview"
 import Timeline from "./Timeline"
 import Transaction from "./Transaction"
 
 const { TabPane } = Tabs
 
-export default React.memo(({ id, type, filters }) => {
+export default memo(function Monetary({ id, type, filters }) {
     const [activeTab, setActiveTab] = useState("overview")
 
     return (

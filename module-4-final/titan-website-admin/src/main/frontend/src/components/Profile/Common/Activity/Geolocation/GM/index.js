@@ -1,13 +1,14 @@
-import React, { memo, useEffect, useRef, useState } from "react"
-import GoogleMapReact from "google-map-react"
-import { Card } from "antd"
+import { Button, Card } from "antd"
 import Axios from "axios"
+import GoogleMapReact from "google-map-react"
+import React, { memo, useEffect, useState } from "react"
 
 export default memo(function GoogleMapGeolocation({ id, type, filters }) {
     const [data, setData] = useState([])
     const [map, setMap] = useState(null)
     const [maps, setMaps] = useState(null)
     const [currentHeatmap, setCurrentHeatmap] = useState(null)
+    const [currentBounds, setCurrentBounds] = useState(null)
 
     useEffect(() => {
         Axios.post(`http://localhost:8085/api/profile/user/${id}/geolocation`, {
@@ -24,9 +25,13 @@ export default memo(function GoogleMapGeolocation({ id, type, filters }) {
     }, [id, filters])
 
     const fitBoundsAndRenderHeatMap = (data, map, maps) => {
-        const markers = data.map((x) => new maps.LatLng(x.lat, x.lng))
+        const markers = data.map((x) => ({
+            location: new maps.LatLng(x.lat, x.lng),
+            weight: parseInt(x.location_count),
+        }))
         const bounds = new maps.LatLngBounds()
-        markers.forEach((m) => bounds.extend(m))
+        markers.forEach((m) => bounds.extend(m.location))
+        setCurrentBounds(bounds)
         map.fitBounds(bounds)
         if (currentHeatmap) {
             currentHeatmap.setMap(null)
@@ -40,8 +45,18 @@ export default memo(function GoogleMapGeolocation({ id, type, filters }) {
     }
     return (
         <Card
-            style={{ width: "100%", height: "50vh" }}
-            bodyStyle={{ height: "100%" }}
+            style={{ width: "100%", height: "70vh" }}
+            bodyStyle={{ height: "90%" }}
+            title='Geolocation'
+            headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
+            extra={
+                <Button
+                    onClick={() => map.fitBounds(currentBounds)}
+                    type='primary'
+                >
+                    Zoom Back
+                </Button>
+            }
         >
             <GoogleMapReact
                 bootstrapURLKeys={{
@@ -57,6 +72,7 @@ export default memo(function GoogleMapGeolocation({ id, type, filters }) {
                     mapTypeControl: true,
                     panControl: false,
                     scrollwheel: true,
+                    mapTypeId: "satellite",
                 }}
                 yesIWantToUseGoogleMapApiInternals
                 onGoogleApiLoaded={({ map, maps }) => {

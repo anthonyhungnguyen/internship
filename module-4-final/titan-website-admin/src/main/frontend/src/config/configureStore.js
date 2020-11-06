@@ -1,14 +1,10 @@
-import { combineReducers } from '@reduxjs/toolkit';
-import reducers from '../reducers';
-import generalReducer from '../slices/general';
-import deviceReducer from '../slices/device';
-import userReducer from '../slices/user';
+import { combineReducers } from "@reduxjs/toolkit"
+import reducers from "../reducers"
+import generalReducer from "../slices"
 
 const rootReducer = combineReducers({
-	general: generalReducer,
-	device: deviceReducer,
-	user: userReducer,
-	...reducers
-});
+    general: generalReducer,
+    ...reducers,
+})
 
-export default rootReducer;
+export default rootReducer

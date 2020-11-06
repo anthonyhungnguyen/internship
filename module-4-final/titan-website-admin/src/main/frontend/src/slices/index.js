@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import moment from "moment"
 
 export const initialState = {
     loading: true,
@@ -7,6 +8,12 @@ export const initialState = {
     id: "160516000000002",
     type: "userid",
     exist: true,
+    filters: {
+        range: [
+            moment().subtract(1, "months").format("YYYY-MM-DD"),
+            moment().format("YYYY-MM-DD"),
+        ],
+    },
 }
 
 const generalSlice = createSlice({
@@ -35,6 +42,9 @@ const generalSlice = createSlice({
         storeExist: (state, { payload }) => {
             state.exist = payload
         },
+        storeDateRange: (state, { payload }) => {
+            state.filters = { ...state.filters, range: payload }
+        },
     },
 })
 
@@ -45,6 +55,7 @@ export const {
     storeId,
     storeType,
     storeExist,
+    storeDateRange,
 } = generalSlice.actions
 
 export const generalSelector = (state) => state.general

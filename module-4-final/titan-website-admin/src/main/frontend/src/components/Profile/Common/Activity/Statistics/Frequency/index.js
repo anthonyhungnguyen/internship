@@ -1,11 +1,11 @@
-import { Statistic, Card, Divider, Row, Col, Skeleton } from "antd"
-import React, { useEffect, useState } from "react"
-import ReactEcharts from "echarts-for-react"
+import { Card, Col, Divider, Row, Skeleton, Statistic } from "antd"
 import axios from "axios"
-import { generalSelector } from "../../../../../../slices/general"
+import ReactEcharts from "echarts-for-react"
+import React, { memo, useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import { generalSelector } from "../../../../../../slices"
 
-export default function Frequency({ id, queryUrl, queryParams }) {
+export default memo(function Frequency({ id, queryUrl, queryParams }) {
     const { type } = useSelector(generalSelector)
     const [monetaryFrequencyOverview, setMonetaryFrequencyOverview] = useState(
         null
@@ -26,7 +26,7 @@ export default function Frequency({ id, queryUrl, queryParams }) {
     }, [queryUrl, queryParams, type, id])
 
     return monetaryFrequencyOverview ? (
-        <Card>
+        <Card hoverable={true}>
             <Row>
                 <Col span={12}>
                     <Statistic
@@ -93,4 +93,4 @@ export default function Frequency({ id, queryUrl, queryParams }) {
     ) : (
         <Skeleton active />
     )
-}
+})

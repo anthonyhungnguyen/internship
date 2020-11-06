@@ -1,14 +1,12 @@
 import { Card } from "antd"
 import Axios from "axios"
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { useSelector } from "react-redux"
-import { generalSelector } from "../../../../../slices/general"
-import { userSelector } from "../../../../../slices/user"
+import { generalSelector } from "../../../../../slices"
 import "./index.css"
 
 export default function CardNetwork() {
-    const { id } = useSelector(generalSelector)
-    const { filters } = useSelector(userSelector)
+    const { id, filters } = useSelector(generalSelector)
     useEffect(() => {
         Axios.post("http://localhost:8085/api/profile/user/network/card", {
             id: `userid/${id}`,

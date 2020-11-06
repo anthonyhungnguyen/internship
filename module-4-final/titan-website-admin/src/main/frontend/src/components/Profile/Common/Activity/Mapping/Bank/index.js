@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react"
 import { Empty, Modal, Skeleton } from "antd"
 import axios from "axios"
 import ReactEcharts from "echarts-for-react"
+import React, { memo, useEffect, useState } from "react"
 
-export default React.memo(({ queryUrl, queryParams }) => {
+export default memo(function Bank({ queryUrl, queryParams }) {
     const [visible, setVisible] = useState(false)
     const [option, setOption] = useState(null)
     const [noData, setNoData] = useState(false)

@@ -1,6 +1,6 @@
 import { Table } from "antd"
-import React, { useEffect, useState } from "react"
 import Axios from "axios"
+import React, { memo, useEffect, useState } from "react"
 
 const columns = [
     {
@@ -24,7 +24,7 @@ const columns = [
     },
 ]
 
-export default function MappingAccountTable({ id, type, filters }) {
+export default memo(function MappingAccountTable({ id, type, filters }) {
     const [data, setData] = useState(null)
 
     useEffect(() => {
@@ -49,4 +49,4 @@ export default function MappingAccountTable({ id, type, filters }) {
             scroll={{ y: 220 }}
         />
     )
-}
+})

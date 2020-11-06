@@ -1,7 +1,7 @@
-import { Card, Table, Tag } from "antd"
-import React, { useEffect, useState } from "react"
-import moment from "moment"
+import { Table, Tag } from "antd"
 import Axios from "axios"
+import moment from "moment"
+import React, { memo, useEffect, useState } from "react"
 
 const columns = [
     {
@@ -43,7 +43,7 @@ const columns = [
     },
 ]
 
-export default function Transaction({ id, type, filters }) {
+export default memo(function Transaction({ id, type, filters }) {
     const [data, setData] = useState(null)
 
     useEffect(() => {
@@ -65,4 +65,4 @@ export default function Transaction({ id, type, filters }) {
             scroll={{ y: 330 }}
         />
     )
-}
+})

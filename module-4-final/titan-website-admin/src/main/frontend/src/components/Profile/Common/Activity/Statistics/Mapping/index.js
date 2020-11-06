@@ -1,9 +1,9 @@
-import { Statistic, Card, Divider, Row, Col, Skeleton } from "antd"
-import React, { useEffect, useState } from "react"
+import { Card, Col, Divider, Row, Skeleton, Statistic } from "antd"
 import axios from "axios"
 import ReactEcharts from "echarts-for-react"
+import React, { memo, useEffect, useState } from "react"
 
-export default function Mapping({ queryUrl, queryParams }) {
+export default memo(function Mapping({ queryUrl, queryParams }) {
     const [mappingStatistics, setMappingStatistics] = useState(null)
 
     useEffect(() => {
@@ -14,7 +14,7 @@ export default function Mapping({ queryUrl, queryParams }) {
     }, [queryUrl, queryParams])
 
     return mappingStatistics ? (
-        <Card>
+        <Card hoverable={true}>
             <Row>
                 <Col span={8}>
                     <Statistic
@@ -94,4 +94,4 @@ export default function Mapping({ queryUrl, queryParams }) {
     ) : (
         <Skeleton active />
     )
-}
+})

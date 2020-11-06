@@ -1,9 +1,9 @@
-import { Card, Col, Row, Tabs } from "antd"
-import React from "react"
-import CardNetwork from "./CardNetwork"
+import { Card, Col, Row } from "antd"
+import React, { memo } from "react"
 import AccountNetwork from "./AccountNetwork"
+import CardNetwork from "./CardNetwork"
 
-export default function Network() {
+export default memo(function Network() {
     return (
         <Card>
             <Row>
@@ -16,4 +16,4 @@ export default function Network() {
             </Row>
         </Card>
     )
-}
+})
