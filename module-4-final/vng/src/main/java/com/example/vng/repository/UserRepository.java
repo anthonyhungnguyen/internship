@@ -158,11 +158,12 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "                    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +
             "                    AGGREGATE amount = SUM(TO_NUMBER(e.amount))\n" +
             "                    RETURN {date, amount})\n" +
-            "    \n" +
+            "    \n" + 
             "LET totalAmount = SUM((FOR e IN totalPayment RETURN TO_NUMBER(e.amount)))\n" +
             "    \n" +
-            "LET successRate = COUNT(FOR v in totalPayment FILTER v.transStatus == 'SUCCESSFUL' RETURN v) / COUNT(totalPayment)\n" +
-            "RETURN {popularMerchant, totalAmount, graphData, successRate}")
+            "LET successTransCount = COUNT(FOR v in totalPayment FILTER v.transStatus == 'SUCCESSFUL' RETURN v)\n" +
+            "LET totalPaymentCount = COUNT(totalPayment)\n" +
+            "RETURN {popularMerchant, totalAmount, graphData, successTransCount, totalPaymentCount}")
     Map<String, Object> getSpendingStatisticsOverview(@BindVars Map<String, Object> bindVars);
 
     @Query("LET totalPayment = (FOR v, e IN 1..1 ANY @id transaction FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +

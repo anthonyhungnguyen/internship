@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { useSelector } from "react-redux"
 import { generalSelector } from "../../../../slices"
 import Graph from "../../Common/Connection/Graph"
+import UserBasic from "../../Common/Overview/UserIdentity"
 
 export default React.memo(() => {
     const { id, type } = useSelector(generalSelector)
@@ -12,8 +13,11 @@ export default React.memo(() => {
 
     return (
         <React.Fragment>
-            <Row gutter={[24, 24]}>
-                <Col span={24}>
+            <Row gutter={[12, 12]} className='items-stretch'>
+                <Col span={8}>
+                    <UserBasic id={currentChosenId} />
+                </Col>
+                <Col span={16}>
                     <Graph
                         setCurrentType={setCurrentType}
                         setCurrentChosenId={setCurrentChosenId}

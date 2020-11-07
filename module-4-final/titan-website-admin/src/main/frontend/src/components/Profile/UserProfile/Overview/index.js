@@ -34,7 +34,7 @@ export default function UserActivity() {
                             <Monetary id={id} type={type} filters={filters} />
                         </Col>
                         <Col span={10}>
-                            <UserBasic />
+                            <UserBasic id={id} />
                         </Col>
                     </Row>
                 </Col>

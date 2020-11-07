@@ -161,9 +161,10 @@ export default memo(function Graph({
         graphData && (
             <div className='animated fadeIn'>
                 <Card
-                    className='w-full'
-                    title='Dive Depth'
+                    className='h-full w-full'
+                    title='Graph'
                     headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
+                    bodyStyle={{ height: "100vh" }}
                     hoverable={true}
                     extra={
                         <React.Fragment>
@@ -181,7 +182,7 @@ export default memo(function Graph({
                         ref={ref}
                         option={graphData}
                         lazyUpdate={true}
-                        style={{ height: "65vh", width: "100%" }}
+                        style={{ height: "100%", width: "100%" }}
                         renderer='canvas'
                         onEvents={{
                             click: handleOnClick,

@@ -83,9 +83,10 @@ export const generateGraphData = (data, type) => {
                 categories: categoriesAndLegends,
                 // focusNodeAdjacency: true,
                 force: {
-                    edgeLength: 70,
-                    repulsion: 500,
+                    edgeLength: 50,
+                    repulsion: 100,
                     friction: 0.05,
+                    layoutAnimation: false,
                 },
                 draggable: true,
                 edges: data.links,
