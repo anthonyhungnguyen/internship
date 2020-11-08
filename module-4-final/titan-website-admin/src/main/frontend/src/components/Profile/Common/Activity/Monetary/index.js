@@ -14,6 +14,7 @@ export default memo(function Monetary({ id, type, filters }) {
             title='Monetary'
             headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
             className='h-full'
+            bodyStyle={{ height: "100%" }}
             hoverable={true}
             renderer='canvas'
             extra={

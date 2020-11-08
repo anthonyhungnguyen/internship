@@ -26,7 +26,7 @@ export default memo(function Frequency({ id, queryUrl, queryParams }) {
     }, [queryUrl, queryParams, type, id])
 
     return monetaryFrequencyOverview ? (
-        <Card hoverable={true}>
+        <Card hoverable={true} className='h-full'>
             <Row>
                 <Col span={12}>
                     <Statistic
@@ -79,7 +79,7 @@ export default memo(function Frequency({ id, queryUrl, queryParams }) {
                         valueStyle={{ color: "#e67e22" }}
                     />
                 </Col>
-                <Col>
+                <Col span={12}>
                     <Statistic
                         title='Recency'
                         value={
@@ -91,6 +91,6 @@ export default memo(function Frequency({ id, queryUrl, queryParams }) {
             </Row>
         </Card>
     ) : (
-        <Skeleton active />
+        <Skeleton />
     )
 })

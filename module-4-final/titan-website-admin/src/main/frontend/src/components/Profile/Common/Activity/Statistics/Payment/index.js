@@ -11,7 +11,7 @@ export default memo(function Payment({ id, filters, queryUrl, queryParams }) {
             .catch(console.error)
     }, [id, filters, queryUrl, queryParams])
     return monetaryStatistics ? (
-        <Card hoverable={true}>
+        <Card hoverable={true} className='h-full'>
             <Row>
                 <Col span={14}>
                     <Statistic
@@ -53,7 +53,7 @@ export default memo(function Payment({ id, filters, queryUrl, queryParams }) {
             </Row>
             <Divider />
             <Row>
-                <Col span={12}>
+                <Col span={10}>
                     <Statistic
                         title='Success'
                         value={parseInt(
@@ -72,9 +72,9 @@ export default memo(function Payment({ id, filters, queryUrl, queryParams }) {
                         suffix='%'
                     />
                 </Col>
-                <Col>
+                <Col span={14}>
                     <Statistic
-                        title='Popular type'
+                        title='Popular merchant'
                         value={
                             monetaryStatistics["popularMerchant"] ?? "Unknown"
                         }
@@ -84,6 +84,6 @@ export default memo(function Payment({ id, filters, queryUrl, queryParams }) {
             </Row>
         </Card>
     ) : (
-        <Skeleton active />
+        <Skeleton />
     )
 })

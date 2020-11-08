@@ -14,7 +14,7 @@ export default memo(function Mapping({ queryUrl, queryParams }) {
     }, [queryUrl, queryParams])
 
     return mappingStatistics ? (
-        <Card hoverable={true}>
+        <Card hoverable={true} className='h-full'>
             <Row>
                 <Col span={8}>
                     <Statistic
@@ -73,7 +73,7 @@ export default memo(function Mapping({ queryUrl, queryParams }) {
 
             <Divider />
             <Row>
-                <Col span={12}>
+                <Col span={10}>
                     <Statistic
                         title='Success'
                         value={mappingStatistics["successPercent"] ?? 0}
@@ -82,7 +82,7 @@ export default memo(function Mapping({ queryUrl, queryParams }) {
                         suffix='%'
                     />
                 </Col>
-                <Col>
+                <Col span={14}>
                     <Statistic
                         title='Popular Bank'
                         value={mappingStatistics["popularBank"] ?? "Unknown"}
@@ -92,6 +92,6 @@ export default memo(function Mapping({ queryUrl, queryParams }) {
             </Row>
         </Card>
     ) : (
-        <Skeleton active />
+        <Skeleton />
     )
 })

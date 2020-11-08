@@ -176,6 +176,6 @@ export default memo(function Frequency({ id, type, filters }) {
             </Modal>
         </React.Fragment>
     ) : (
-        <Skeleton active />
+        <Skeleton />
     )
 })

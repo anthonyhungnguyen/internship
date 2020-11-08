@@ -61,6 +61,12 @@ export default memo(function Overview({ id, type, filters }) {
                         trigger: "item",
                         formatter: "{b} : {c} ({d}%)",
                     },
+                    legend: {
+                        orient: "vertical",
+                        right: "10",
+                        top: "50",
+                        formatter: () => "",
+                    },
                     toolbox: {
                         show: true,
                         feature: {
@@ -119,7 +125,7 @@ export default memo(function Overview({ id, type, filters }) {
     return noData ? (
         <div
             style={{
-                height: "100%",
+                height: "400px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -155,6 +161,8 @@ export default memo(function Overview({ id, type, filters }) {
             </Modal>
         </React.Fragment>
     ) : (
-        <Skeleton active />
+        <div style={{ height: "400px" }}>
+            <Skeleton />
+        </div>
     )
 })

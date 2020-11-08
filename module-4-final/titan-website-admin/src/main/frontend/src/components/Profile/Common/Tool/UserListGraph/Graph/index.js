@@ -141,7 +141,7 @@ export default function Graph({ userList }) {
                     notMerge={true}
                 />
             ) : (
-                <Skeleton active />
+                <Skeleton />
             )}
         </Card>
     )

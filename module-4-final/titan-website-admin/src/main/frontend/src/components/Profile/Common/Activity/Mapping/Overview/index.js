@@ -114,7 +114,7 @@ export default memo(function Overview({ queryUrl, queryParams }) {
     return noData ? (
         <div
             style={{
-                height: "100%",
+                height: "400px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -153,6 +153,8 @@ export default memo(function Overview({ queryUrl, queryParams }) {
             </Modal>
         </React.Fragment>
     ) : (
-        <Skeleton active />
+        <div style={{ height: "400px" }}>
+            <Skeleton />
+        </div>
     )
 })

@@ -190,7 +190,7 @@ export default memo(function Timeline({ id, type, filters }) {
     return noData ? (
         <div
             style={{
-                height: "100%",
+                height: "400px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -226,6 +226,8 @@ export default memo(function Timeline({ id, type, filters }) {
             </Modal>
         </React.Fragment>
     ) : (
-        <Skeleton active />
+        <div style={{ height: "400px" }}>
+            <Skeleton />
+        </div>
     )
 })

@@ -101,6 +101,6 @@ export default memo(function FundingChannelIdentity({ id }) {
             ))}
         </Card>
     ) : (
-        <Skeleton active />
+        <Skeleton />
     )
 })

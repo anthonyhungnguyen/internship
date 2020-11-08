@@ -303,6 +303,6 @@ export default React.memo(({ id, type, filters }) => {
             </Modal>
         </React.Fragment>
     ) : (
-        <Skeleton active />
+        <Skeleton />
     )
 })

@@ -211,7 +211,7 @@ export default memo(function Details({ id, type, filters }) {
     return noData ? (
         <div
             style={{
-                height: "100%",
+                height: "400px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -266,6 +266,8 @@ export default memo(function Details({ id, type, filters }) {
             )}
         </React.Fragment>
     ) : (
-        <Skeleton active />
+        <div style={{ height: "450px" }}>
+            <Skeleton />
+        </div>
     )
 })
