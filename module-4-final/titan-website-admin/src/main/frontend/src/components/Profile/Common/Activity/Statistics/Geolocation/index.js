@@ -11,6 +11,7 @@ export default memo(function Geolocation({ id, filters }) {
             toDate: filters.range[1],
         })
             .then(async (response) => {
+                console.log(response)
                 setGeolocation(response.data)
                 getPopularGeolocation(
                     response.data
@@ -28,7 +29,7 @@ export default memo(function Geolocation({ id, filters }) {
     const getPopularGeolocation = async (data) => {
         if (data) {
             await Axios.post(
-                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${data.lat},${data.lng}&key=AIzaSyAE6JauemrWtkXp72H-gLm0l6TZ5H3bH7I`
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${data.lat},${data.lng}&key=AIzaSyBwYcyKKgLLdQRapd9VL20iERA3FqXNhJ4`
             )
                 .then((response) => {
                     setFormattedAddress(

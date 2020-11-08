@@ -8,6 +8,7 @@ export const initialState = {
     id: "160516000000002",
     type: "userid",
     exist: true,
+    useGPU: false,
     filters: {
         range: [
             moment().subtract(1, "months").format("YYYY-MM-DD"),
@@ -45,6 +46,9 @@ const generalSlice = createSlice({
         storeDateRange: (state, { payload }) => {
             state.filters = { ...state.filters, range: payload }
         },
+        storeUseGPU: (state, { payload }) => {
+            state.useGPU = payload
+        },
     },
 })
 
@@ -56,6 +60,7 @@ export const {
     storeType,
     storeExist,
     storeDateRange,
+    storeUseGPU,
 } = generalSlice.actions
 
 export const generalSelector = (state) => state.general

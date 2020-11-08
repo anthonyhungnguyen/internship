@@ -14,26 +14,26 @@ export default memo(function UserBasic({ id }) {
                 setInfo({
                     Avatar: <Image src={data["avatar"]} />,
                     "Display Name": data["displayname"],
-                    Birthday: data["birthdate"],
-                    Gender: data["usergender"],
                     "Is Locked": data["islocked"] ? (
                         <CheckCircleTwoTone twoToneColor='#52c41a' />
                     ) : (
                         <CloseCircleTwoTone twoToneColor='#e74c3c' />
                     ),
-                    "Profile Level": data["profilelevel"],
                     "Acquital Result": data["acquital_result"] ? (
                         <CheckCircleTwoTone twoToneColor='#52c41a' />
                     ) : (
                         <CloseCircleTwoTone twoToneColor='#e74c3c' />
                     ),
-                    "Postmoterm Add Date": data["postmortem_add_date"],
-                    "Postmoterm Result": data["postmortem_result"],
-                    "KYC DOB": data["kycdob"],
-                    "KYC Fullname": data["kycfullname"],
-                    "KYC Gender": data["kycgender"],
+                    "Profile Level": data["profilelevel"],
+                    "KYC DOB": data["kycdob"] ?? "Unknown",
+                    "KYC Fullname": data["kycfullname"] ?? "Unknown",
+                    "KYC Gender": data["kycgender"] ?? "Unknown",
+                    Birthday: data["birthdate"],
+                    Gender: data["usergender"],
                     "Phone Number": data["phonenumber"],
                     "Zalo ID": data["zaloid"],
+                    "Postmoterm Add Date": data["postmortem_add_date"],
+                    "Postmoterm Result": data["postmortem_result"],
                 })
             })
             .catch(console.err)
@@ -41,7 +41,7 @@ export default memo(function UserBasic({ id }) {
 
     return info ? (
         <Card
-            title='Identity'
+            title='User Identity'
             headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
             hoverable={true}
             className='h-full'

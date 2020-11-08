@@ -55,7 +55,8 @@ export const generateGraphData = (data, type) => {
                 type: "graph",
                 layout: "force",
                 animation: false,
-                // edgeSymbol: [ 'none', 'arrow' ],
+                edgeSymbol: ["none", "arrow"],
+                edgeSymbolSize: 3,
                 label: {
                     normal: {
                         show: data.nodes.length < 50 ? true : false,
@@ -72,26 +73,48 @@ export const generateGraphData = (data, type) => {
                 lineStyle: {
                     color: "source",
                     curveness: 0.1,
-                    width: 0.5,
+                    width: 0.3,
                 },
                 emphasis: {
                     lineStyle: {
-                        width: 5,
+                        width: 3,
                     },
                 },
-                data: data.nodes,
+                nodes: data.nodes,
                 categories: categoriesAndLegends,
                 // focusNodeAdjacency: true,
                 force: {
-                    edgeLength: 50,
-                    repulsion: 100,
-                    friction: 0.05,
-                    layoutAnimation: false,
+                    edgeLength: 100,
+                    repulsion: 200,
+                    friction: 0.1,
+                    layoutAnimation: true,
                 },
                 draggable: true,
-                edges: data.links,
+                links: data.links,
                 roam: true,
                 symbolSize: 14,
+            },
+        ],
+    }
+    return options
+}
+
+export const generateGraphDataWithGPU = (data, type) => {
+    const categoriesAndLegends = generateCategoriesAndLegendsFromRoot(type)
+    const options = {
+        legend: { data: categoriesAndLegends, itemHeight: 22 },
+        tooltip: {},
+        series: [
+            {
+                type: "graphGL",
+                layout: "forceAtlas2",
+                forceAtlas2: {
+                    steps: 5,
+                },
+                nodes: data.nodes,
+                categories: categoriesAndLegends,
+                draggable: true,
+                links: data.links,
             },
         ],
     }

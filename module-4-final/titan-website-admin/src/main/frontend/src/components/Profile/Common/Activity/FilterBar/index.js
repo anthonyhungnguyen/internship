@@ -1,8 +1,12 @@
-import { DatePicker } from "antd"
+import { Col, DatePicker, Divider, Row, Switch } from "antd"
 import moment from "moment"
 import React, { memo } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { generalSelector, storeDateRange } from "../../../../../slices"
+import {
+    generalSelector,
+    storeDateRange,
+    storeUseGPU,
+} from "../../../../../slices"
 const { RangePicker } = DatePicker
 
 export default memo(function FilterBar() {
@@ -15,9 +19,13 @@ export default memo(function FilterBar() {
         }
     }
 
+    const handleToggleUseCPU = (e) => {
+        dispatch(storeUseGPU(e))
+    }
+
     return (
         <React.Fragment>
-            <p className='font-bold '>Timeline</p>
+            <p className='font-bold text-xl'>Timeline</p>
             <RangePicker
                 format='YYYY-MM-DD'
                 className='w-full'
@@ -27,6 +35,16 @@ export default memo(function FilterBar() {
                     moment(filters.range[1], "YYYY-MM-DD"),
                 ]}
             />
+            <Divider />
+            <p className='font-bold text-xl'>Graph</p>
+            <Row>
+                <Col span={12} className='font-bold'>
+                    Use GPU
+                </Col>
+                <Col span={12}>
+                    <Switch onChange={handleToggleUseCPU} />
+                </Col>
+            </Row>
         </React.Fragment>
     )
 })

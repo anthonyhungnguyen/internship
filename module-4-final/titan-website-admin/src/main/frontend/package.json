@@ -27,6 +27,7 @@
 		"core-js": "^3.1.4",
 		"dayjs": "^1.8.36",
 		"echarts": "^4.9.0",
+		"echarts-dagre": "^0.1.0",
 		"echarts-extension-gmap": "^1.1.0",
 		"echarts-for-react": "^2.0.16",
 		"echarts-gl": "^1.1.1",

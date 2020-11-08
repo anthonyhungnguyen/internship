@@ -2,11 +2,15 @@ import { Card, Slider } from "antd"
 import axios from "axios"
 import copy from "copy-to-clipboard"
 import ReactEcharts from "echarts-for-react"
+import "echarts-gl"
+import { useSelector } from "react-redux"
 import React, { memo, useEffect, useRef, useState } from "react"
+import { generalSelector } from "../../../../../slices"
 import {
     configureSymbolSizeBasedOnDegree,
     generateCategoryFromType,
     generateGraphData,
+    generateGraphDataWithGPU,
     preprocessMoreConnection,
 } from "../../../../../slices/util"
 
@@ -18,9 +22,11 @@ export default memo(function Graph({
     type,
 }) {
     // Used for restoring old depth
+    const { useGPU } = useSelector(generalSelector)
     const [graphData, setgraphData] = useState([])
     let ref = useRef()
     useEffect(() => {
+        depthData = {}
         axios
             .post("http://localhost:8085/api/profile/depth", {
                 idList: [`userid/${id}`],
@@ -30,13 +36,11 @@ export default memo(function Graph({
                     `userid/${id}`,
                     response.data
                 )
-                const graphData = generateGraphData(
-                    formattedConnections,
-                    "userid"
-                )
+                const graphData = !useGPU
+                    ? generateGraphData(formattedConnections, "userid")
+                    : generateGraphDataWithGPU(formattedConnections, "userid")
                 setgraphData(graphData)
                 depthData[1] = graphData
-                console.log(depthData)
             })
             .catch(console.error)
 
@@ -81,7 +85,7 @@ export default memo(function Graph({
                 links: links,
             }
         }
-    }, [id])
+    }, [id, useGPU])
 
     const handleOnClick = async (e) => {
         if (e.data.type === "deviceid") {
@@ -101,8 +105,8 @@ export default memo(function Graph({
 
     const expandOneDepth = async (depth) => {
         let echartsInstance = ref.current.getEchartsInstance()
-        const { data, edges } = echartsInstance.getOption()["series"][0]
-        const unExpandedId = data
+        const { nodes, links } = echartsInstance.getOption()["series"][0]
+        const unExpandedId = nodes
             .filter((x) => !x.expanded)
             .map((x) => `${x.type}/${x.id}`)
         if (!depthData[depth]) {
@@ -114,15 +118,15 @@ export default memo(function Graph({
                     .then((response) => {
                         const moreConnection = preprocessMoreConnection(
                             response.data,
-                            data,
-                            edges
+                            nodes,
+                            links
                         )
-                        const newGraphData = generateGraphData(
-                            moreConnection,
-                            type
-                        )
+                        const newGraphData = !useGPU
+                            ? generateGraphData(moreConnection, type)
+                            : generateGraphDataWithGPU(moreConnection, type)
                         depthData[depth] = newGraphData
-                        echartsInstance.setOption(newGraphData)
+                        setgraphData(newGraphData)
+                        // echartsInstance.setOption(newGraphData)
                     })
                     .catch(console.error)
             }
@@ -133,8 +137,8 @@ export default memo(function Graph({
 
     const expandOneDepthOnOneNode = async (id) => {
         let echartsInstance = ref.current.getEchartsInstance()
-        const { data, edges } = echartsInstance.getOption()["series"][0]
-        const checkExpanded = data.find((x) => x.id !== id && !x.expanded)
+        const { nodes, links } = echartsInstance.getOption()["series"][0]
+        const checkExpanded = nodes.find((x) => x.id !== id && !x.expanded)
         if (checkExpanded) {
             axios
                 .post("http://localhost:8085/api/profile/depth", {
@@ -143,10 +147,12 @@ export default memo(function Graph({
                 .then((response) => {
                     const moreConnection = preprocessMoreConnection(
                         response.data,
-                        data,
-                        edges
+                        nodes,
+                        links
                     )
-                    const newGraphData = generateGraphData(moreConnection, type)
+                    const newGraphData = !useGPU
+                        ? generateGraphData(moreConnection, type)
+                        : generateGraphDataWithGPU(moreConnection, type)
                     echartsInstance.setOption(newGraphData)
                 })
                 .catch(console.error)
@@ -159,38 +165,37 @@ export default memo(function Graph({
 
     return (
         graphData && (
-            <div className='animated fadeIn'>
-                <Card
-                    className='h-full w-full'
-                    title='Graph'
-                    headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
-                    bodyStyle={{ height: "100vh" }}
-                    hoverable={true}
-                    extra={
-                        <React.Fragment>
-                            <Slider
-                                min={1}
-                                max={10}
-                                onChange={expandOneDepth}
-                                className='w-40'
-                                tooltipVisible
-                            />
-                        </React.Fragment>
-                    }
-                >
-                    <ReactEcharts
-                        ref={ref}
-                        option={graphData}
-                        lazyUpdate={true}
-                        style={{ height: "100%", width: "100%" }}
-                        renderer='canvas'
-                        onEvents={{
-                            click: handleOnClick,
-                            dblclick: handleDoubleClick,
-                        }}
-                    />
-                </Card>
-            </div>
+            <Card
+                className='h-full w-full'
+                title='Graph'
+                className='overflow-scroll'
+                headStyle={{ fontWeight: "bold", fontSize: "1.3em" }}
+                bodyStyle={{ height: "100vh" }}
+                hoverable={true}
+                extra={
+                    <React.Fragment>
+                        <Slider
+                            min={1}
+                            max={10}
+                            onChange={expandOneDepth}
+                            className='w-40'
+                            tooltipVisible
+                        />
+                    </React.Fragment>
+                }
+            >
+                <ReactEcharts
+                    ref={ref}
+                    option={graphData}
+                    lazyUpdate={true}
+                    style={{ height: "100%", width: "100%" }}
+                    renderer='canvas'
+                    onEvents={{
+                        click: handleOnClick,
+                        dblclick: handleDoubleClick,
+                    }}
+                />
+            </Card>
         )
     )
 })

@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { useSelector } from "react-redux"
 import { generalSelector } from "../../../../slices"
 import Graph from "../../Common/Connection/Graph"
+import FundingChannelIdentity from "../../Common/Overview/FundingChannelIdentity"
 import UserBasic from "../../Common/Overview/UserIdentity"
 
 export default React.memo(() => {
@@ -15,7 +16,12 @@ export default React.memo(() => {
         <React.Fragment>
             <Row gutter={[12, 12]} className='items-stretch'>
                 <Col span={8}>
-                    <UserBasic id={currentChosenId} />
+                    {currentType === "userid" && (
+                        <UserBasic id={currentChosenId} />
+                    )}
+                    {currentType === "funding_channel" && (
+                        <FundingChannelIdentity id={currentChosenId} />
+                    )}
                 </Col>
                 <Col span={16}>
                     <Graph

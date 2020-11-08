@@ -4392,6 +4392,14 @@ d@1, d@^1.0.1:
     es5-ext "^0.10.50"
     type "^1.0.1"
 
+dagre@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.7.4.tgz#de72f0e74a550ce11ce638f0a136fed712398022"
+  integrity sha1-3nLw50pVDOEc5jjwoTb+1xI5gCI=
+  dependencies:
+    graphlib "^1.0.5"
+    lodash "^3.10.0"
+
 dagre@^0.8.5:
   version "0.8.5"
   resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.8.5.tgz#ba30b0055dac12b6c1fcc247817442777d06afee"
@@ -4850,6 +4858,17 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
+echarts-dagre@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/echarts-dagre/-/echarts-dagre-0.1.0.tgz#281a1a4879c086d3a558cdace0368a0d03c48a4c"
+  integrity sha1-KBoaSHnAhtOlWM2s4DaKDQPEikw=
+  dependencies:
+    dagre "^0.7.4"
+    echarts "^3.1.10"
+    graphlib "1.0.x"
+    lodash "3.10.x"
+    zrender "3.1.x"
+
 echarts-extension-gmap@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/echarts-extension-gmap/-/echarts-extension-gmap-1.1.0.tgz#b5cdaa60ed43cd2a9e55f7f88ca96dc1fb0e4194"
@@ -4873,6 +4892,13 @@ echarts-gl@^1.1.1:
   dependencies:
     claygl "^1.2.1"
     zrender "^4.0.4"
+
+echarts@^3.1.10:
+  version "3.8.5"
+  resolved "https://registry.yarnpkg.com/echarts/-/echarts-3.8.5.tgz#58e4a51d2743c6fb75257b0dc0a9cf9f5378ac0e"
+  integrity sha512-E+nnROMfCeiLeoT/fZyX8SE8mKzwkTjyemyoBF543oqjRtjTSKQAVDEihMXy4oC6pJS0tYGdMqCA2ATk8onyRg==
+  dependencies:
+    zrender "3.7.4"
 
 echarts@^4.7.0, echarts@^4.9.0:
   version "4.9.0"
@@ -6230,6 +6256,13 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
   integrity sha512-a30VEBm4PEdx1dRB7MFK7BejejvCvBronbLjht+sHuGYj8PHs7M/5Z+rt5lw551vZ7yfTCj4Vuyy3mSJytDWRQ==
+
+graphlib@1.0.x, graphlib@^1.0.5:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-1.0.7.tgz#0cab2df0ffe6abe070b2625bfa1edb6ec967b8b1"
+  integrity sha1-DKst8P/mq+BwsmJb+h7bbslnuLE=
+  dependencies:
+    lodash "^3.10.0"
 
 graphlib@^2.1.8:
   version "2.1.8"
@@ -8158,6 +8191,11 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
+
+lodash@3.10.x, lodash@^3.10.0:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
+  integrity sha1-W/Rejkm6QYnhfUgnid/RW9FAt7Y=
 
 "lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.15.0, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4, lodash@^4.17.5, lodash@~4.17.12:
   version "4.17.15"
@@ -14271,6 +14309,16 @@ yargs@^15.0.2:
     which-module "^2.0.0"
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
+
+zrender@3.1.x:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/zrender/-/zrender-3.1.3.tgz#445897e40a431a4224ef0e71357c61e2d7497c8c"
+  integrity sha1-RFiX5ApDGkIk7w5xNXxh4tdJfIw=
+
+zrender@3.7.4:
+  version "3.7.4"
+  resolved "https://registry.yarnpkg.com/zrender/-/zrender-3.7.4.tgz#f847d53948481ef6d42906d1ea9aeec7acbefdf2"
+  integrity sha512-5Nz7+L1wIoL0+Pp/iOP56jD6eD017qC9VRSgUBheXBiAHgOBJZ4uh4/g6e83acIwa8RKSyZf/FlceKu5ntUuxQ==
 
 zrender@4.3.2, zrender@^4.0.4:
   version "4.3.2"

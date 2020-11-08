@@ -4,6 +4,7 @@ import com.example.vng.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class UserController {
 
     @PostMapping("info")
     public Map<String, Object> getUserInfo(@RequestBody Map<String, Object> body) {
-        List<String> list = Stream.of("profilelevel",
+        List<String> list = Arrays.asList("profilelevel",
                 "acquital_result",
                 "postmortem_add_date",
                 "postmortem_result",
@@ -34,7 +35,7 @@ public class UserController {
                 "kycgender",
                 "phonenumber",
                 "usergender",
-                "zaloid").collect(Collectors.toList());
+                "zaloid");
         body.put("keepList", list);
         return userRepository.getUserInfo(body);
     }

@@ -158,7 +158,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "                    COLLECT date = DATE_FORMAT(DATE_TIMESTAMP(e.reqDate), '%dd-%mm-%yyyy')\n" +
             "                    AGGREGATE amount = SUM(TO_NUMBER(e.amount))\n" +
             "                    RETURN {date, amount})\n" +
-            "    \n" + 
+            "    \n" +
             "LET totalAmount = SUM((FOR e IN totalPayment RETURN TO_NUMBER(e.amount)))\n" +
             "    \n" +
             "LET successTransCount = COUNT(FOR v in totalPayment FILTER v.transStatus == 'SUCCESSFUL' RETURN v)\n" +
