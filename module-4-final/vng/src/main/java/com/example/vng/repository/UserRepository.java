@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface UserRepository extends ArangoRepository<String, String> {
     @Query("RETURN KEEP(DOCUMENT(@id), @keepList)")
-    Map<String, Object> getUserInfo(@BindVars Map<String, Object> bindVars);
+    Map<String, Object> getUserInfo(@Param("id") String id, @Param("keepList") List<String> keepList);
 
     @Query("FOR v, e IN 1..1 ANY @id transaction\n" +
             "    FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) \n" +
@@ -85,26 +85,13 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    RETURN {bankName, firstAccountNo, lastAccountNo, frequency}")
     List<Map<String, Object>> getMappingAccountTable(@Param("id") String id, @BindVars Map<String, Object> bindVars);
 
-    @Query("FOR v IN map_card\n" +
-            "    FILTER v._from == @id\n" +
-            "    COLLECT cardId = v.cardId, bankName = v.bankName, first6CardNo = v.first6CardNo, last4CardNo = v.last4CardNo\n" +
-            "    RETURN {cardId, bankName, first6CardNo, last4CardNo}")
-    List<Map<String, Object>> getCardOverview(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR v IN map_account\n" +
-            "    FILTER v._from == @id\n" +
-            "    COLLECT cardId = v.accountId, bankName = v.bankName, firstAccountNo = v.firstAccountNo, lastAccountNo = v.lastAccountNo\n" +
-            "    RETURN {cardId, bankName, firstAccountNo, lastAccountNo}")
-    List<Map<String, Object>> getAccountOverview(@BindVars Map<String, Object> bindVars);
-
-
     @Query("FOR e IN @@col\n" +
             "    FILTER e._from == @id" +
             "    AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
             "    COLLECT status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    SORT status_count DESC\n" +
             "    RETURN {status, status_count}")
-    List<Map<String, Object>> getMappingOverview(@BindVars Map<String, Object> bindVars);
+    List<Map<String, Object>> getMappingOverview(@Param("id") String id, @BindVars Map<String, String> bindVars);
 
     @Query("FOR e IN @@col\n" +
             "    FILTER e._from == @id\n" +
@@ -112,13 +99,13 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    COLLECT date = DATE_FORMAT(DATE_ISO8601(e.reqDate), \"%yyyy-%mm-%dd\"), status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    SORT DATE_TIMESTAMP(date)\n" +
             "    RETURN {date, status, status_count}")
-    List<Map<String, Object>> getMappingTimeline(@BindVars Map<String, Object> bindVars);
+    List<Map<String, Object>> getMappingTimeline(@Param("id") String id, @BindVars Map<String, String> bindVars);
 
     @Query("FOR e IN @@col\n" +
             "    FILTER e._from == @id AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
             "    COLLECT bName = e.bankName, status = e.requestStatus WITH COUNT INTO status_count\n" +
             "    RETURN {bName, status, status_count}")
-    List<Map<String, Object>> getMappingBank(@BindVars Map<String, Object> bindVars);
+    List<Map<String, Object>> getMappingBank(@Param("id") String id, @BindVars Map<String, String> bindVars);
 
 
     @Query("    LET a = (FOR e IN map_card FILTER e._from == @id AND e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
@@ -139,7 +126,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "    ))\n" +
             "    \n" +
             "    RETURN {card: count(a), account: count(b), popularBank, totalMappingTimes: COUNT(totalMapping), successPercent}")
-    Map<String, Object> getMappingStatisticsOverview(@BindVars Map<String, Object> bindVars);
+    Map<String, Object> getMappingStatisticsOverview(@Param("id") String id, @BindVars Map<String, Object> bindVars);
 
     @Query("LET totalPayment = (FOR v, e IN 1..1 ANY @id transaction FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "LET appid_list = (FOR v IN totalPayment\n" +
@@ -164,7 +151,7 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "LET successTransCount = COUNT(FOR v in totalPayment FILTER v.transStatus == 'SUCCESSFUL' RETURN v)\n" +
             "LET totalPaymentCount = COUNT(totalPayment)\n" +
             "RETURN {popularMerchant, totalAmount, graphData, successTransCount, totalPaymentCount}")
-    Map<String, Object> getSpendingStatisticsOverview(@BindVars Map<String, Object> bindVars);
+    Map<String, Object> getSpendingStatisticsOverview(@Param("id") String id, @BindVars Map<String, Object> bindVars);
 
     @Query("LET totalPayment = (FOR v, e IN 1..1 ANY @id transaction FILTER DATE_TIMESTAMP(e.reqDate) >= DATE_TIMESTAMP(@fromDate) AND DATE_TIMESTAMP(e.reqDate) <= DATE_TIMESTAMP(@toDate) RETURN e)\n" +
             "\n" +
@@ -182,34 +169,34 @@ public interface UserRepository extends ArangoRepository<String, String> {
             "                        \n" +
             "                        \n" +
             "return {graphData, peakDate, sumFrequency, lastDate: LAST(graphData).date}")
-    Map<String, Object> getSpendingFrequencyOverview(@BindVars Map<String, Object> bindVars);
+    Map<String, Object> getSpendingFrequencyOverview(@Param("id") String id, @BindVars Map<String, Object> bindVars);
 
-    @Query("LET card_user = (FOR v, e IN 1..2 ANY @id map_card\n" +
-            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
-            "    COLLECT cardId = e.cardId, userId = e._from\n" +
-            "    RETURN {cardId, userId})\n" +
-            "\n" +
-            "FOR cu in card_user\n" +
-            "    LET userList = (FOR cu_in IN card_user FILTER cu_in.userId != @id AND cu_in.cardId == cu.cardId RETURN cu_in.userId)\n" +
-            "    LET userListLength = length(userList)\n" +
-            "    SORT userListLength DESC\n" +
-            "    RETURN DISTINCT {cardId: cu.cardId, userList: userList, userListLength, userListLength}")
-    List<Map<String, Object>> getNetworkCard(@BindVars Map<String, Object> bindVars);
-
-    @Query("LET account_user = (FOR v, e IN 1..2 ANY @id map_account\n" +
-            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
-            "    COLLECT accountId = e.accountId, userId = e._from\n" +
-            "    RETURN {accountId, userId})\n" +
-            "\n" +
-            "FOR cu in account_user\n" +
-            "    LET userList = (FOR cu_in IN account_user FILTER cu_in.userId != @id AND cu_in.accountId == cu.accountId RETURN cu_in.userId)\n" +
-            "    LET userListLength = length(userList)\n" +
-            "    SORT userListLength DESC\n" +
-            "    RETURN DISTINCT {accountId: cu.accountId, userList: userList, userListLength, userListLength}")
-    List<Map<String, Object>> getNetworkAccount(@BindVars Map<String, Object> bindVars);
-
-    @Query("FOR u in @list\n" +
-            "    LET userDoc = document(u)\n" +
-            "    return {userid: userDoc._key, abuseScore: userDoc.abuseScore, abuseUpdateTime: userDoc.abuseUpdateTime}")
-    List<Map<String, Object>> getAbuseScoreList(@Param("list") List<String> userList);
+//    @Query("LET card_user = (FOR v, e IN 1..2 ANY @id map_card\n" +
+//            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
+//            "    COLLECT cardId = e.cardId, userId = e._from\n" +
+//            "    RETURN {cardId, userId})\n" +
+//            "\n" +
+//            "FOR cu in card_user\n" +
+//            "    LET userList = (FOR cu_in IN card_user FILTER cu_in.userId != @id AND cu_in.cardId == cu.cardId RETURN cu_in.userId)\n" +
+//            "    LET userListLength = length(userList)\n" +
+//            "    SORT userListLength DESC\n" +
+//            "    RETURN DISTINCT {cardId: cu.cardId, userList: userList, userListLength, userListLength}")
+//    List<Map<String, Object>> getNetworkCard(@BindVars Map<String, Object> bindVars);
+//
+//    @Query("LET account_user = (FOR v, e IN 1..2 ANY @id map_account\n" +
+//            "    FILTER e.reqDate >= DATE_TIMESTAMP(@fromDate) AND e.reqDate <= DATE_TIMESTAMP(@toDate)\n" +
+//            "    COLLECT accountId = e.accountId, userId = e._from\n" +
+//            "    RETURN {accountId, userId})\n" +
+//            "\n" +
+//            "FOR cu in account_user\n" +
+//            "    LET userList = (FOR cu_in IN account_user FILTER cu_in.userId != @id AND cu_in.accountId == cu.accountId RETURN cu_in.userId)\n" +
+//            "    LET userListLength = length(userList)\n" +
+//            "    SORT userListLength DESC\n" +
+//            "    RETURN DISTINCT {accountId: cu.accountId, userList: userList, userListLength, userListLength}")
+//    List<Map<String, Object>> getNetworkAccount(@BindVars Map<String, Object> bindVars);
+//
+//    @Query("FOR u in @list\n" +
+//            "    LET userDoc = document(u)\n" +
+//            "    return {userid: userDoc._key, abuseScore: userDoc.abuseScore, abuseUpdateTime: userDoc.abuseUpdateTime}")
+//    List<Map<String, Object>> getAbuseScoreList(@Param("list") List<String> userList);
 }

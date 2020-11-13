@@ -15,9 +15,6 @@ public interface ArangoDBRepository extends ArangoRepository<String, String> {
     @Query("RETURN NOT(IS_NULL(DOCUMENT(@id)))")
     List<Boolean> checkTypeAndIDExists(@BindVars Map<String, Object> bindVars);
 
-    @Query("RETURN DOCUMENT(@id)")
-    List<Map<String, Object>> getInfo(@BindVars Map<String, Object> bindVars);
-
     @Query("FOR v, e IN 1..1 ANY @id user_device_onboard\n" +
             "FILTER TO_NUMBER(e.timestamp*1000) >= DATE_TIMESTAMP(@fromDate) AND TO_NUMBER(e.timestamp*1000) <= DATE_TIMESTAMP(@toDate)\n" +
             "COLLECT date = DATE_FORMAT(DATE_ISO8601(TO_NUMBER(e.timestamp) * 1000), @dateFormat) WITH COUNT INTO date_count\n" +

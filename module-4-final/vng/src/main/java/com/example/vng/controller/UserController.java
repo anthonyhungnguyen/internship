@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
-@RequestMapping("/api/profile/user")
+@RequestMapping("/investigation/user/")
 public class UserController {
     private final UserRepository userRepository;
 
@@ -20,8 +21,8 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("info")
-    public Map<String, Object> getUserInfo(@RequestBody Map<String, Object> body) {
+    @PostMapping("{id}/info")
+    public Map<String, Object> getUserInfo(@PathVariable("id") String id) {
         List<String> list = Arrays.asList("profilelevel",
                 "acquital_result",
                 "postmortem_add_date",
@@ -36,8 +37,7 @@ public class UserController {
                 "phonenumber",
                 "usergender",
                 "zaloid");
-        body.put("keepList", list);
-        return userRepository.getUserInfo(body);
+        return userRepository.getUserInfo("userid/" + id, list);
     }
 
     @PostMapping("{id}/monetary/timeline")
@@ -85,82 +85,62 @@ public class UserController {
         return userRepository.getMappingAccountTable("userid/" + id, body);
     }
 
-    @PostMapping("card/overview")
-    public List<Map<String, Object>> getCardOverview(@RequestBody Map<String, Object> body) {
-        body.put("id", "userid/" + body.get("id"));
-        return userRepository.getCardOverview(body);
+    @PostMapping("{id}/{mappingType}/mapping/overview")
+    public List<Map<String, Object>> getCardMappingOverview(@PathVariable("id") String id, @PathVariable("mappingType") String type) {
+        Map<String, String> body = new HashMap<>();
+        if (type.equals("card")) {
+            body.put("@col", "map_card");
+        } else {
+            body.put("@col", "map_account");
+        }
+        return userRepository.getMappingOverview("userid/" + id, body);
     }
 
-    @PostMapping("account/overview")
-    public List<Map<String, Object>> getAccountOverview(@RequestBody Map<String, Object> body) {
-        body.put("id", "userid/" + body.get("id"));
-        return userRepository.getAccountOverview(body);
+    @PostMapping("{id}/{mappingType}/mapping/timeline")
+    public List<Map<String, Object>> getCardMappingTimeline(@PathVariable("id") String id, @PathVariable("mappingType") String type) {
+        Map<String, String> body = new HashMap<>();
+        if (type.equals("card")) {
+            body.put("@col", "map_card");
+        } else {
+            body.put("@col", "map_account");
+        }
+        return userRepository.getMappingTimeline("userid/" + id, body);
     }
 
-    @PostMapping("card/mapping/overview")
-    public List<Map<String, Object>> getCardMappingOverview(@RequestBody Map<String, Object> body) {
-        body.put("@col", "map_card");
-        return userRepository.getMappingOverview(body);
-    }
-
-    @PostMapping("card/mapping/timeline")
-    public List<Map<String, Object>> getCardMappingTimeline(@RequestBody Map<String, Object> body) {
-        body.put("@col", "map_card");
-        return userRepository.getMappingTimeline(body);
-    }
-
-    @PostMapping("card/mapping/bank")
-    public List<Map<String, Object>> getCardMappingBank(@RequestBody Map<String, Object> body) {
-        body.put("@col", "map_card");
-        return userRepository.getMappingBank(body);
+    @PostMapping("{id}/{mappingType}/mapping/bank")
+    public List<Map<String, Object>> getCardMappingBank(@PathVariable("id") String id, @PathVariable("mappingType") String type) {
+        Map<String, String> body = new HashMap<>();
+        if (type.equals("card")) {
+            body.put("@col", "map_card");
+        } else {
+            body.put("@col", "map_account");
+        }
+        return userRepository.getMappingBank("userid/" + id, body);
     }
 
 
-    @PostMapping("account/mapping/overview")
-    public List<Map<String, Object>> getAccountMappingOverview(@RequestBody Map<String, Object> body) {
-        body.put("@col", "map_account");
-        return userRepository.getMappingOverview(body);
+    @PostMapping("{id}/mapping/overview")
+    public Map<String, Object> getMappingStatisticsOverview(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
+        return userRepository.getMappingStatisticsOverview("userid/" + id, body);
     }
 
-    @PostMapping("account/mapping/timeline")
-    public List<Map<String, Object>> getAccountMappingTimeline(@RequestBody Map<String, Object> body) {
-        body.put("@col", "map_account");
-        return userRepository.getMappingTimeline(body);
+    @PostMapping("{id}/monetary/overview")
+    public Map<String, Object> getSpendingStatisticsOverview(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
+        return userRepository.getSpendingStatisticsOverview("userid/" + id, body);
     }
 
-    @PostMapping("account/mapping/bank")
-    public List<Map<String, Object>> getAccountMappingBank(@RequestBody Map<String, Object> body) {
-        body.put("@col", "map_account");
-        return userRepository.getMappingBank(body);
+    @PostMapping("{id}/monetary/overview/frequency")
+    public Map<String, Object> getSpendingFrequencyOverview(@PathVariable("id") String id, @RequestBody Map<String, Object> body) {
+        return userRepository.getSpendingFrequencyOverview("userid/" + id, body);
     }
 
-    @PostMapping("mapping/overview")
-    public Map<String, Object> getMappingStatisticsOverview(@RequestBody Map<String, Object> body) {
-        return userRepository.getMappingStatisticsOverview(body);
-    }
-
-    @PostMapping("monetary/overview")
-    public Map<String, Object> getSpendingStatisticsOverview(@RequestBody Map<String, Object> body) {
-        return userRepository.getSpendingStatisticsOverview(body);
-    }
-
-    @PostMapping("monetary/overview/frequency")
-    public Map<String, Object> getSpendingFrequencyOverview(@RequestBody Map<String, Object> body) {
-        return userRepository.getSpendingFrequencyOverview(body);
-    }
-
-    @PostMapping("network/card")
-    public List<Map<String, Object>> getNetworkCard(@RequestBody Map<String, Object> body) {
-        return userRepository.getNetworkCard(body);
-    }
-
-    @PostMapping("network/account")
-    public List<Map<String, Object>> getNetworkAccount(@RequestBody Map<String, Object> body) {
-        return userRepository.getNetworkAccount(body);
-    }
-
-    @PostMapping("abuseScore")
-    public List<Map<String, Object>> getAbuseScoreList(@RequestBody List<String> userList) {
-        return userRepository.getAbuseScoreList(userList);
-    }
+//    @PostMapping("network/card")
+//    public List<Map<String, Object>> getNetworkCard(@RequestBody Map<String, Object> body) {
+//        return userRepository.getNetworkCard(body);
+//    }
+//
+//    @PostMapping("network/account")
+//    public List<Map<String, Object>> getNetworkAccount(@RequestBody Map<String, Object> body) {
+//        return userRepository.getNetworkAccount(body);
+//    }
 }
