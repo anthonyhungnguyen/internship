@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"@reduxjs/toolkit": "^1.4.0",
-		"moment": "^2.27.0",
+		"moment": "^2.29.2",
 		"next": "9.5.2",
 		"rc-progress": "^3.0.0",
 		"react": "16.13.1",
